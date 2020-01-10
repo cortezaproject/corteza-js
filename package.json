@@ -1,0 +1,75 @@
+{
+  "name": "corteza-js",
+  "description": "Corteza JavaScript/TypeScript libs",
+  "version": "2020.3.0-alpha.0",
+  "license": "Apache-2.0",
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
+  "contributors": [
+    "Denis Arh <denis.arh@crust.tech>"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "tsndev": "ts-node-dev --debounce 200 --transpileOnly -r tsconfig-paths/register -r esm",
+    "serve:dev": "npm tsndev --respawn --ignore-watch node_module --ignore-watch usr ./src/app.ts",
+    "serve": "node -r esm dist/app.js",
+    "build": "tsc",
+    "lint": "eslint src/** --ext .js,.ts",
+    "test:unit": "mocha",
+    "test:unit:cc": "nyc mocha"
+  },
+  "dependencies": {
+    "axios": "0.19.1"
+  },
+  "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "1.0.1",
+    "@types/chai": "^4.2.6",
+    "@types/chai-as-promised": "^7.1.2",
+    "@types/lodash": "^4.14.149",
+    "@types/mocha": "^5.2.7",
+    "@typescript-eslint/eslint-plugin": "^2.11.0",
+    "@typescript-eslint/parser": "^2.11.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "eslint": "^6.7.2",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-import-resolver-typescript": "^2.0.0",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-json": "^2.0.1",
+    "eslint-plugin-node": "11.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "mocha": "7.0.0",
+    "node-watch": "^0.6.3",
+    "nodemon": "2.0.2",
+    "nyc": "15.0.0",
+    "sinon": "8.0.4",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.7.2"
+  },
+  "nyc": {
+    "extends": "@istanbuljs/nyc-config-typescript",
+    "require": [
+      "ts-node/register"
+    ],
+    "all": true,
+    "check-coverage": true,
+    "per-file": true,
+    "lines": 90,
+    "functions": 90,
+    "statements": 90,
+    "reporter": [
+      "text",
+      "lcov"
+    ],
+    "include": [
+      "src/**/*.ts"
+    ]
+  },
+  "engines": {
+    "node": ">=12.14.0"
+  }
+}
