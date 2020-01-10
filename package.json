@@ -1,22 +1,22 @@
 {
-  "name": "corteza-js",
+  "name": "@cortezaproject/corteza-js",
   "description": "Corteza JavaScript/TypeScript libs",
   "version": "2020.3.0-alpha.0",
   "license": "Apache-2.0",
-  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "contributors": [
     "Denis Arh <denis.arh@crust.tech>"
   ],
   "main": "dist/index.js",
+  "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/"
   ],
   "scripts": {
-    "tsndev": "ts-node-dev --debounce 200 --transpileOnly -r tsconfig-paths/register -r esm",
-    "serve:dev": "npm tsndev --respawn --ignore-watch node_module --ignore-watch usr ./src/app.ts",
-    "serve": "node -r esm dist/app.js",
-    "build": "tsc",
+    "build": "rollup -c",
     "lint": "eslint src/** --ext .js,.ts",
     "test:unit": "mocha",
     "test:unit:cc": "nyc mocha"
@@ -42,10 +42,13 @@
     "eslint-plugin-node": "11.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
+    "esm": "^3.2.25",
     "mocha": "7.0.0",
     "node-watch": "^0.6.3",
     "nodemon": "2.0.2",
     "nyc": "15.0.0",
+    "rollup": "^1.29.0",
+    "rollup-plugin-typescript2": "^0.25.3",
     "sinon": "8.0.4",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.7.2"
