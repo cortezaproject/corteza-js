@@ -30,7 +30,7 @@ module.exports = {
   },
   overrides: [
     {
-      "files": ["*.test.js"],
+      "files": ["*.test.ts"],
       "rules": {
           "no-unused-expressions": "off"
       }
