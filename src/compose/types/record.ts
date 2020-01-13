@@ -40,12 +40,19 @@ export interface Values {
 type RecordCtorCombo = Record | Module | RawValue | RawValue[] | RawRecord | Values | Values[]
 
 /**
+ * For something to be useful module (for a Record), it needs to contain fields
+ */
+function isModule (m?: unknown): m is Module {
+  return IsOf<Module>(m, 'fields') && Array.isArray(m.fields) && m.fields.length > 0
+}
+
+/**
  * Record class will be used all over the place, user scripts, etc..
  *
  * Constructor (and apply fn) is as versatile as possible to handle
  * different use-cases.
  */
-class Record {
+export class Record {
   public recordID = NoID;
   public moduleID = NoID;
   public namespaceID = NoID;
@@ -66,35 +73,19 @@ class Record {
   private [propModule]?: Module
 
   constructor (recModVal1: RecordCtorCombo, recModVal2?: RecordCtorCombo) {
-    let r, m
-
-    this.values.foo = 'bae'
-
-    // switch will check for p1 type variants
-    switch (true) {
-      // recModVal1 is module,
-      // expecting recModVal2 to be something we can use as a record
-      case IsOf<Module>(recModVal1, 'fields'):
-        m = recModVal1
-        r = recModVal2
-        break
-
-      // p1 looks like a record,
-      // try to resolve a module
-      case IsOf<Record>(recModVal1, 'values'):
-        r = recModVal1 as Record
-        if (recModVal2 && IsOf<Module>(recModVal2, 'fields')) {
-          // module is passed as the 2nd argument
-          m = recModVal2
-        } else if (!recModVal2) {
-          // module was not explicitly passed, can we take it out of record?
-          m = r.module
-        }
-        break
+    if (isModule(recModVal1)) {
+      this.module = recModVal1
+      this.apply(recModVal2)
+      return
     }
 
-    this.module = m as Module
-    this.apply(r)
+    if (isModule(recModVal2)) {
+      this.module = recModVal2
+      this.apply(recModVal1)
+      return
+    }
+
+    throw new Error('invalid module used to initialize a record')
   }
 
   apply (p?: unknown): void {
@@ -141,8 +132,10 @@ class Record {
   }
 
   public set module (m: Module) {
-    if (!m) {
-      throw new Error('invalid module used to initialize a record')
+    if (this[propModule]) {
+      if ((this[propModule] as Module).moduleID !== m.moduleID) {
+        throw new Error('module for this record already set')
+      }
     }
 
     if (!m.fields || !Array.isArray(m.fields) || m.fields.length === 0) {
@@ -176,21 +169,6 @@ class Record {
     Object.freeze(this[fieldIndex])
   }
 
-  // [resetValues] () {
-  //   let values = {
-  //     toJSON: () => {
-  //       // Remove unneeded properties
-  //       return this.serializeValues()
-  //     },
-  //   }
-  //
-  //   this.module.fields.forEach(({ name, isMulti, kind }) => {
-  //     values[name] = isMulti ? [] : undefined
-  //   })
-  //
-  //   this.values = values
-  // }
-
   /**
    * Converts internal representation of values into array of RawValue objects
    */
@@ -214,7 +192,7 @@ class Record {
     return vv
   }
 
-  public setValues (input?: Values|Values[]|RawValue[]) {
+  public setValues (input?: Values|Values[]|RawValue[]): void {
     if (input) {
       this.prepareValues(input, this.values)
     }
@@ -223,16 +201,18 @@ class Record {
   /**
    * Updates record's values object with provided input
    */
-  private prepareValues (src: Values|Values[]|RawValue[], dst = this.values) {
+  private prepareValues (src: Values|Values[]|RawValue[], dst = this.values): void {
+
     if (AreObjectsOf<RawValue>(src, 'name')) {
       // Assign values from RawValues to Values like struct
       src = src.reduce((vv, { name, value }) => {
+        vv[name] = value
         return vv
       }, {} as Values)
     } else if (Array.isArray(src)) {
       // Merge all given Values objects
       src = src.reduce((vv, v) => {
-        for (const name in Object.getOwnPropertyNames(v)) {
+        for (const name of Object.getOwnPropertyNames(v)) {
           vv[name] = v[name]
         }
 
@@ -244,8 +224,8 @@ class Record {
 
     // src is now aggregated (and narrowed to Values)
     // we need to make sure only valid fields are assigned to values
-    for (const name in Object.getOwnPropertyNames(src)) {
-      // Skip resevred names
+    for (const name of Object.getOwnPropertyNames(src)) {
+      // Skip reserved names
       if (reservedFieldNames.includes(name)) {
         continue
       }
@@ -271,9 +251,6 @@ class Record {
 
   /**
    * Validates record values
-   *
-   * @param {Validator} additional validators for fields
-   * @param {...string[]} onlyFields Validate only these fields
    */
   public validate (additional?: Validator): Validated {
     const validator = new Validator()
@@ -288,11 +265,7 @@ class Record {
     return validator.run(this)
   }
 
-  public isValid (additional?: Validator) {
+  public isValid (additional?: Validator): boolean {
     return this.validate(additional).size === 0
   }
-}
-
-export {
-  Record
 }
