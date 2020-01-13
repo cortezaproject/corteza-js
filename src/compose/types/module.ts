@@ -17,7 +17,7 @@ interface Meta {
 /**
  * System fields that are present in every object.
  */
-const systemFields = Object.freeze([
+export const systemFields = Object.freeze([
   { name: 'ownedBy', label: 'Owned by', kind: 'User' },
   { name: 'createdBy', label: 'Created by', kind: 'User' },
   { name: 'createdAt', label: 'Created at', kind: 'DateTime' },
@@ -52,7 +52,7 @@ interface RawModule {
   canGrant?: boolean;
 }
 
-class Module {
+export class Module {
   public moduleID = NoID;
   public namespaceID = NoID;
   public name = '';
@@ -152,10 +152,4 @@ class Module {
   import (): Module {
     return this
   }
-}
-
-export default Module
-export {
-  systemFields,
-  Module,
 }

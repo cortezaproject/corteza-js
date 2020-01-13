@@ -1,7 +1,8 @@
-import { Apply, CortezaID, NoID } from '../../cast'
 import { IsOf } from '../../guards'
+import { Apply, CortezaID, NoID } from '../../cast'
+import { IsEmpty, ValidatorError, ValidatorResult } from '../../validator/validator'
 
-const FieldNameValidator = /^\w{1,}$/
+export const FieldNameValidator = /^\w{1,}$/
 
 interface RawModuleField {
   fieldID?: string;
@@ -20,7 +21,7 @@ interface RawModuleField {
   options?: object;
 }
 
-class ModuleField {
+export class ModuleField {
   public fieldID = NoID
   public name = ''
   public kind = ''

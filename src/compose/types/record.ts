@@ -1,7 +1,6 @@
-import { Module } from './module'
 import { AreObjectsOf, IsOf } from '../../guards'
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
-import { StandardModuleFieldValidator, Validated, Validator } from '../record-validation'
+import { Module } from './module'
 
 const fieldIndex = Symbol('fieldIndex')
 const propModule = Symbol('module')
