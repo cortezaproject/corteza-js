@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import { AreObjectsOf, IsOf } from '../../guards'
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
 import { Module } from './module'
 
 const fieldIndex = Symbol('fieldIndex')
 const propModule = Symbol('module')
+const cleanValues = Symbol('cleanValues')
 
 const reservedFieldNames = [
   'toJSON',
@@ -57,7 +59,6 @@ export class Record {
   public namespaceID = NoID;
 
   public values: Values = {}
-  public cleanValues: Values = {}
 
   public createdAt?: Date = undefined;
   public updatedAt?: Date = undefined;
@@ -70,6 +71,7 @@ export class Record {
 
   private [fieldIndex]: Map<string, FieldIndex>
   private [propModule]?: Module
+  private [cleanValues]: Values = {}
 
   constructor (recModVal1: RecordCtorCombo, recModVal2?: RecordCtorCombo) {
     if (isModule(recModVal1)) {
@@ -116,10 +118,17 @@ export class Record {
 
     if (r.values) {
       this.prepareValues(r.values, this.values)
-
-      // Make copy of values so that we know if it changed
-      this.cleanValues = Object.freeze({ ...this.values })
     }
+
+    if (!this[cleanValues]) {
+      // When there are no clean values,
+      // make copy of values so that we know if it changed
+      this[cleanValues] = Object.freeze({ ...this.values })
+    }
+  }
+
+  public get cleanValues (): Values {
+    return this[cleanValues]
   }
 
   public get module (): Module {
