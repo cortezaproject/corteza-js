@@ -102,3 +102,26 @@ describe('value setting', () => {
     expect(r.values.multi).to.deep.eq(['bar'])
   })
 })
+
+describe('JSON serialization', () => {
+  let r: Record
+  beforeEach(() => {
+    r = new Record(m)
+  })
+
+  it('should properly serialize whole record', () => {
+    r.setValues([{ simple: 'foo', multi: ['bar', 'baz'] }])
+    expect(JSON.stringify(r)).to.equal(
+      '{"recordID":"0","moduleID":"0","namespaceID":"0",' +
+      '"values":[{"name":"simple","value":"foo"},{"name":"multi","value":"bar"},{"name":"multi","value":"baz"}],' +
+      '"ownedBy":"0","createdBy":"0","updatedBy":"0","deletedBy":"0"}')
+  })
+
+  it('serialization magic should sustain object manipulation', () => {
+    r.setValues([{ simple: 'foo', multi: ['bar', 'baz'] }])
+    const { values } = r
+
+    expect(JSON.stringify(values)).to.equal(
+      '[{"name":"simple","value":"foo"},{"name":"multi","value":"bar"},{"name":"multi","value":"baz"}]')
+  })
+})

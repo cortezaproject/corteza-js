@@ -254,5 +254,10 @@ export class Record {
         dst[name] = src[name]
       }
     }
+
+    // TypeScript complains about incompatibility between
+    // indexed object and toJSON function
+    // @ts-ignore
+    dst.toJSON = (): RawValue[] => this.serializeValues(dst)
   }
 }
