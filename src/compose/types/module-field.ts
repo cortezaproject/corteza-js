@@ -79,9 +79,18 @@ export class ModuleField {
   public isValid (): boolean {
     return this.hasValidName()
   }
-}
 
-export {
-  FieldNameValidator,
-  ModuleField,
+  /**
+   * Creates standard field validator
+   *
+   * It tests value if field is marked as required
+   */
+  public validateValue (newValue: string|string[]): ValidatorResult {
+    if (this.isRequired) {
+      if (IsEmpty(newValue)) {
+        // @todo return something typified...
+        return new ValidatorError('missing required value')
+      }
+    }
+  }
 }

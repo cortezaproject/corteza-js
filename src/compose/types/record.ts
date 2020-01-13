@@ -201,7 +201,6 @@ export class Record {
    * Updates record's values object with provided input
    */
   private prepareValues (src: Values|Values[]|RawValue[], dst = this.values): void {
-
     if (AreObjectsOf<RawValue>(src, 'name')) {
       // Assign values from RawValues to Values like struct
       src = src.reduce((vv, { name, value }) => {
@@ -246,25 +245,5 @@ export class Record {
         dst[name] = src[name]
       }
     }
-  }
-
-  /**
-   * Validates record values
-   */
-  public validate (additional?: Validator): Validated {
-    const validator = new Validator()
-
-    // Make sure all fields are validated
-    validator.addField(StandardModuleFieldValidator, ...this.module.fields)
-
-    if (additional) {
-      validator.merge(additional)
-    }
-
-    return validator.run(this)
-  }
-
-  public isValid (additional?: Validator): boolean {
-    return this.validate(additional).size === 0
   }
 }
