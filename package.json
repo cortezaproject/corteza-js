@@ -21,8 +21,9 @@
     "test:unit": "mocha",
     "test:unit:cc": "nyc mocha"
   },
-  "dependencies": {
-    "axios": "0.19.1"
+  "peerDependencies": {
+    "axios": "0.19.1",
+    "pino": "^5.16.0"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "1.0.1",
@@ -30,6 +31,7 @@
     "@types/chai-as-promised": "^7.1.2",
     "@types/lodash": "^4.14.149",
     "@types/mocha": "^5.2.7",
+    "@types/pino": "^5.15.1",
     "@typescript-eslint/eslint-plugin": "^2.11.0",
     "@typescript-eslint/parser": "^2.11.0",
     "chai": "^4.2.0",
