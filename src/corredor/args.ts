@@ -1,4 +1,5 @@
 import { User } from '../system/types/user'
+import { CortezaTypes } from './args-corteza'
 
 export interface BaseArgs {
   $invoker: User;
@@ -52,7 +53,7 @@ export function GenericCasterFreezer<T, K extends T> (C: GenericCtor<T>): Generi
  * All these variables are casted (if passed as an argument) to proper types ($record => Record, $module => Module, ...)
  */
 export class Args {
-  constructor (args: {[_: string]: unknown}, caster?: Caster) {
+  constructor (args: {[_: string]: unknown}, caster: Caster = CortezaTypes) {
     for (const arg in args) {
       if (caster && caster.has(arg)) {
         const cast = caster.get(arg)

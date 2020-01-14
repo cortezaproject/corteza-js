@@ -3,7 +3,7 @@
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 import { Args } from './args'
-import { cortezaTypes } from './args-corteza'
+import { CortezaTypes } from './args-corteza'
 import { Module } from '../compose/types/module'
 
 describe('arguments constructor', () => {
@@ -20,7 +20,7 @@ describe('arguments constructor', () => {
 
   it('should use caster', () => {
     const module = { moduleID: '42' }
-    const args = new Args({ module }, cortezaTypes)
+    const args = new Args({ module }, CortezaTypes)
     expect(args).to.haveOwnProperty('$module')
     expect(args).to.haveOwnProperty('rawModule')
     expect(args).property('$module').instanceOf(Module)

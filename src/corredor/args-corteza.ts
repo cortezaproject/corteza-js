@@ -29,31 +29,31 @@ function recordCasterFreezer (this: RecordCasterCaller, val: unknown): Readonly<
 }
 
 /**
- * cortezaTypes map helps ExecArgs class with translation of (special) arguments
+ * CortezaTypes map helps ExecArgs class with translation of (special) arguments
  * to their respected types
  *
  * There's noe need to set/define casters for old* arguments,
  * It's auto-magically done by Args class
  */
-export const cortezaTypes: Caster = new Map()
+export const CortezaTypes: Caster = new Map()
 
-cortezaTypes.set('authUser', GenericCasterFreezer(User))
-cortezaTypes.set('invoker', GenericCasterFreezer(User))
-cortezaTypes.set('module', GenericCaster(Module))
-cortezaTypes.set('oldModule', GenericCasterFreezer(Module))
-cortezaTypes.set('page', GenericCaster(Page))
-cortezaTypes.set('oldPage', GenericCasterFreezer(Page))
-cortezaTypes.set('namespace', GenericCaster(Namespace))
-cortezaTypes.set('oldNamespace', GenericCasterFreezer(Namespace))
-cortezaTypes.set('application', GenericCaster(Application))
-cortezaTypes.set('oldApplication', GenericCasterFreezer(Application))
-cortezaTypes.set('user', GenericCaster(User))
-cortezaTypes.set('oldUser', GenericCasterFreezer(User))
-cortezaTypes.set('role', GenericCaster(Role))
-cortezaTypes.set('oldRole', GenericCasterFreezer(Role))
-cortezaTypes.set('channel', GenericCaster(Channel))
-cortezaTypes.set('oldChannel', GenericCasterFreezer(Channel))
-cortezaTypes.set('message', GenericCaster(Message))
-cortezaTypes.set('oldMessage', GenericCasterFreezer(Message))
-cortezaTypes.set('record', recordCaster)
-cortezaTypes.set('oldRecord', recordCasterFreezer)
+CortezaTypes.set('authUser', GenericCasterFreezer(User))
+CortezaTypes.set('invoker', GenericCasterFreezer(User))
+CortezaTypes.set('module', GenericCaster(Module))
+CortezaTypes.set('oldModule', GenericCasterFreezer(Module))
+CortezaTypes.set('page', GenericCaster(Page))
+CortezaTypes.set('oldPage', GenericCasterFreezer(Page))
+CortezaTypes.set('namespace', GenericCaster(Namespace))
+CortezaTypes.set('oldNamespace', GenericCasterFreezer(Namespace))
+CortezaTypes.set('application', GenericCaster(Application))
+CortezaTypes.set('oldApplication', GenericCasterFreezer(Application))
+CortezaTypes.set('user', GenericCaster(User))
+CortezaTypes.set('oldUser', GenericCasterFreezer(User))
+CortezaTypes.set('role', GenericCaster(Role))
+CortezaTypes.set('oldRole', GenericCasterFreezer(Role))
+CortezaTypes.set('channel', GenericCaster(Channel))
+CortezaTypes.set('oldChannel', GenericCasterFreezer(Channel))
+CortezaTypes.set('message', GenericCaster(Message))
+CortezaTypes.set('oldMessage', GenericCasterFreezer(Message))
+CortezaTypes.set('record', recordCaster)
+CortezaTypes.set('oldRecord', recordCasterFreezer)
