@@ -93,4 +93,19 @@ export class ModuleField {
       }
     }
   }
+
+  /**
+   * Returns resource ID
+   */
+  get resourceID (): string {
+    return `${this.resourceType}:${this.fieldID}`
+  }
+
+  /**
+   * Resource type
+   */
+  get resourceType (): string {
+    return 'compose:module-field'
+  }
+
 }

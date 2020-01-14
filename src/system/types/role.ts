@@ -40,4 +40,18 @@ export class Role {
 
     Apply(this, c, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt', 'archivedAt')
   }
+
+  /**
+   * Returns resource ID
+   */
+  get resourceID (): string {
+    return `${this.resourceType}:${this.roleID}`
+  }
+
+  /**
+   * Resource type
+   */
+  get resourceType (): string {
+    return 'system:role'
+  }
 }

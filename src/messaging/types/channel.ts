@@ -105,6 +105,20 @@ export class Channel {
     )
   }
 
+  /**
+   * Returns resource ID
+   */
+  get resourceID (): string {
+    return `${this.resourceType}:${this.channelID}`
+  }
+
+  /**
+   * Resource type
+   */
+  get resourceType (): string {
+    return 'messaging:channel'
+  }
+
   get fts (): string {
     return [
       this.name,

@@ -82,4 +82,18 @@ export class Namespace {
       'canGrant',
     )
   }
+
+  /**
+   * Returns resource ID
+   */
+  get resourceID (): string {
+    return `${this.resourceType}:${this.namespaceID}`
+  }
+
+  /**
+   * Resource type
+   */
+  get resourceType (): string {
+    return 'compose:namespace'
+  }
 }

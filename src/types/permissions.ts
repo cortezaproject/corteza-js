@@ -1,5 +1,7 @@
-const WildcardChar = '*'
-const ResourceDelimiterChar = ':'
+const ServiceResourceTest = /^[a-z]+$/
+const ResourceTypeTest = /^[a-z]+(:[a-z]+)+$/
+const AnyResourceTest = /^[a-z]+(:[a-z]+)*(:\*)$/
+const SpecResourceTest = /^[a-z]+(:[a-z]+)*(:[0-9]+)$/
 
 export enum Access {
   INHERIT = 'inherit',
@@ -12,7 +14,7 @@ interface Role {
 }
 
 interface Resource {
-  resourceID(): string;
+  resourceID: string;
 }
 
 interface RawRule {
@@ -37,7 +39,7 @@ export class PermissionRule {
     this.resource =
       typeof resource === 'string'
         ? resource
-        : resource.resourceID()
+        : resource.resourceID
 
     this.operation = operation
     this.access = access || Access.INHERIT
@@ -62,17 +64,23 @@ export class DenyAccess extends PermissionRule {
  * foo:42 => foo:*
  * foo    => foo
  */
-export function AnyOf (specific: Resource): Resource {
-  const resourceID = specific.resourceID()
-  const pos = resourceID.lastIndexOf(ResourceDelimiterChar)
+export function AnyOf (spc: string|Resource): Resource {
+  const resourceID =
+      typeof spc === 'string'
+        ? spc
+        : spc.resourceID
 
-  if (pos > 0) {
-    return {
-      resourceID (): string {
-        return resourceID.substring(0, pos) + ResourceDelimiterChar + WildcardChar
-      },
-    }
-  } else {
-    return specific
+  switch (true) {
+    case ServiceResourceTest.test(resourceID):
+    case AnyResourceTest.test(resourceID):
+      // Do not convert service & wildcard resources
+      return { resourceID }
+
+    case ResourceTypeTest.test(resourceID):
+      return { resourceID: `${resourceID}:*` }
+
+    case SpecResourceTest.test(resourceID):
+    default:
+      return { resourceID: `${resourceID.substring(0, resourceID.lastIndexOf(':'))}:*` }
   }
 }

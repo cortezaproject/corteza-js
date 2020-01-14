@@ -33,6 +33,20 @@ export class User {
     Apply(this, c, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt', 'suspendedAt')
   }
 
+  /**
+   * Returns resource ID
+   */
+  get resourceID (): string {
+    return `${this.resourceType}:${this.userID}`
+  }
+
+  /**
+   * Resource type
+   */
+  get resourceType (): string {
+    return 'system:user'
+  }
+
   get fts (): string {
     return [
       this.name,

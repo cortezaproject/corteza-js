@@ -1,12 +1,12 @@
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
-import { AllowAccess, AnyOf, DenyAccess, PermissionRule } from './permissions'
+import { AllowAccess, DenyAccess, AnyOf } from './permissions'
 
 const aRole =
   Object.freeze({ roleID: '1234' })
 
 const aResource =
-  Object.freeze({ resourceID (): string { return 'thing:42' } })
+  Object.freeze({ resourceID: 'thing:42' })
 
 const anyResource =
   Object.freeze(AnyOf(aResource))
@@ -53,6 +53,21 @@ describe(__filename, () => {
         operation: 'read',
         role: '1234',
       })
+    })
+  })
+
+  describe('AnyOf() specific resource to wildcard converter', () => {
+    it('should convert standard resource id format', () => {
+      expect(AnyOf({ resourceID: 'foo:42' })).to.have.property('resourceID').equal('foo:*')
+    })
+    it('should not covert service resource ID', () => {
+      expect(AnyOf({ resourceID: 'foo' })).to.have.property('resourceID').equal('foo')
+    })
+    it('should keep wildcard if already there', () => {
+      expect(AnyOf({ resourceID: 'foo:*' })).to.have.property('resourceID').equal('foo:*')
+    })
+    it('should silently handle resources ending with :', () => {
+      expect(AnyOf({ resourceID: 'foo:' })).to.have.property('resourceID').equal('foo:*')
     })
   })
 })

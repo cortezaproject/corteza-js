@@ -103,6 +103,20 @@ export class Module {
   }
 
   /**
+   * Returns resource ID
+   */
+  get resourceID (): string {
+    return `${this.resourceType}:${this.moduleID}`
+  }
+
+  /**
+   * Resource type
+   */
+  get resourceType (): string {
+    return 'compose:module'
+  }
+
+  /**
    * Returns fields from module, filtered and order as requested
    */
   filterFields (requested?: string[] | ModuleField[]): ModuleField[] {
