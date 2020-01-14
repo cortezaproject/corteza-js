@@ -23,7 +23,7 @@ describe('context sanity check', () => {
     )
 
     expect(ctx.console).to.not.be.undefined
-    // expect(ctx.$authUser).to.not.be.undefined
+    expect(ctx.$authUser).to.not.be.undefined
     expect(ctx.SystemAPI).to.not.be.undefined
     expect(ctx.ComposeAPI).to.not.be.undefined
     expect(ctx.MessagingAPI).to.not.be.undefined

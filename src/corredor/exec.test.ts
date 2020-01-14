@@ -1,13 +1,13 @@
 /* eslint-disable no-unused-expressions,@typescript-eslint/no-empty-function,@typescript-eslint/ban-ts-ignore */
-
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
-import { ArgsRaw, Exec, ScriptExecFn } from './exec'
-import { LogToArray } from '../log-to-array'
+import { Exec, ScriptExecFn } from './exec'
 
 // @ts-ignore
 import pino from 'pino'
-import { BaseArgs } from './args'
+import { Args, BaseArgs } from './args'
+import { Config } from './ctx'
+import { User } from '../system/types/user'
 
 interface CheckerFnArgs {
     result?: {[_: string]: unknown}|unknown;
@@ -22,22 +22,26 @@ interface CheckerFn {
 class Dummy {}
 
 describe('execution', () => {
-  const execIt = (name: string, check: CheckerFn, exec: ScriptExecFn, args?: BaseArgs): void => {
+  const execIt = (name: string, check: CheckerFn, exec: ScriptExecFn): void => {
     it(name, async () => {
-      const logBuffer = new LogToArray()
-      const scriptLogger = pino({}, logBuffer)
+      const scriptLogger = pino()
+      const config: Config = { cServers: { compose: {}, messaging: {}, system: {} } }
+      const args: BaseArgs = {
+        authToken: '',
+        $authUser: new User(),
+        $invoker: new User(),
+      }
 
-      Exec(exec, args, scriptLogger)
-        .then(result => check({ result }))
-        .catch((error: Error|undefined) => check({ error })
-        )
+      Exec(exec, args, scriptLogger, config)
+        .then((result: object) => check({ result }))
+        .catch((error: Error|undefined) => check({ error }))
     })
   }
 
   execIt(
     'empty',
     () => {},
-    () => {}
+    () => {},
   )
 
   execIt(
@@ -47,7 +51,7 @@ describe('execution', () => {
       expect(result).to.deep.eq({ result: true })
     },
 
-    () => true
+    () => true,
   )
 
   execIt(
@@ -56,7 +60,7 @@ describe('execution', () => {
       expect(result).to.be.undefined
       expect(error).to.be.instanceOf(Error)
     },
-    () => false
+    () => false,
   )
 
   execIt(
@@ -65,7 +69,7 @@ describe('execution', () => {
       expect(error).to.be.undefined
       expect(result).to.deep.eq({ result: '' })
     },
-    () => ''
+    () => '',
   )
 
   execIt(
@@ -75,7 +79,7 @@ describe('execution', () => {
       expect(error).to.be.undefined
       expect(result).to.deep.eq({ result: 'rval-string' })
     },
-    () => 'rval-string'
+    () => 'rval-string',
   )
 
   execIt(
@@ -85,7 +89,7 @@ describe('execution', () => {
       expect(error).to.be.undefined
       expect(result).to.deep.eq({ result: [] })
     },
-    () => ([])
+    () => ([]),
   )
 
   execIt(
@@ -95,7 +99,7 @@ describe('execution', () => {
       expect(error).to.be.undefined
       expect(result).to.deep.eq({ result: ['rval-string'] })
     },
-    () => (['rval-string'])
+    () => (['rval-string']),
   )
 
   execIt(
@@ -105,7 +109,7 @@ describe('execution', () => {
       expect(error).to.be.undefined
       expect(result).to.deep.eq({})
     },
-    () => ({})
+    () => ({}),
   )
 
   execIt(
@@ -115,7 +119,7 @@ describe('execution', () => {
       expect(error).to.be.undefined
       expect(result).to.deep.eq({ an: 'object' })
     },
-    () => ({ an: 'object' })
+    () => ({ an: 'object' }),
   )
 
   execIt(
@@ -125,7 +129,7 @@ describe('execution', () => {
       expect(error).to.be.undefined
       expect(result).to.deep.eq({ result: new Dummy() })
     },
-    () => new Dummy()
+    () => new Dummy(),
   )
 
   execIt(
@@ -137,7 +141,7 @@ describe('execution', () => {
         expect(error.message).to.be.eq('err')
       }
     },
-    () => { throw new Error('err') }
+    () => { throw new Error('err') },
   )
 
   execIt(
@@ -147,7 +151,7 @@ describe('execution', () => {
       expect(error).to.be.eq('err')
     },
     // eslint-disable-next-line prefer-promise-reject-errors
-    async () => { return Promise.reject('err') }
+    async () => { return Promise.reject('err') },
   )
 
   execIt(
@@ -157,6 +161,6 @@ describe('execution', () => {
       expect(result.result).to.be.eq('ok')
       expect(error).to.be.undefined
     },
-    async () => { return Promise.resolve('ok') }
+    async () => { return Promise.resolve('ok') },
   )
 })

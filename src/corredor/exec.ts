@@ -2,13 +2,12 @@ import { BaseLogger } from 'pino'
 import { BaseArgs } from './args'
 import { Config, Ctx } from './ctx'
 
-export interface ArgsRaw {
-    jwt?: string;
-    [_: string]: unknown;
-}
-
 export interface ScriptExecFn {
     (args: BaseArgs, ctx?: Ctx): unknown;
+}
+
+interface Results {
+  result?: unknown;
 }
 
 /**
@@ -19,7 +18,7 @@ export interface ScriptExecFn {
  * @param config Configuration for context that we feed to the script
  * @returns Promise<object>
  */
-export async function Exec (exec: ScriptExecFn, args: BaseArgs, log: BaseLogger, config: Config): Promise<object> {
+export async function Exec (exec: ScriptExecFn, args: BaseArgs, log: BaseLogger, config: Config): Promise<Results> {
   // Context for exec function (script)
   const execCtx = new Ctx(config, log, args)
 
