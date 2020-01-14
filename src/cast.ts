@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
 const iso8601check = /^([\\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24:?00)([.,]\d+(?!:))?)?(\17[0-5]\d([.,]\d+)?)?([zZ]|([\\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/
 
 const uint64zeropad = '00000000000000000000'
@@ -54,17 +53,36 @@ export function PropCast<T> (type: Caster<T>, o: {[_: string]: unknown}|undefine
 }
 
 /**
+ * Tests if a given value looks like corteza ID
+ * @param ID
+ * @constructor
+ */
+export function IsCortezaID (ID: unknown): boolean {
+  if (typeof ID !== 'string') {
+    return false
+  }
+
+  if (!/^\d+$/.test(ID)) {
+    return false
+  }
+
+  return true
+}
+
+/**
  * @return {string}
  */
 export function CortezaID (value: unknown): string {
-  if (typeof value === 'string' && /^\d*$/) {
-    return value || NoID
-  } else if (typeof value === 'number') {
+  if (!value) {
+    return NoID
+  }
+
+  if (IsCortezaID(value)) {
+    return value as string
+  }
+
+  if (typeof value === 'number') {
     return String(value)
-  } else if (typeof value === 'object' && Object.prototype.hasOwnProperty.call(value, 'toString')) {
-    if (value) {
-      return value.toString()
-    }
   }
 
   throw new Error('Invalid CortezaID value')
@@ -90,6 +108,10 @@ export function Apply<DST, SRC, T extends keyof DST> (dst: DST, src: SRC, cast: 
     // and use String as a caster, effectively forcing
     // cast-to-string on all applied values to
     cast = String
+  }
+
+  if (typeof src !== 'object') {
+    return
   }
 
   props.forEach(prop => {
