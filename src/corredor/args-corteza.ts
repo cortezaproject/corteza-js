@@ -1,15 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
-import { Caster, GenericCaster, GenericCasterFreezer } from './args'
-import { User } from '../system/types/user'
-import { Module } from '../compose/types/module'
-import { Page } from '../compose/types/page'
-import { Namespace } from '../compose/types/namespace'
-import { Application } from '../system/types/application'
-import { Role } from '../system/types/role'
-import { Channel } from '../messaging/types/channel'
-import { Message } from '../messaging/types/message'
-import { Record } from '../compose/types/record'
+import { User, Role, Application } from '../system'
+import { Module, Page, Namespace, Record } from '../compose'
+import { Channel, Message } from '../messaging'
+import { Caster, GenericCaster, GenericCasterFreezer } from './shared'
 
 interface RecordCasterCaller {
   $module: Module;

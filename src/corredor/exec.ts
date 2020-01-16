@@ -1,5 +1,5 @@
 import { BaseLogger } from 'pino'
-import { BaseArgs } from './args'
+import { BaseArgs } from './shared'
 import { Config, Ctx } from './ctx'
 
 export interface ScriptExecFn {

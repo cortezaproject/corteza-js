@@ -6,7 +6,7 @@ import * as apiClients from '../../src/api-clients'
 import * as helpers from './helpers'
 
 import { BaseLogger } from 'pino'
-import { BaseArgs } from './args'
+import { BaseArgs } from './shared'
 import { User } from '../system'
 
 export interface ConfigCServers {
