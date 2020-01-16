@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
 // @ts-ignore
-import * as apiClients from '../../src/api-clients/export'
+import * as apiClients from '../../src/api-clients'
 // @ts-ignore
-import * as helpers from './helpers/export'
+import * as helpers from './helpers'
 
 import { BaseLogger } from 'pino'
 import { BaseArgs } from './args'
-import { User } from '../system/types/user'
+import { User } from '../system'
 
 export interface ConfigCServers {
   system: ConfigServer;

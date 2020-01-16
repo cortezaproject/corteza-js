@@ -1,13 +1,14 @@
 /**
  * Exporting compose-related symbols, events...
  */
-import { EventBus } from './eventbus/eventbus'
-import * as corredor from './corredor/export'
+import { EventBus } from './eventbus'
+import * as corredor from './corredor'
 import * as validator from './validator/validator'
-import * as compose from './compose/export'
-import * as messaging from './messaging/export'
-import * as system from './system/export'
-import * as apiClients from './api-clients/export'
+import * as compose from './compose'
+import * as messaging from './messaging'
+import * as system from './system'
+import * as shared from './shared'
+import * as apiClients from './api-clients'
 
 export {
   EventBus,
@@ -16,5 +17,6 @@ export {
   compose,
   messaging,
   system,
+  shared,
   apiClients,
 }
