@@ -17,7 +17,8 @@
     "build": "rollup -c",
     "lint": "eslint src/** --ext .js,.ts",
     "test:unit": "mocha",
-    "test:unit:cc": "nyc mocha"
+    "test:unit:cc": "nyc mocha",
+    "codegen:corteza-api-client": "node -r esm tools/codegen/corteza-api-client.js"
   },
   "peerDependencies": {
     "axios": "0.19.1",
@@ -34,6 +35,8 @@
     "@typescript-eslint/parser": "2.16.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "esformatter": "^0.11.2",
+    "esformatter-add-trailing-commas": "^1.1.0",
     "eslint": "^6.7.2",
     "eslint-config-standard": "^14.1.0",
     "eslint-import-resolver-typescript": "^2.0.0",
@@ -43,6 +46,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "esm": "^3.2.25",
+    "handlebars": "^4.7.2",
     "mocha": "7.0.0",
     "node-watch": "^0.6.3",
     "nodemon": "2.0.2",
@@ -50,6 +54,8 @@
     "rollup": "^1.29.0",
     "rollup-plugin-typescript2": "^0.25.3",
     "sinon": "8.1.0",
+    "source-map-support": "^0.5.16",
+    "ts-node": "^8.6.2",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.7.2"
   },

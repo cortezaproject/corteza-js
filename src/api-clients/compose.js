@@ -5,7 +5,7 @@ import axios from 'axios'
 // This is a generated file.
 // See README.md file for update instructions
 
-export class Compose {
+export default class Compose {
   constructor ({baseURL, headers, jwt} = {}) {
     this.jwt = null
     this.baseURL = baseURL

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 // @ts-ignore
-export { System } from './system'
+export { default as System } from './system'
 // @ts-ignore
-export { Compose } from './compose'
+export { default as Compose } from './compose'
 // @ts-ignore
-export { Messaging } from './messaging'
+export { default as Messaging } from './messaging'
