@@ -1,7 +1,7 @@
 {
   "name": "@cortezaproject/corteza-js",
   "description": "Corteza JavaScript/TypeScript libs",
-  "version": "2020.3.0-alpha.4",
+  "version": "2020.3.0-alpha.5",
   "license": "Apache-2.0",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
