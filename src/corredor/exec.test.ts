@@ -5,9 +5,10 @@ import { Exec, ScriptExecFn } from './exec'
 
 // @ts-ignore
 import pino from 'pino'
-import { Args, BaseArgs } from './args'
+import { Args } from './args'
 import { Config } from './ctx'
 import { User } from '../system/types/user'
+import { BaseArgs } from './shared'
 
 interface CheckerFnArgs {
     result?: {[_: string]: unknown}|unknown;
@@ -28,7 +29,6 @@ describe('execution', () => {
       const config: Config = { cServers: { compose: {}, messaging: {}, system: {} } }
       const args: BaseArgs = {
         authToken: '',
-        $authUser: new User(),
         $invoker: new User(),
       }
 

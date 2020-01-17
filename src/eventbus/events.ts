@@ -5,3 +5,7 @@ export interface Event {
   EventType(): string;
   Match(c: ConstraintMatcher): boolean;
 }
+
+export interface ManualEvent extends Event{
+  ScriptName(): string;
+}

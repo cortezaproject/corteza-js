@@ -1,25 +1,8 @@
 import { ConstraintMatcher } from './constraints'
-import { Event } from './events'
+import { Event, ManualEvent } from './events'
+import { HandlerFn, onManual, Trigger } from './shared'
+import { IsOf } from '../guards'
 
-interface Constraint {
-  name?:
-      string;
-  op?:
-      string;
-  value:
-      string[];
-}
-
-export interface HandlerFn {
-  (ev: Event): Promise<unknown>;
-}
-
-export interface Trigger {
-  eventTypes: string[];
-  resourceTypes: string[];
-  weight?: number;
-  constraints?: Constraint[];
-}
 
 // Dummy handler, can be used for tests
 export async function DummyHandler (): Promise<undefined> { return undefined }
@@ -31,28 +14,48 @@ export class Handler {
   readonly weight: number;
   readonly handle: HandlerFn;
 
+  /**
+   * Script
+   */
+  readonly scriptName?: string
+
   constructor (h: HandlerFn, t: Trigger) {
+    if (t.scriptName && !t.eventTypes.includes(onManual)) {
+      throw new Error('cannot make handler from trigger with script name without onManual eventType')
+    }
+
+    if (!t.scriptName && t.eventTypes.includes(onManual)) {
+      throw new Error('cannot make handler from trigger with onManual eventType without script name')
+    }
+
     this.handle = h
     this.eventTypes = t.eventTypes
     this.resourceTypes = t.resourceTypes
     this.weight = t.weight || 0
-    // @todo parse constraints to constaints matchers
+    // @todo parse constraints to constraint matchers
     this.constraints = []
+    this.scriptName = t.scriptName
   }
 
   /**
-   * Match event and trigger - type, resource, constraints
+   * Match this handler with a given event - type, resource, constraints + scriptName when ManualEvent
    *
    * @param {Event} ev
    * @return bool
    */
-  Match (ev: Event): boolean {
+  Match (ev: Event|ManualEvent): boolean {
     if (!this.eventTypes.includes(ev.EventType())) {
       return false
     }
 
     if (!this.resourceTypes.includes(ev.ResourceType())) {
       return false
+    }
+
+    if (IsOf<ManualEvent>(ev, 'ScriptName')) {
+      if (this.scriptName !== ev.ScriptName()) {
+        return false
+      }
     }
 
     // Event should match all trigger's constraints

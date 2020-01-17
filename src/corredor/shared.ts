@@ -28,7 +28,6 @@ export function GenericCasterFreezer<T, K extends T> (C: GenericCtor<T>): Generi
 
 export interface BaseArgs {
   $invoker: User;
-  $authUser: User;
   authToken: string;
 }
 
