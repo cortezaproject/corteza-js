@@ -20,8 +20,8 @@
     "test:unit:cc": "nyc mocha",
     "codegen:corteza-api-client": "node -r esm tools/codegen/corteza-api-client.js"
   },
-  "peerDependencies": {
-    "axios": "0.19.1",
+  "dependencies": {
+    "axios": "^0.19.1",
     "pino": "^5.16.0"
   },
   "devDependencies": {
