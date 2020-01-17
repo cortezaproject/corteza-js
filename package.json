@@ -3,9 +3,6 @@
   "description": "Corteza JavaScript/TypeScript libs",
   "version": "2020.3.0-alpha.5",
   "license": "Apache-2.0",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "author": "Denis Arh <denis.arh@crust.tech>",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -22,6 +19,7 @@
   },
   "dependencies": {
     "axios": "^0.19.1",
+    "minimatch": "^3.0.4",
     "pino": "^5.16.0"
   },
   "devDependencies": {
@@ -29,6 +27,7 @@
     "@types/chai": "^4.2.6",
     "@types/chai-as-promised": "^7.1.2",
     "@types/lodash": "^4.14.149",
+    "@types/minimatch": "^3.0.3",
     "@types/mocha": "^5.2.7",
     "@types/pino": "5.15.3",
     "@typescript-eslint/eslint-plugin": "2.16.0",

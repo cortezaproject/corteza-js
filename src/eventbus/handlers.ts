@@ -1,4 +1,4 @@
-import { ConstraintMatcher } from './constraints'
+import { ConstraintMaker, ConstraintMatcher } from './constraints'
 import { Event, ManualEvent } from './events'
 import { HandlerFn, onManual, Trigger } from './shared'
 import { IsOf } from '../guards'
@@ -33,7 +33,7 @@ export class Handler {
     this.resourceTypes = t.resourceTypes
     this.weight = t.weight || 0
     // @todo parse constraints to constraint matchers
-    this.constraints = []
+    this.constraints = t.constraints ? t.constraints.map(ConstraintMaker) : []
     this.scriptName = t.scriptName
   }
 
