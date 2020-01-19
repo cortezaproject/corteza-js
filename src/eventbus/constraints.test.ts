@@ -1,10 +1,7 @@
-import { EventBus } from './eventbus'
 import { expect } from 'chai'
-import { Dummy, ManualDummy } from '../events/dummy'
-import { onManual } from './shared'
 import { ConstraintMaker } from './constraints'
 
-describe.only(__filename, () => {
+describe(__filename, () => {
   describe('maker', () => {
     it('should make simple equal matcher', () => {
       expect(ConstraintMaker({ value: ['foo'] }).Match('foo')).to.be.true

@@ -19,7 +19,7 @@
  *
  */
 
-import { Event, ManualEvent } from './events'
+import { Event } from './events'
 import { Handler } from './handlers'
 import { HandlerFn, onManual, scriptSorter, Trigger } from './shared'
 
@@ -33,9 +33,7 @@ export class EventBus {
   private handlers: Handler[] = []
 
   /**
-   * Dispatches event and waits for all handlers
-   *
-   * It refuses to dispatch explicit (onManual) events
+   * Dispatches event and waits for all handlers to complete
    *
    * Handling handler results works a bit different then on backend.
    * Scripts executed with handlers have DIRECT access to values passed (by reference)
@@ -43,12 +41,30 @@ export class EventBus {
    *
    * @param {Event} ev Event to dispatch
    */
-  async WaitFor (ev: Event): Promise<null> {
-    if (ev.EventType() === onManual) {
+  async WaitFor (ev: Event, script?: string): Promise<null> {
+    console.debug('eventbus: waiting for event', { ev, script })
+    if (script) {
+      if (ev.EventType() !== onManual) {
+        return null
+      }
+    } else {
+      if (ev.EventType() === onManual) {
+        return null
+      }
+    }
+
+    const matched = this.find(ev, script)
+
+    if (matched.length === 0) {
       return null
     }
 
-    const matched = this.find(ev)
+    if (script) {
+      // When executing a specific script,
+      // make sure we do not run it multiple times.
+      matched.splice(1)
+    }
+
     try {
       for (const t of matched) {
         const result = await t.Handle(ev)
@@ -64,39 +80,11 @@ export class EventBus {
   }
 
   /**
-   * Executes onManual event that references a specific script
-   *
-   * It expects a ManualEvent
-   *
-   * @param ev
-   * @constructor
-   */
-  async Exec (ev: ManualEvent): Promise<null> {
-    if (ev.EventType() !== onManual) {
-      return null
-    }
-
-    const matched = this.find(ev)
-
-    if (matched.length === 0) {
-      return null
-    }
-
-    const result = await matched.pop()!.Handle(ev)
-    if (result === false) {
-      return Promise.reject(new Error('aborted'))
-    }
-
-    return null
-  }
-
-  /**
    * Filters and sorts all handlers by event & constraints
-   * @param {Event} ev Event to use for filtering handlers
    */
-  private find (ev: Event): Handler[] {
+  private find (ev: Event, script?: string): Handler[] {
     return this.handlers
-      .filter(t => t.Match(ev))
+      .filter(t => t.Match(ev, script))
       .sort(scriptSorter)
   }
 

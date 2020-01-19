@@ -1,6 +1,6 @@
 import { EventBus } from './eventbus'
 import { expect } from 'chai'
-import { Dummy, ManualDummy } from '../events/dummy'
+import { Dummy } from '../events/dummy'
 import { onManual } from './shared'
 
 describe(__filename, () => {
@@ -39,7 +39,7 @@ describe(__filename, () => {
 
       expect(guineapig).to.equal(0)
       eb.Register(h, t)
-      await eb.Exec(new ManualDummy({ resource: 'r1', event: onManual, scriptName: 'sn1' }))
+      await eb.WaitFor(new Dummy({ resource: 'r1', event: onManual }), 'sn1')
       expect(guineapig).to.equal(42)
     })
 
@@ -53,7 +53,7 @@ describe(__filename, () => {
 
       expect(guineapig).to.equal(0)
       eb.Register(h, t)
-      await eb.Exec(new ManualDummy({ resource: 'r1', event: onManual, scriptName: 'sn1' }))
+      await eb.WaitFor(new Dummy({ resource: 'r1', event: onManual }), 'sn1')
       expect(guineapig).to.equal(0)
     })
   })

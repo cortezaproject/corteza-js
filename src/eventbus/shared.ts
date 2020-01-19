@@ -23,6 +23,10 @@ export interface Trigger {
   scriptName?: string;
 }
 
-export function scriptSorter (a: { weight: number }, b: { weight: number }): number {
+interface SortableScript {
+  weight: number;
+}
+
+export function scriptSorter (a: SortableScript, b: SortableScript): number {
   return a.weight - b.weight
 }
