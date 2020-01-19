@@ -31,8 +31,22 @@ export function scriptSorter (a: SortableScript, b: SortableScript): number {
   return a.weight - b.weight
 }
 
+interface EventMatcher {
+  (c: ConstraintMatcher): boolean;
+}
+
 export interface Event {
   resourceType: string;
   eventType: string;
-  match?: { (c: ConstraintMatcher): boolean };
+  match?: EventMatcher;
+}
+
+interface ResourceTypeGetter { resourceType: string }
+
+export function GenericEventMaker<T extends ResourceTypeGetter> (t: T, eventType: string, match?: EventMatcher): Event {
+  return {
+    resourceType: t.resourceType,
+    eventType,
+    match,
+  }
 }
