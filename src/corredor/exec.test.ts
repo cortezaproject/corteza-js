@@ -5,9 +5,8 @@ import { Exec, ScriptExecFn } from './exec'
 
 // @ts-ignore
 import pino from 'pino'
-import { Args } from './args'
 import { Config } from './ctx'
-import { User } from '../system/types/user'
+import { User } from '../system'
 import { BaseArgs } from './shared'
 
 interface CheckerFnArgs {

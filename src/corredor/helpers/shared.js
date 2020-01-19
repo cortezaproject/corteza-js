@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 /**
  * Extracts ID-like (numeric) value from string or object
  *

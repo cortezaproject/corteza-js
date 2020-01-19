@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { Channel } from '../../messaging/types/channel'
 import { User } from '../../system/types/user'
 import { extractID, genericPermissionUpdater, isFresh } from './shared'

@@ -1,13 +1,5 @@
 import { expect } from 'chai'
-import { Module } from '../compose/types/module'
 import { IsEmpty, NormalizeValidatorResults, Validated, ValidatorError } from './validator'
-
-const m = new Module({
-  fields: [
-    { name: 'simple' },
-    { name: 'required', isRequired: true },
-  ],
-})
 
 describe('ValidatorError class', () => {
   it('should properly construct from a simple string', () => {

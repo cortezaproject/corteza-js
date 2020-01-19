@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { extractID, genericPermissionUpdater, isFresh } from './shared'
 import { Namespace } from '../../compose/types/namespace'
 import { Record } from '../../compose/types/record'

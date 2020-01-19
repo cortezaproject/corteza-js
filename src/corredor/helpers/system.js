@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { extractID, genericPermissionUpdater, isFresh } from './shared'
 import { User } from '../../system/types/user'
 import { Role } from '../../system/types/role'

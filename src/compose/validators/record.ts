@@ -44,7 +44,7 @@ export class RecordValidator extends Validator<Record> {
    * @param name
    * @param vfn
    */
-  public push (...vfn: ValidatorFn<Record>[]) {
+  public push (...vfn: ValidatorFn<Record>[]): void {
     this.registered.push(...vfn)
   }
 
@@ -54,7 +54,7 @@ export class RecordValidator extends Validator<Record> {
    * @param name
    * @param vfn
    */
-  public pushToField (name: string, ...vfn: ValidatorFn<Record>[]) {
+  public pushToField (name: string, ...vfn: ValidatorFn<Record>[]): void {
     if (!this.rfv[name]) {
       throw new Error('can not push validators to unknown field')
     }

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore,no-unused-expressions */
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
@@ -6,8 +6,6 @@ import { Ctx } from './ctx'
 import { User } from '../system/types/user'
 // @ts-ignore
 import pino from 'pino'
-
-class Dummy {}
 
 describe(__filename, () => {
   describe('context sanity check', () => {

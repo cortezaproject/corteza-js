@@ -132,11 +132,11 @@ export class Validated {
     return this.length > 0
   }
 
-  public push (...r: ValidatorResult[]) {
+  public push (...r: ValidatorResult[]): void {
     this.set.push(...NormalizeValidatorResults(...r))
   }
 
-  public applyMeta (meta: Meta) {
+  public applyMeta (meta: Meta): void {
     this.set = this.set.map(r => {
       const appliedMeta = { ...r, meta: { ...r.meta, ...meta } }
 
@@ -162,7 +162,7 @@ export class Validated {
    */
   public filterByMeta (key: string, value?: unknown): Validated {
     return this.filter(
-      (err) => (value === undefined ? err.meta[key] !== undefined : err.meta[key] === value)
+      (err) => (value === undefined ? err.meta[key] !== undefined : err.meta[key] === value),
     )
   }
 }

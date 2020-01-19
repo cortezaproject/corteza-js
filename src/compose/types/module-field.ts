@@ -107,5 +107,4 @@ export class ModuleField {
   get resourceType (): string {
     return 'compose:module-field'
   }
-
 }
