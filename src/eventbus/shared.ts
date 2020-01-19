@@ -35,18 +35,22 @@ interface EventMatcher {
   (c: ConstraintMatcher): boolean;
 }
 
+interface EventArgs { [_: string]: unknown }
+
 export interface Event {
   resourceType: string;
   eventType: string;
   match?: EventMatcher;
+  args?: EventArgs;
 }
 
 interface ResourceTypeGetter { resourceType: string }
 
-export function GenericEventMaker<T extends ResourceTypeGetter> (t: T, eventType: string, match?: EventMatcher): Event {
+export function GenericEventMaker<T extends ResourceTypeGetter> (t: T, eventType: string, match: EventMatcher, args: EventArgs): Event {
   return {
     resourceType: t.resourceType,
     eventType,
     match,
+    args,
   }
 }
