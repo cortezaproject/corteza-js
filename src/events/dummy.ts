@@ -33,16 +33,3 @@ export class Dummy {
     return this.match ? this.match() : true
   }
 }
-
-export class ManualDummy extends Dummy{
-  private scriptName: string
-
-  constructor ({ scriptName = '', ...rest }) {
-    super(rest)
-    this.scriptName = scriptName
-  }
-
-  ScriptName (): string {
-    return this.scriptName
-  }
-}
