@@ -1,4 +1,4 @@
-import { Event } from './events'
+import { ConstraintMatcher } from './constraints'
 
 export interface Constraint {
   name?:
@@ -29,4 +29,10 @@ interface SortableScript {
 
 export function scriptSorter (a: SortableScript, b: SortableScript): number {
   return a.weight - b.weight
+}
+
+export interface Event {
+  resourceType: string;
+  eventType: string;
+  match?: { (c: ConstraintMatcher): boolean };
 }

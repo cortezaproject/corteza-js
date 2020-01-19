@@ -1,7 +1,5 @@
 import { ConstraintMaker, ConstraintMatcher } from './constraints'
-import { Event } from './events'
-import { HandlerFn, onManual, Trigger } from './shared'
-import { IsOf } from '../guards'
+import { Event, HandlerFn, onManual, Trigger } from './shared'
 
 // Dummy handler, can be used for tests
 export async function DummyHandler (): Promise<undefined> { return undefined }
@@ -39,11 +37,11 @@ export class Handler {
    * @return bool
    */
   Match (ev: Event, script?: string): boolean {
-    if (!this.eventTypes.includes(ev.EventType())) {
+    if (!this.eventTypes.includes(ev.eventType)) {
       return false
     }
 
-    if (!this.resourceTypes.includes(ev.ResourceType())) {
+    if (!this.resourceTypes.includes(ev.resourceType)) {
       return false
     }
 
@@ -51,10 +49,12 @@ export class Handler {
       return false
     }
 
-    // Event should match all trigger's constraints
-    for (const c of this.constraints) {
-      if (!ev.Match(c)) {
-        return false
+    if (ev.match) {
+      // Event should match all trigger's constraints
+      for (const c of this.constraints) {
+        if (!ev.match(c)) {
+          return false
+        }
       }
     }
 

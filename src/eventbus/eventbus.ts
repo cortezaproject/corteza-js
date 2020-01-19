@@ -19,9 +19,8 @@
  *
  */
 
-import { Event } from './events'
 import { Handler } from './handlers'
-import { HandlerFn, onManual, scriptSorter, Trigger } from './shared'
+import { Event, HandlerFn, onManual, scriptSorter, Trigger } from './shared'
 
 /**
  * EventBus for event dispatching and handling
@@ -42,13 +41,12 @@ export class EventBus {
    * @param {Event} ev Event to dispatch
    */
   async WaitFor (ev: Event, script?: string): Promise<null> {
-    console.debug('eventbus: waiting for event', { ev, script })
     if (script) {
-      if (ev.EventType() !== onManual) {
+      if (ev.eventType !== onManual) {
         return null
       }
     } else {
-      if (ev.EventType() === onManual) {
+      if (ev.eventType === onManual) {
         return null
       }
     }
