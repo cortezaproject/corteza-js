@@ -5,6 +5,7 @@ dist
 .env
 coverage
 .nyc_output
+package-lock.json
 
 # Editor directories and files
 .idea
