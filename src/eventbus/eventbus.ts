@@ -32,7 +32,7 @@ export class EventBus {
   private handlers: Handler[] = []
 
   /**
-   * Dispatches event and waits for all handlers to complete
+   * Dispatches event and sequentially calls all handlers.
    *
    * Handling handler results works a bit different then on backend.
    * Scripts executed with handlers have DIRECT access to values passed (by reference)
@@ -40,7 +40,7 @@ export class EventBus {
    *
    * @param {Event} ev Event to dispatch
    */
-  async WaitFor (ev: Event, script?: string): Promise<null> {
+  async Dispatch (ev: Event, script?: string): Promise<null> {
     if (script) {
       if (ev.eventType !== onManual) {
         return null

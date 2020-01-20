@@ -11,7 +11,7 @@ describe(__filename, () => {
     })
 
     it('should not raise any errors when dispatching w/o any registered handlers', () => {
-      eb.WaitFor({ resourceType: 'res1', eventType: 'ev1' })
+      eb.Dispatch({ resourceType: 'res1', eventType: 'ev1' })
     })
 
     it('should trigger registered handler', async () => {
@@ -24,7 +24,7 @@ describe(__filename, () => {
 
       expect(guineapig).to.equal(0)
       eb.Register(h, t)
-      await eb.WaitFor({ resourceType: 'r1', eventType: 'e1' })
+      await eb.Dispatch({ resourceType: 'r1', eventType: 'e1' })
       expect(guineapig).to.equal(42)
     })
 
@@ -38,7 +38,7 @@ describe(__filename, () => {
 
       expect(guineapig).to.equal(0)
       eb.Register(h, t)
-      await eb.WaitFor({ resourceType: 'r1', eventType: onManual }, 'sn1')
+      await eb.Dispatch({ resourceType: 'r1', eventType: onManual }, 'sn1')
       expect(guineapig).to.equal(42)
     })
 
@@ -52,7 +52,7 @@ describe(__filename, () => {
 
       expect(guineapig).to.equal(0)
       eb.Register(h, t)
-      await eb.WaitFor({ resourceType: 'r1', eventType: onManual }, 'sn1')
+      await eb.Dispatch({ resourceType: 'r1', eventType: onManual }, 'sn1')
       expect(guineapig).to.equal(0)
     })
   })
