@@ -1909,7 +1909,7 @@ export default class Compose {
 
   // List all available automation scripts for compose resources
   async automationList () {
-    const {resourceTypes, eventTypes, excludeClientScripts, excludeServerScripts, } = arguments[0] || {}
+    const {resourceTypePrefixes, resourceTypes, eventTypes, excludeInvalid, excludeClientScripts, excludeServerScripts, } = arguments[0] || {}
 
 
     let cfg = {
@@ -1917,8 +1917,10 @@ export default class Compose {
       url: this.automationListEndpoint({  }),
     }
     cfg.params = {
+      resourceTypePrefixes,
       resourceTypes,
       eventTypes,
+      excludeInvalid,
       excludeClientScripts,
       excludeServerScripts,
     }
@@ -1930,6 +1932,30 @@ export default class Compose {
 
   automationListEndpoint () {
     return `/automation/`
+  }
+
+  // Serves client scripts bundle
+  async automationBundle () {
+    const {bundle, type, ext, } = arguments[0] || {}
+
+
+    let cfg = {
+      method: 'get',
+      url: this.automationBundleEndpoint({
+        bundle,
+        type,
+        ext,
+      }),
+    }
+
+
+    return new Promise((resolve, reject) => {
+      this.api().request(cfg).then(this.stdResolve(resolve, reject), this.stdReject(reject))
+    })
+  }
+
+  automationBundleEndpoint ({bundle, type, ext, } = {}) {
+    return `/automation/${bundle}-${type}.${ext}`
   }
 
   // Triggers execution of a specific script on a system service level
