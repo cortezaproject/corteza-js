@@ -1,4 +1,118 @@
+import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
+import { AreObjectsOf, IsOf } from '../../guards'
+import { PageBlock, PageBlockMaker } from './page-block'
+
+interface RawPage {
+  pageID?: string;
+  selfID?: string;
+  moduleID?: string;
+  namespaceID?: string;
+
+  title?: string;
+  handle?: string;
+  description?: string;
+
+  visible?: boolean;
+
+  children?: RawPage[];
+
+  blocks?: (InstanceType<typeof PageBlock>|object)[];
+
+  createdAt?: string|number|Date;
+  updatedAt?: string|number|Date;
+  deletedAt?: string|number|Date;
+
+  canUpdatePage?: boolean;
+  canDeletePage?: boolean;
+  canGrant?: boolean;
+}
+
 export class Page {
-  // @todo port page class here
-  [_: string]: unknown
+  public pageID = NoID;
+  public selfID = NoID;
+  public moduleID = NoID;
+  public namespaceID = NoID;
+
+  public title = '';
+  public handle = '';
+  public description = '';
+
+  public visible = false;
+
+  public children?: Page[]
+
+  public blocks: (InstanceType<typeof PageBlock>)[] = [];
+
+  public createdAt?: Date = undefined;
+  public updatedAt?: Date = undefined;
+  public deletedAt?: Date = undefined;
+
+  public canUpdatePage = false;
+  public canDeletePage = false;
+  public canGrant = false;
+
+  constructor (i?: RawPage | Page) {
+    this.apply(i)
+  }
+
+  apply (i?: RawPage | Page): void {
+    if (!i) return
+
+    Apply(this, i, CortezaID, 'pageID', 'selfID', 'moduleID', 'namespaceID')
+    Apply(this, i, String, 'title', 'handle', 'description')
+    Apply(this, i, Boolean, 'visible')
+
+    if (i.blocks) {
+      this.blocks = []
+      if (AreObjectsOf<PageBlock>(i.blocks, 'kind') && AreObjectsOf<PageBlock>(i.blocks, 'xywh')) {
+        this.blocks = i.blocks.map((b: { kind: string }) => PageBlockMaker(b))
+      }
+    }
+
+    if (i.children) {
+      this.children = []
+      if (AreObjectsOf<Page>(i.children, 'pageID')) {
+        this.children = i.children.map(c => new Page(c))
+      }
+    }
+
+    Apply(this, i, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt')
+    Apply(this, i, Boolean,
+      'canUpdatePage',
+      'canDeletePage',
+      'canGrant',
+    )
+  }
+
+  /**
+   * Returns resource ID
+   */
+  get resourceID (): string {
+    return `${this.resourceType}:${this.pageID}`
+  }
+
+  /**
+   * Resource type
+   */
+  get resourceType (): string {
+    return 'compose:Page'
+  }
+
+  get hasModule (): boolean {
+    return this.moduleID !== NoID
+  }
+
+  get firstLevel (): boolean {
+    return this.selfID === NoID
+  }
+
+  export (): RawPage {
+    return {
+      title: this.title,
+      handle: this.handle,
+      description: this.description,
+      visible: this.visible,
+      blocks: this.blocks,
+    }
+  }
 }
