@@ -1,26 +1,9 @@
 import { Apply } from '../../../cast'
 
-interface PageBlockStyleVariants {
-  [_: string]: string;
-}
+interface PageBlockStyleVariants { [_: string]: string }
+interface PageBlockStyle { variants: PageBlockStyleVariants }
 
-interface PageBlockStyle {
-  variants: PageBlockStyleVariants;
-}
-
-interface PageBlockOptions {
-  [_: string]: string;
-}
-
-export interface RawPageBlock {
-  title?: string;
-  description?: string;
-  kind?: string;
-  options?: PageBlockOptions;
-  style?: PageBlockStyle;
-
-  xywh?: number[];
-}
+export type PageBlockInput = PageBlock | Partial<PageBlock>
 
 export class PageBlock {
   public title = '';
@@ -34,11 +17,11 @@ export class PageBlock {
     variants: {},
   }
 
-  constructor (i?: RawPageBlock | PageBlock) {
+  constructor (i?: PageBlockInput) {
     this.apply(i)
   }
 
-  apply (i?: RawPageBlock | PageBlock): void {
+  apply (i?: PageBlockInput): void {
     if (!i) return
 
     Apply(this, i, String, 'title', 'description')

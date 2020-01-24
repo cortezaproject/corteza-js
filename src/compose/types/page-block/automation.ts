@@ -1,4 +1,4 @@
-import { PageBlock, RawPageBlock, Registry } from './base'
+import { PageBlock, PageBlockInput, Registry } from './base'
 
 const kind = 'Automation'
 
@@ -13,12 +13,12 @@ export class PageBlockAutomation extends PageBlock {
     buttons: [],
   }
 
-  constructor (i?: PageBlock | RawPageBlock) {
+  constructor (i?: PageBlockInput) {
     super(i)
-    this.applyOptions(i?.options as Options)
+    this.applyOptions(i?.options as Partial<Options>)
   }
 
-  applyOptions (o?: Options): void {
+  applyOptions (o?: Partial<Options>): void {
     if (!o) return
 
     if (o.buttons) {

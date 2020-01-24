@@ -1,4 +1,4 @@
-import { PageBlock, RawPageBlock, Registry } from './base'
+import { PageBlock, PageBlockInput, Registry } from './base'
 import { Apply } from '../../../cast'
 
 const kind = 'Content'
@@ -14,12 +14,12 @@ export class PageBlockContent extends PageBlock {
     body: '',
   }
 
-  constructor (i?: PageBlock | RawPageBlock) {
+  constructor (i?: PageBlockInput) {
     super(i)
-    this.applyOptions(i?.options as Options)
+    this.applyOptions(i?.options as Partial<Options>)
   }
 
-  applyOptions (o?: Options): void {
+  applyOptions (o?: Partial<Options>): void {
     if (!o) return
 
     Apply(this.options, o, String, 'body')

@@ -1,4 +1,4 @@
-import { PageBlock, RawPageBlock, Registry } from './base'
+import { PageBlock, PageBlockInput, Registry } from './base'
 import { Apply, CortezaID, NoID } from '../../../cast'
 
 const kind = 'Chart'
@@ -14,12 +14,12 @@ export class PageBlockChart extends PageBlock {
     chartID: NoID,
   }
 
-  constructor (i?: PageBlock | RawPageBlock) {
+  constructor (i?: PageBlockInput) {
     super(i)
-    this.applyOptions(i?.options as Options)
+    this.applyOptions(i?.options as Partial<Options>)
   }
 
-  applyOptions (o?: Options): void {
+  applyOptions (o?: Partial<Options>): void {
     if (!o) return
 
     Apply(this.options, o, CortezaID, 'chartID')

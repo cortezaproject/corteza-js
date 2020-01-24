@@ -1,4 +1,4 @@
-import { PageBlock, RawPageBlock, Registry } from './base'
+import { PageBlock, PageBlockInput, Registry } from './base'
 import { Apply, CortezaID, NoID } from '../../../cast'
 import { Compose as ComposeAPI } from '../../../api-clients'
 import { Module } from '../module'
@@ -37,12 +37,12 @@ export class PageBlockRecordList extends PageBlock {
     perPage: 20,
   }
 
-  constructor (i?: PageBlock | RawPageBlock) {
+  constructor (i?: PageBlockInput) {
     super(i)
-    this.applyOptions(i?.options as Options)
+    this.applyOptions(i?.options as Partial<Options>)
   }
 
-  applyOptions (o?: Options): void {
+  applyOptions (o?: Partial<Options>): void {
     if (!o) return
 
     Apply(this.options, o, CortezaID, 'pageID', 'moduleID')
