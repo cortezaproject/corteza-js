@@ -147,6 +147,39 @@ export function Apply<DST, SRC, T extends keyof DST> (dst: DST, src: SRC, cast: 
   })
 }
 
+export function ApplyWhitelisted<DST, SRC, WL, T extends keyof DST> (dst: DST, src: SRC, whitelist: (DST[T])[], ...props: (keyof DST)[]): void {
+  if (typeof src !== 'object') {
+    return
+  }
+
+  props.forEach(prop => {
+    // prop must exist on dst
+    if (!Object.prototype.hasOwnProperty.call(dst, prop)) {
+      return
+    }
+
+    // prop must exist on src
+    if (!Object.prototype.hasOwnProperty.call(src, prop)) {
+      return
+    }
+
+    // sProp is prop from source
+    const sProp = (prop as unknown) as keyof SRC
+
+    // value on src should be defined
+    if (src[sProp] === undefined) {
+      return
+    }
+
+    // Cast value from src to type of value from prop on dst
+    const val = (src[sProp] as unknown) as DST[T]
+
+    if (whitelist.includes(val)) {
+      dst[prop] = val
+    }
+  })
+}
+
 export function makeIDSortable (ID?: string): string {
   // We're using uint64 for CortezaID and JavaScript does not know how to handle this type
   // natively. We get the value from backend as string anyway and we need to prefix

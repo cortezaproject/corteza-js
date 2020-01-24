@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { ModuleField } from './module-field'
+import { ModuleField } from './base'
 
 describe('check module field casting', () => {
   it('simple assignment', () => {

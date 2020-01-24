@@ -45,7 +45,7 @@ export class Calendar extends PageBlock {
     this.applyOptions(i?.options as Partial<CalendarOptions>)
   }
 
-  applyOptions (o?: Partial<CalendarOptions>) {
+  applyOptions (o?: Partial<CalendarOptions>): void {
     if (!o) return
 
     this.options.defaultView = Calendar.handleLegacyView(o.defaultView) || 'dayGridMonth'

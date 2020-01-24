@@ -1,6 +1,7 @@
-import { ModuleField } from './module-field'
+import { ModuleField, ModuleFieldMaker } from './module-field'
 import { CortezaID, NoID, ISO8601Date, Apply } from '../../cast'
-import { AreStrings, IsOf } from '../../guards'
+import { AreObjects, AreObjectsOf, AreStrings, IsOf } from '../../guards'
+import { PageBlock, PageBlockMaker } from './page-block'
 
 interface MetaAdminRecordList {
   columns: string[];
@@ -70,7 +71,12 @@ export class Module {
     Apply(this, m, String, 'name', 'handle')
 
     if (IsOf(m, 'fields')) {
-      this.fields = m.fields.map((f: Partial<ModuleField>) => new ModuleField(f))
+      this.fields = []
+      if (AreObjects(m.fields)) {
+        // We're very permissive here -- array of (empty) objects is all we need
+        // to create fields.
+        this.fields = m.fields.map((b: { kind?: string }) => ModuleFieldMaker(b))
+      }
     }
 
     if (IsOf(m, 'meta')) {

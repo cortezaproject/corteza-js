@@ -1,6 +1,6 @@
-import { IsOf } from '../../guards'
-import { Apply, CortezaID, NoID } from '../../cast'
-import { IsEmpty, ValidatorError, ValidatorResult } from '../../validator/validator'
+import { IsOf } from '../../../guards'
+import { Apply, CortezaID, NoID } from '../../../cast'
+import { IsEmpty, ValidatorError, ValidatorResult } from '../../../validator/validator'
 
 export const FieldNameValidator = /^\w{1,}$/
 
@@ -91,3 +91,5 @@ export class ModuleField {
     return 'compose:module-field'
   }
 }
+
+export const Registry = new Map<string, typeof ModuleField>()

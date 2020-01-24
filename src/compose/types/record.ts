@@ -40,7 +40,7 @@ type RecordCtorCombo = Record | Module | RawValue | RawValue[] | PartialRecord |
  * For something to be useful module (for a Record), it needs to contain fields
  */
 function isModule (m?: unknown): m is Module {
-  return IsOf<Module>(m, 'fields') && Array.isArray(m.fields) && m.fields.length > 0
+  return m && IsOf<Module>(m, 'fields') && Array.isArray(m.fields) && m.fields.length > 0
 }
 
 /**
