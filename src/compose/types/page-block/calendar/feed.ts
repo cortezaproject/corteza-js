@@ -16,6 +16,8 @@ interface LegacyFeed {
   allDay?: boolean;
 }
 
+export type FeedInput = Partial<Feed> | Feed | LegacyFeed
+
 const defOptions = {
   moduleID: NoID,
   color: '#ffffff',
@@ -34,11 +36,11 @@ export default class Feed {
 
   public allDay = false
 
-  constructor (i?: Partial<Feed> | Feed | LegacyFeed) {
+  constructor (i?: FeedInput) {
     this.apply(i)
   }
 
-  apply (i?: Partial<Feed> | Feed | LegacyFeed) {
+  apply (i?: FeedInput) {
     if (!i) return
 
     if (!IsOf<Feed>(i, 'resource') && IsOf<LegacyFeed>(i, 'moduleID')) {

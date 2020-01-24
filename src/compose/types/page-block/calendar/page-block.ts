@@ -1,5 +1,5 @@
 import { PageBlock, Registry } from '../base'
-import Feed from './feed'
+import Feed, { FeedInput } from './feed'
 
 const kind = 'Calendar'
 
@@ -39,6 +39,11 @@ class CalendarOptions {
 export class Calendar extends PageBlock {
   readonly kind = kind
   public options = new CalendarOptions()
+
+  readonly feedResources = {
+    record: 'compose:record',
+    reminder: 'system:reminder',
+  }
 
   constructor (i?: PageBlock | Partial<PageBlock>) {
     super(i)
@@ -86,7 +91,7 @@ export class Calendar extends PageBlock {
    * @note When adding new ones, make sure included plugins support it.
    * @returns {Array}
    */
-  static availableViews () {
+  static availableViews (): Array<string> {
     return [
       'dayGridMonth',
       'timeGridWeek',
@@ -99,7 +104,7 @@ export class Calendar extends PageBlock {
    * Reorder views according to available views array order.
    * @param {Array} views Array of views to filter & sort
    */
-  reorderViews (views: string[] = []) {
+  reorderViews (views: string[] = []): Array<string> {
     return Calendar.availableViews()
       .filter(v => views.find(fv => fv === v))
       .map(v => v)
@@ -108,7 +113,7 @@ export class Calendar extends PageBlock {
   /**
    * Converts old < V4 view names to >= V4 view names.
    * @note It wil preserve fields that don't need to/can't be converted
-   * @param {Array} views Array of updated view names
+   * @param {string} views converted view name
    */
   static handleLegacyView (views = 'dayGridMonth'): string {
     return legacyViewMapping[views] || views
@@ -117,10 +122,14 @@ export class Calendar extends PageBlock {
   /**
    * Converts old < V4 view names to >= V4 view names.
    * @note It wil preserve fields that don't need to/can't be converted
-   * @param {Array} views Array of updated view names
+   * @param {string[]} views converted view names
    */
   static handleLegacyViews (views: string[]): string[] {
     return views.map(v => legacyViewMapping[v] || v)
+  }
+
+  static makeFeed(f?: FeedInput): Feed {
+    return new Feed(f)
   }
 }
 
