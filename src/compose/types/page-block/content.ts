@@ -1,6 +1,5 @@
 import { PageBlock, RawPageBlock, Registry } from './base'
 import { Apply } from '../../../cast'
-import { PageBlockAutomation } from './automation'
 
 const kind = 'Content'
 

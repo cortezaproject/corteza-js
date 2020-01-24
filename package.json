@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "axios": "^0.19.1",
+    "hex-rgb": "^4.1.0",
     "minimatch": "^3.0.4",
     "pino": "^5.16.0"
   },

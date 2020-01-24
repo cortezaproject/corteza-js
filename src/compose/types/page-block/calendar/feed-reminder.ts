@@ -1,9 +1,25 @@
-import { makeColors } from './colors'
-// import variables from 'corteza-webapp-compose/src/themes/corteza-base/variables.scss'
+import { System as SystemAPI } from '../../../../api-clients'
+import { User } from '../../../../system'
+import { Reminder } from '../../../../system/types/reminder'
+import { makeColors, Event } from './shared'
 
+// import variables from 'corteza-webapp-compose/src/themes/corteza-base/variables.scss'
 // const defaultColor = variables.secondary
 // @todo fix this!
 const defaultColor = '#568ba2'
+
+interface FeedOptions {
+  color: string;
+}
+
+interface Feed {
+  options: FeedOptions;
+}
+
+interface Range {
+  end: Date;
+  start: Date;
+}
 
 /**
  * Loads & converts reminder resource into FC events
@@ -13,7 +29,7 @@ const defaultColor = '#568ba2'
  * @param {Object} range Current date range
  * @returns {Promise<Array>} Resolves to a set of FC events to display
  */
-export default async function ($SystemAPI, user, feed, range) {
+export async function ReminderFeed ($SystemAPI: SystemAPI, user: User, feed: Feed, range: Range): Promise<Event[]> {
   feed.options.color = feed.options.color || defaultColor
   return $SystemAPI.reminderList({
     perPage: 0,
@@ -22,7 +38,7 @@ export default async function ($SystemAPI, user, feed, range) {
     scheduledOnly: true,
     excludeDismissed: true,
     assignedTo: user.userID,
-  }).then(({ set: reminders = [] }) => {
+  }).then(({ set: reminders = [] }: { set: Reminder[] }) => {
     const { backgroundColor, borderColor, isLight } = makeColors(feed.options.color)
 
     return reminders.map(r => {
