@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { Page } from './page'
 
-describe.only(__filename, () => {
+describe(__filename, () => {
   describe('page creation', () => {
     it('sanity check', () => {
       const p = new Page({
@@ -27,7 +27,6 @@ describe.only(__filename, () => {
           { kind: 'SocialFeed', xywh: [0, 0, 3, 3] },
         ],
       })
-      console.log(p.blocks)
     })
   })
 })
