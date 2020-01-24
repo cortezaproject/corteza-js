@@ -83,7 +83,7 @@ export class Page {
     return 'compose:Page'
   }
 
-  get hasModule (): boolean {
+  get isRecordPage (): boolean {
     return this.moduleID !== NoID
   }
 
