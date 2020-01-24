@@ -2,29 +2,14 @@ import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
 import { AreObjectsOf, IsOf } from '../../guards'
 import { PageBlock, PageBlockMaker } from './page-block'
 
-interface RawPage {
-  pageID?: string;
-  selfID?: string;
-  moduleID?: string;
-  namespaceID?: string;
+interface PartialPage extends Partial<Omit<Page, 'children' | 'blocks' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
+  children?: Array<PartialPage>;
 
-  title?: string;
-  handle?: string;
-  description?: string;
-
-  visible?: boolean;
-
-  children?: RawPage[];
-
-  blocks?: (InstanceType<typeof PageBlock>|object)[];
+  blocks?: (Partial<PageBlock>)[];
 
   createdAt?: string|number|Date;
   updatedAt?: string|number|Date;
   deletedAt?: string|number|Date;
-
-  canUpdatePage?: boolean;
-  canDeletePage?: boolean;
-  canGrant?: boolean;
 }
 
 export class Page {
@@ -39,7 +24,7 @@ export class Page {
 
   public visible = false;
 
-  public children?: Page[]
+  public children?: Array<Partial<Page>>
 
   public blocks: (InstanceType<typeof PageBlock>)[] = [];
 
@@ -51,11 +36,11 @@ export class Page {
   public canDeletePage = false;
   public canGrant = false;
 
-  constructor (i?: RawPage | Page) {
+  constructor (i?: PartialPage) {
     this.apply(i)
   }
 
-  apply (i?: RawPage | Page): void {
+  apply (i?: PartialPage): void {
     if (!i) return
 
     Apply(this, i, CortezaID, 'pageID', 'selfID', 'moduleID', 'namespaceID')
@@ -106,7 +91,7 @@ export class Page {
     return this.selfID === NoID
   }
 
-  export (): RawPage {
+  export (): PartialPage {
     return {
       title: this.title,
       handle: this.handle,

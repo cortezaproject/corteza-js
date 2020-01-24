@@ -4,23 +4,6 @@ import { IsEmpty, ValidatorError, ValidatorResult } from '../../validator/valida
 
 export const FieldNameValidator = /^\w{1,}$/
 
-interface RawModuleField {
-  fieldID?: string;
-  name?: string;
-  kind?: string;
-  label?: string;
-  helpText?: string;
-  defaultValue?: string|string[];
-  maxLength?: number;
-  isRequired?: boolean;
-  isPrivate?: boolean;
-  isMulti?: boolean;
-  isSystem?: boolean;
-  canUpdateRecordValue?: boolean;
-  canReadRecordValue?: boolean;
-  options?: object;
-}
-
 export class ModuleField {
   public fieldID = NoID
   public name = ''
@@ -40,11 +23,11 @@ export class ModuleField {
   public canUpdateRecordValue = false
   public canReadRecordValue = false
 
-  constructor (f?: RawModuleField | ModuleField) {
+  constructor (f?: Partial<ModuleField>) {
     this.apply(f)
   }
 
-  public apply (f?: RawModuleField | ModuleField): void {
+  public apply (f?: Partial<ModuleField>): void {
     if (!f) return
 
     Apply(this, f, CortezaID, 'fieldID')

@@ -30,26 +30,13 @@ export const systemFields = Object.freeze([
   isSystem: true,
 })))
 
-interface RawModule {
-  moduleID?: string;
-  namespaceID?: string;
-  name?: string;
-  handle?: string;
-  fields?: object[] | ModuleField[];
-  meta?: Meta;
+interface PartialModule extends Partial<Omit<Module, 'fields' | 'meta' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
+  fields?: Array<Partial<ModuleField>> | Array<ModuleField>;
+  meta?: Partial<Meta>;
 
   createdAt?: string|number|Date;
   updatedAt?: string|number|Date;
   deletedAt?: string|number|Date;
-
-  canUpdateModule?: boolean;
-  canDeleteModule?: boolean;
-  canCreateRecord?: boolean;
-  canReadRecord?: boolean;
-  canUpdateRecord?: boolean;
-  canDeleteRecord?: boolean;
-  canManageAutomationTriggers?: boolean;
-  canGrant?: boolean;
 }
 
 export class Module {
@@ -57,7 +44,7 @@ export class Module {
   public namespaceID = NoID;
   public name = '';
   public handle = '';
-  public fields: ModuleField[] = [];
+  public fields: Array<ModuleField> = [];
   public meta: object = {};
 
   public createdAt?: Date = undefined;
@@ -72,18 +59,18 @@ export class Module {
   public canDeleteRecord = false;
   public canGrant = false;
 
-  constructor (i?: RawModule | Module) {
+  constructor (i?: PartialModule) {
     this.apply(i)
   }
 
-  apply (m?: RawModule | Module): void {
+  apply (m?: PartialModule): void {
     if (!m) return
 
     Apply(this, m, CortezaID, 'moduleID', 'namespaceID')
     Apply(this, m, String, 'name', 'handle')
 
     if (IsOf(m, 'fields')) {
-      this.fields = m.fields.map(f => new ModuleField(f))
+      this.fields = m.fields.map((f: Partial<ModuleField>) => new ModuleField(f))
     }
 
     if (IsOf(m, 'meta')) {
@@ -119,7 +106,7 @@ export class Module {
   /**
    * Returns fields from module, filtered and order as requested
    */
-  filterFields (requested?: string[] | ModuleField[]): ModuleField[] {
+  filterFields (requested?: string[] | Array<ModuleField>): Array<ModuleField> {
     if (!requested || requested.length === 0) {
       return []
     }

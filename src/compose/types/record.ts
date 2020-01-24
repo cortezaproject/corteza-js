@@ -22,11 +22,7 @@ interface RawValue {
   value: string;
 }
 
-interface RawRecord {
-  recordID?: string;
-  moduleID?: string;
-  namespaceID?: string;
-
+interface PartialRecord extends Partial<Omit<Record, 'values' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
   values?: RawValue[];
 
   createdAt?: string|number|Date;
@@ -38,7 +34,7 @@ export interface Values {
   [name: string]: string|string[];
 }
 
-type RecordCtorCombo = Record | Module | RawValue | RawValue[] | RawRecord | Values | Values[]
+type RecordCtorCombo = Record | Module | RawValue | RawValue[] | PartialRecord | Values | Values[]
 
 /**
  * For something to be useful module (for a Record), it needs to contain fields
@@ -103,14 +99,14 @@ export class Record {
 
       case AreObjectsOf(p, 'name'):
         // assuming p1 is array of raw values
-        r = ({ values: p as RawValue[] }) as RawRecord
+        r = ({ values: p as RawValue[] }) as PartialRecord
         break
 
       default:
         r = ({ values: p }) as Record
     }
 
-    r = r as RawRecord|Record
+    r = r as PartialRecord
 
     Apply(this, r, CortezaID, 'recordID', 'moduleID', 'namespaceID')
     Apply(this, r, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt')

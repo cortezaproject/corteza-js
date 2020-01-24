@@ -26,28 +26,11 @@ enum MembershipFlag {
   ignored = 'ignored',
 }
 
-interface RawChannel {
-  channelID?: string;
-  name?: string;
-  topic?: string;
-  type?: Type;
-  members?: string[];
-  membershipFlag?: MembershipFlag;
-  membershipPolicy?: MembershipPolicy;
-  canJoin?: boolean;
-  canPart?: boolean;
-  canObserve?: boolean;
-  canSendMessages?: boolean;
-  canDeleteMessages?: boolean;
-  canChangeMembers?: boolean;
-  canChangeMembershipPolicy?: boolean;
-  canUpdate?: boolean;
-  canArchive?: boolean;
-  canDelete?: boolean;
+interface PartialChannel extends Partial<Omit<Channel, 'createdAt' | 'updatedAt' | 'deletedAt' | 'suspendedAt'>> {
   createdAt?: string|number|Date;
   updatedAt?: string|number|Date;
   deletedAt?: string|number|Date;
-  archivedAt?: string|number|Date;
+  suspendedAt?: string|number|Date;
 }
 
 export class Channel {
@@ -73,11 +56,11 @@ export class Channel {
   public deletedAt?: Date = undefined
   public archivedAt?: Date = undefined
 
-  constructor (c?: RawChannel | Channel) {
+  constructor (c?: PartialChannel) {
     this.apply(c)
   }
 
-  apply (c?: RawChannel | Channel): void {
+  apply (c?: PartialChannel): void {
     Apply(this, c, CortezaID, 'channelID')
 
     Apply(this, c, String, 'name', 'topic')

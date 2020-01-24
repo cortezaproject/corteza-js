@@ -1,15 +1,10 @@
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
 
-interface RawUser {
-  userID?: string;
-  handle?: string;
-  username?: string;
-  email?: string;
-  name?: string;
+interface PartialUser extends Partial<Omit<User, 'createdAt' | 'updatedAt' | 'deletedAt' | 'suspendedAt'>> {
   createdAt?: string|number|Date;
   updatedAt?: string|number|Date;
   deletedAt?: string|number|Date;
-  archivedAt?: string|number|Date;
+  suspendedAt?: string|number|Date;
 }
 
 export class User {
@@ -23,11 +18,11 @@ export class User {
   public deletedAt?: Date = undefined
   public suspendedAt?: Date = undefined
 
-  constructor (c?: RawUser | User) {
+  constructor (c?: PartialUser) {
     this.apply(c)
   }
 
-  apply (c?: RawUser | User): void {
+  apply (c?: PartialUser): void {
     Apply(this, c, CortezaID, 'userID')
     Apply(this, c, String, 'handle', 'username', 'email', 'name')
     Apply(this, c, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt', 'suspendedAt')

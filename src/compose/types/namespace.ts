@@ -1,5 +1,6 @@
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
 import { IsOf } from '../../guards'
+import { Module } from './module'
 
 interface MetaAdminRecordList {
   columns: string[];
@@ -14,25 +15,11 @@ interface Meta {
   description: string;
 }
 
-interface RawNamespace {
-  namespaceID?: string;
-  name?: string;
-  slug?: string;
-  enabled?: boolean;
-
-  meta?: Meta;
-
+interface PartialNamespace extends Partial<Omit<Module, 'meta' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
+  meta?: Partial<Meta>;
   createdAt?: string|number|Date;
   updatedAt?: string|number|Date;
   deletedAt?: string|number|Date;
-
-  canCreateChart?: boolean;
-  canCreateModule?: boolean;
-  canCreatePage?: boolean;
-  canDeleteNamespace?: boolean;
-  canUpdateNamespace?: boolean;
-  canManageNamespace?: boolean;
-  canGrant?: boolean;
 }
 
 export class Namespace {
@@ -55,11 +42,11 @@ export class Namespace {
   public canManageNamespace = false
   public canGrant = false
 
-  constructor (i?: RawNamespace | Namespace) {
+  constructor (i?: PartialNamespace | Namespace) {
     this.apply(i)
   }
 
-  apply (n?: RawNamespace | Namespace): void {
+  apply (n?: PartialNamespace | Namespace): void {
     if (!n) return
 
     Apply(this, n, CortezaID, 'namespaceID')

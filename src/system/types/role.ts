@@ -1,11 +1,8 @@
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
 import { AreStrings } from '../../guards'
+import { User } from './user'
 
-interface RawRole {
-  roleID?: string;
-  name?: string;
-  handle?: string;
-  members?: string[];
+interface PartialRole extends Partial<Omit<Role, 'createdAt' | 'updatedAt' | 'deletedAt' | 'archivedAt'>> {
   createdAt?: string|number|Date;
   updatedAt?: string|number|Date;
   deletedAt?: string|number|Date;
@@ -22,11 +19,11 @@ export class Role {
   public deletedAt?: Date = undefined
   public archivedAt?: Date = undefined
 
-  constructor (c?: RawRole | Role) {
+  constructor (c?: PartialRole) {
     this.apply(c)
   }
 
-  apply (c?: RawRole | Role): void {
+  apply (c?: PartialRole): void {
     Apply(this, c, CortezaID, 'roleID')
 
     Apply(this, c, String, 'name', 'handle')

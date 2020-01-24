@@ -4,21 +4,11 @@ interface KV {
   [_: string]: unknown;
 }
 
-interface RawReminder {
-  reminderID?: string;
-  resource?: string;
-  payload?: object;
-  snoozeCount?: number;
-  assignedTo?: string;
-  assignedBy?: string;
+interface PartialReminder extends Partial<Omit<Reminder, 'assignedAt' | 'dismissedAt' | 'remindAt' | 'createdAt'>> {
   assignedAt?: string|number|Date;
-  dismissedBy?: string;
   dismissedAt?: string|number|Date;
   remindAt?: string|number|Date;
   createdAt?: string|number|Date;
-  processed?: boolean;
-  actions?: object;
-  options?: object;
 }
 
 export class Reminder {
@@ -37,11 +27,11 @@ export class Reminder {
   public actions: KV = {}
   public options: KV = {}
 
-  constructor (r?: RawReminder | Reminder) {
+  constructor (r?: PartialReminder) {
     this.apply(r)
   }
 
-  apply (r?: RawReminder | Reminder): void {
+  apply (r?: PartialReminder): void {
     if (!r) return
 
     Apply(this, r, CortezaID, 'reminderID')
