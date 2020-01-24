@@ -5,11 +5,13 @@ interface PageBlockStyle { variants: PageBlockStyleVariants }
 
 export type PageBlockInput = PageBlock | Partial<PageBlock>
 
+const defaultXYWH = [0, 0, 3, 3]
+
 export class PageBlock {
   public title = '';
   public description = '';
 
-  xywh: number[] = []
+  xywh: number[] = defaultXYWH
   kind = ''
 
   public options = {}
@@ -36,7 +38,7 @@ export class PageBlock {
       }
 
       // by default, park 3x3 block in upper left corner
-      this.xywh = i.xywh || [0, 0, 3, 3]
+      this.xywh = i.xywh || defaultXYWH
     }
 
     if (i.options) {
