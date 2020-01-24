@@ -1,6 +1,7 @@
 export { Record } from './types/record'
 export { Module } from './types/module'
-export { ModuleField } from './types/module-field'
+export * from './types/module-field'
 export { Namespace } from './types/namespace'
 export { Page } from './types/page'
+export * from './types/page-block'
 export { RecordValidator } from './validators/record'
