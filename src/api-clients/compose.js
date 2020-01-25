@@ -291,10 +291,6 @@ export default class Compose {
       console.error('pageCreate failed, field title is empty', arguments) // log error so we can debug/trace it
       throw Error('field title is empty')
     }
-    if (!blocks) {
-      console.error('pageCreate failed, field blocks is empty', arguments) // log error so we can debug/trace it
-      throw Error('field blocks is empty')
-    }
 
     let cfg = {
       method: 'post',
@@ -390,10 +386,6 @@ export default class Compose {
     if (!title) {
       console.error('pageUpdate failed, field title is empty', arguments) // log error so we can debug/trace it
       throw Error('field title is empty')
-    }
-    if (!blocks) {
-      console.error('pageUpdate failed, field blocks is empty', arguments) // log error so we can debug/trace it
-      throw Error('field blocks is empty')
     }
 
     let cfg = {
