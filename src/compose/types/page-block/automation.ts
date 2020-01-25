@@ -6,12 +6,14 @@ interface Options {
   buttons: string[];
 }
 
+const defaults: Readonly<Options> = Object.freeze({
+  buttons: [],
+})
+
 export class PageBlockAutomation extends PageBlock {
   readonly kind = kind
 
-  options: Options = {
-    buttons: [],
-  }
+  options: Options = { ...defaults }
 
   constructor (i?: PageBlockInput) {
     super(i)

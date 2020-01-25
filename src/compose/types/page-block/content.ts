@@ -7,12 +7,14 @@ interface Options {
   body: string;
 }
 
+const defaults: Readonly<Options> = Object.freeze({
+  body: '',
+})
+
 export class PageBlockContent extends PageBlock {
   readonly kind = kind
 
-  options: Options = {
-    body: '',
-  }
+  options: Options = { ...defaults }
 
   constructor (i?: PageBlockInput) {
     super(i)

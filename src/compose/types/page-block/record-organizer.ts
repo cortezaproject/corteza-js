@@ -15,18 +15,20 @@ interface Options {
   group: string;
 }
 
+const defaults: Readonly<Options> = Object.freeze({
+  moduleID: NoID,
+  labelField: '',
+  descriptionField: '',
+  filter: '',
+  positionField: '',
+  groupField: '',
+  group: '',
+})
+
 export class PageBlockRecordOrganizer extends PageBlock {
   readonly kind = kind
 
-  options: Options = {
-    moduleID: NoID,
-    labelField: '',
-    descriptionField: '',
-    filter: '',
-    positionField: '',
-    groupField: '',
-    group: '',
-  }
+  options: Options = { ...defaults }
 
   constructor (i?: PageBlockInput) {
     super(i)

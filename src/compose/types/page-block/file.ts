@@ -19,13 +19,15 @@ const PageBlockFileModes = [
   'gallery',
 ]
 
+const defaults: Readonly<Options> = Object.freeze({
+  mode: PageBlockFileDefaultMode,
+  attachments: [],
+})
+
 export class PageBlockFile extends PageBlock {
   readonly kind = kind
 
-  options: Options = {
-    mode: PageBlockFileDefaultMode,
-    attachments: [],
-  }
+  options: Options = { ...defaults }
 
   constructor (i?: PageBlockInput) {
     super(i)

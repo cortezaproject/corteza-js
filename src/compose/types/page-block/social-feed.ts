@@ -10,15 +10,17 @@ interface Options {
   profileUrl: string;
 }
 
+const defaults: Readonly<Options> = Object.freeze({
+  moduleID: NoID,
+  fields: [],
+  profileSourceField: '',
+  profileUrl: '',
+})
+
 export class PageBlockSocialFeed extends PageBlock {
   readonly kind = kind
 
-  options: Options = {
-    moduleID: NoID,
-    fields: [],
-    profileSourceField: '',
-    profileUrl: '',
-  }
+  options: Options = { ...defaults }
 
   constructor (i?: PageBlockInput) {
     super(i)

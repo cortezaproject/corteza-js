@@ -8,13 +8,15 @@ interface Options {
   fields: unknown[];
 }
 
+const defaults: Readonly<Options> = Object.freeze({
+  moduleID: NoID,
+  fields: [],
+})
+
 export class PageBlockRecord extends PageBlock {
   readonly kind = kind
 
-  options: Options = {
-    moduleID: NoID,
-    fields: [],
-  }
+  options: Options = { ...defaults }
 
   constructor (i?: PageBlockInput) {
     super(i)

@@ -19,23 +19,25 @@ interface Options {
   perPage: number;
 }
 
+const defaults: Readonly<Options> = Object.freeze({
+  pageID: NoID,
+  moduleID: NoID,
+  prefilter: '',
+  presort: '',
+  fields: [],
+  hideHeader: false,
+  hideAddButton: false,
+  hideSearch: false,
+  hidePaging: false,
+  hideSorting: false,
+  allowExport: false,
+  perPage: 20,
+})
+
 export class PageBlockRecordList extends PageBlock {
   readonly kind = kind
 
-  options: Options = {
-    pageID: NoID,
-    moduleID: NoID,
-    prefilter: '',
-    presort: '',
-    fields: [],
-    hideHeader: false,
-    hideAddButton: false,
-    hideSearch: false,
-    hidePaging: false,
-    hideSorting: false,
-    allowExport: false,
-    perPage: 20,
-  }
+  options: Options = { ...defaults }
 
   constructor (i?: PageBlockInput) {
     super(i)

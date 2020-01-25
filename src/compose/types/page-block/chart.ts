@@ -7,12 +7,14 @@ interface Options {
   chartID: string;
 }
 
+const defaults: Readonly<Options> = Object.freeze({
+  chartID: NoID,
+})
+
 export class PageBlockChart extends PageBlock {
   readonly kind = kind
 
-  options: Options = {
-    chartID: NoID,
-  }
+  options: Options = { ...defaults }
 
   constructor (i?: PageBlockInput) {
     super(i)
