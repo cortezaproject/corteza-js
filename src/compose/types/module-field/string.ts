@@ -9,16 +9,16 @@ interface Options {
   multiDelimiter: string;
 }
 
-const defaults: Options = {
+const defaults: Readonly<Options> = Object.freeze({
   multiLine: false,
   useRichTextEditor: false,
   multiDelimiter: '\n',
-}
+})
 
 export class ModuleFieldString extends ModuleField {
   readonly kind = kind
 
-  options: Options = defaults
+  options: Options = { ...defaults }
 
   constructor (i?: Partial<ModuleFieldString>) {
     super(i)

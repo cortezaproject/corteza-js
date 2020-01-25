@@ -17,7 +17,7 @@ interface Options {
   multiDelimiter: string;
 }
 
-const defaults: Options = {
+const defaults: Readonly<Options> = Object.freeze({
   format: '',
   multiDelimiter: '\n',
   onlyDate: false,
@@ -25,12 +25,12 @@ const defaults: Options = {
   onlyPastValues: false,
   onlyTime: false,
   outputRelative: false,
-}
+})
 
 export class ModuleFieldDateTime extends ModuleField {
   readonly kind = kind
 
-  options: Options = defaults
+  options: Options = { ...defaults }
 
   constructor (i?: Partial<ModuleFieldDateTime>) {
     super(i)

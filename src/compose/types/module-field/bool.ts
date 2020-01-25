@@ -1,4 +1,4 @@
-import { ModuleField, Registry } from './base'
+import { Capabilities, ModuleField, Registry } from './base'
 import { Apply } from '../../../cast'
 
 const kind = 'Bool'
@@ -27,6 +27,16 @@ export class ModuleFieldBool extends ModuleField {
     if (!o) return
 
     Apply(this.options, o, String, 'trueLabel', 'falseLabel')
+  }
+
+  /**
+   * Per module field type capabilities
+   */
+  public get cap (): Readonly<Capabilities> {
+    return {
+      ...super.cap,
+      multiValue: false,
+    }
   }
 }
 

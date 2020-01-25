@@ -21,17 +21,17 @@ interface Options {
   mode: string;
 }
 
-const defaults: Options = {
+const defaults: Readonly<Options> = Object.freeze({
   allowImages: true,
   allowDocuments: true,
   maxSize: 0,
   mode: '\n',
-}
+})
 
 export class ModuleFieldFile extends ModuleField {
   readonly kind = kind
 
-  options: Options = defaults
+  options: Options = { ...defaults }
 
   constructor (i?: Partial<ModuleFieldFile>) {
     super(i)

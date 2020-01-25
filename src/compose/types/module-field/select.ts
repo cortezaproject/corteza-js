@@ -12,16 +12,16 @@ interface Options {
   multiDelimiter: string;
 }
 
-const defaults: Options = {
+const defaults: Readonly<Options> = Object.freeze({
   options: [],
   selectType: 'default',
   multiDelimiter: '\n',
-}
+})
 
 export class ModuleFieldSelect extends ModuleField {
   readonly kind = kind
 
-  options: Options = defaults
+  options: Options = { ...defaults }
 
   constructor (i?: Partial<ModuleFieldSelect>) {
     super(i)

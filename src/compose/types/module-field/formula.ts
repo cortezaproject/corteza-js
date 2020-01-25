@@ -1,21 +1,20 @@
 import { ModuleField, Registry } from './base'
+import { Apply } from '../../../cast'
 
 const kind = 'Formula'
 
 interface Options {
-  outputPlain: boolean;
   multiDelimiter: string;
 }
 
-const defaults: Options = {
-  outputPlain: true,
+const defaults: Readonly<Options> = Object.freeze({
   multiDelimiter: '\n',
-}
+})
 
 export class ModuleFieldFormula extends ModuleField {
   readonly kind = kind
 
-  options: Options = defaults
+  options: Options = { ...defaults }
 
   constructor (i?: Partial<ModuleFieldFormula>) {
     super(i)
@@ -25,7 +24,7 @@ export class ModuleFieldFormula extends ModuleField {
   applyOptions (o?: Partial<Options>): void {
     // if (!o) return
 
-    // options... when we add them.
+    Apply(this.options, o, String, 'multiDelimiter')
   }
 }
 

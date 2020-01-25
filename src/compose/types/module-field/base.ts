@@ -1,8 +1,15 @@
 import { IsOf } from '../../../guards'
 import { Apply, CortezaID, NoID } from '../../../cast'
 import { IsEmpty, ValidatorError, ValidatorResult } from '../../../validator/validator'
+import { ModuleFieldMaker } from './index'
 
 export const FieldNameValidator = /^\w{1,}$/
+
+export interface Capabilities {
+  configurable: true;
+  multiValue: boolean;
+  writable: boolean;
+}
 
 export class ModuleField {
   public fieldID = NoID
@@ -55,16 +62,28 @@ export class ModuleField {
     }
 
     if (IsOf(f, 'options')) {
-      this.options = f.options
+      Object.assign(this.options, f.options)
     }
   }
 
-  public hasValidName (): boolean {
+  /**
+   * Test field validity
+   *
+   * Expecting valid name
+   */
+  public get isValid (): boolean {
     return FieldNameValidator.test(this.name)
   }
 
-  public isValid (): boolean {
-    return this.hasValidName()
+  /**
+   * Per module field type capabilities
+   */
+  public get cap (): Readonly<Capabilities> {
+    return {
+      configurable: true,
+      multiValue: true,
+      writable: true,
+    }
   }
 
   /**
