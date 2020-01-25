@@ -27,6 +27,10 @@ export class ModuleField {
     this.apply(f)
   }
 
+  clone (): ModuleField {
+    return new ModuleField(JSON.parse(JSON.stringify(this)))
+  }
+
   public apply (f?: Partial<ModuleField>): void {
     if (!f) return
 

@@ -64,6 +64,10 @@ export class Module {
     this.apply(i)
   }
 
+  clone (): Module {
+    return new Module(JSON.parse(JSON.stringify(this)))
+  }
+
   apply (m?: PartialModule): void {
     if (!m) return
 

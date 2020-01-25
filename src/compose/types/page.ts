@@ -40,6 +40,10 @@ export class Page {
     this.apply(i)
   }
 
+  clone (): Page {
+    return new Page(JSON.parse(JSON.stringify(this)))
+  }
+
   apply (i?: PartialPage): void {
     if (!i) return
 

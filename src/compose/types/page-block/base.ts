@@ -23,6 +23,10 @@ export class PageBlock {
     this.apply(i)
   }
 
+  clone (): PageBlock {
+    return new PageBlock(JSON.parse(JSON.stringify(this)))
+  }
+
   apply (i?: PageBlockInput): void {
     if (!i) return
 

@@ -85,6 +85,10 @@ export class Record {
     throw new Error('invalid module used to initialize a record')
   }
 
+  clone (): Record {
+    return new Record(JSON.parse(JSON.stringify(this)))
+  }
+
   apply (p?: unknown): void {
     if (!p) return
 

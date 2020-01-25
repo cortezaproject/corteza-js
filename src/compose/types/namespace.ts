@@ -46,6 +46,10 @@ export class Namespace {
     this.apply(i)
   }
 
+  clone (): Namespace {
+    return new Namespace(JSON.parse(JSON.stringify(this)))
+  }
+
   apply (n?: PartialNamespace | Namespace): void {
     if (!n) return
 
