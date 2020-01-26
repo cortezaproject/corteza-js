@@ -1,7 +1,6 @@
 import { IsOf } from '../../../guards'
 import { Apply, CortezaID, NoID } from '../../../cast'
 import { IsEmpty, ValidatorError, ValidatorResult } from '../../../validator/validator'
-import { ModuleFieldMaker } from './index'
 
 export const FieldNameValidator = /^\w{1,}$/
 

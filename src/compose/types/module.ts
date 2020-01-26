@@ -1,7 +1,6 @@
 import { ModuleField, ModuleFieldMaker } from './module-field'
 import { CortezaID, NoID, ISO8601Date, Apply } from '../../cast'
-import { AreObjects, AreObjectsOf, AreStrings, IsOf } from '../../guards'
-import { PageBlock, PageBlockMaker } from './page-block'
+import { AreObjects, AreStrings, IsOf } from '../../guards'
 
 interface MetaAdminRecordList {
   columns: string[];

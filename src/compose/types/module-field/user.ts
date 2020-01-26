@@ -3,7 +3,6 @@
 import { ModuleField, Registry } from './base'
 import { Apply } from '../../../cast'
 import { User } from '../../../system'
-import { ModuleFieldFile } from './file'
 
 const kind = 'User'
 
@@ -36,10 +35,9 @@ export class ModuleFieldUser extends ModuleField {
     Apply(this.options, o, String, 'selectType', 'multiDelimiter')
   }
 
-  formatter ({ userID, name, username, email }: User) {
+  formatter ({ userID, name, username, email }: Partial<User> = {}) {
     return name || username || email || userID
   }
 }
-
 
 Registry.set(kind, ModuleFieldUser)

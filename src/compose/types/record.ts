@@ -117,12 +117,12 @@ export class Record {
     Apply(this, r, CortezaID, 'ownedBy', 'createdBy', 'updatedBy', 'deletedBy')
 
     if (r.values) {
-      this.prepareValues(r.values, this.values)
+      this.prepareValues(r.values)
     }
 
     if (!this[cleanValues]) {
       // When there are no clean values,
-      // make copy of values so that we know if it changed
+      // make copy of values so that we know if change occurred
       this[cleanValues] = Object.freeze({ ...this.values })
     }
   }

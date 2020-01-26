@@ -27,7 +27,7 @@ describe(__filename, () => {
       expect(r.values.multi).to.deep.eq(['bar'])
     }
 
-    const values: Values = { simple: 'foo', multi: ['bar']}
+    const values: Values = { simple: 'foo', multi: ['bar'] }
     const rawValues = [
       { name: 'simple', value: 'foo' },
       { name: 'multi', value: 'bar' },
