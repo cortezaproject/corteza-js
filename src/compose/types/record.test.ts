@@ -15,10 +15,15 @@ describe(__filename, () => {
   describe('record creation', () => {
     const assertAllUndefined = function (r: Record): void {
       expect(r.module).to.eq(m)
-      expect(r.values.simple).to.be.undefined
-      expect(r.values.required).to.be.undefined
-      expect(r.values.multi).to.be.undefined
-      expect(r.values.multiRequired).to.be.undefined
+      /**
+       * It's extremely important that properties are set
+       * even if to undefined. Without this we will have problems
+       * with Vue reactivity
+       */
+      expect(r.values).to.have.property('simple').and.to.be.undefined
+      expect(r.values).to.have.property('required').to.be.undefined
+      expect(r.values).to.have.property('multi').to.be.deep.eq([])
+      expect(r.values).to.have.property('multiRequired').to.be.deep.eq([])
     }
 
     const assertSimpleSet = function (r: Record): void {
@@ -68,38 +73,53 @@ describe(__filename, () => {
       r = new Record(m)
     })
 
+    it('should properly set values via object', () => {
+      r.values.simple = 'foo'
+      expect(r.values.simple).to.eq('foo')
+    })
+
     it('should properly set from values object', () => {
-      r.setValues({simple: 'foo'})
+      r.setValues({ simple: 'foo' })
       expect(r.values.simple).to.eq('foo')
     })
 
     it('should properly set from array of values objects', () => {
-      r.setValues([{simple: 'foo'}])
+      r.setValues([{ simple: 'foo' }])
       expect(r.values.simple).to.eq('foo')
     })
 
     it('should properly set from array of raw-values objects', () => {
-      r.setValues([{name: 'simple', value: 'foo'}])
+      r.setValues([{ name: 'simple', value: 'foo' }])
       expect(r.values.simple).to.eq('foo')
     })
 
     it('should properly set multiple values via values to a non-multi-value field', () => {
-      r.setValues({simple: ['bar', 'baz']})
+      r.setValues({ simple: ['bar', 'baz'] })
       expect(r.values.simple).to.eq('bar')
     })
 
-    it('should properly set value via values to a multi-value field', () => {
-      r.setValues({multi: 'bar'})
+    it.skip('should properly set value directly to a multi-value field', () => {
+      r.values.multi = 'bar'
+      expect(r.values.multi).to.deep.eq(['bar'])
+    })
+
+    it('should properly set value directly to a multi-value field', () => {
+      r.values.multi = ['bar']
+      expect(r.values.multi).to.deep.eq(['bar'])
+    })
+
+    it('should properly set value via setValues to a multi-value field', () => {
+      r.setValues({ multi: 'bar' })
       expect(r.values.multi).to.deep.eq(['bar'])
     })
 
     it('should properly set multiple values via raw-values to a non-multi-value field', () => {
-      r.setValues([{name: 'simple', value: 'foo'}, {name: 'simple', value: 'foo'}])
+      r.setValues([{ name: 'simple', value: 'foo' }, { name: 'simple', value: 'foo' }])
       expect(r.values.simple).to.eq('foo')
     })
 
     it('should properly set value via raw-values to a multi-value field', () => {
-      r.setValues([{name: 'multi', value: 'bar'}])
+      r.setValues([{ name: 'multi', value: 'bar' }])
       expect(r.values.multi).to.deep.eq(['bar'])
     })
   })
@@ -111,7 +131,7 @@ describe(__filename, () => {
     })
 
     it('should properly serialize whole record', () => {
-      r.setValues([{simple: 'foo', multi: ['bar', 'baz']}])
+      r.setValues([{ simple: 'foo', multi: ['bar', 'baz'] }])
       expect(JSON.stringify(r)).to.equal(
         '{"recordID":"0","moduleID":"0","namespaceID":"0",' +
         '"values":[{"name":"simple","value":"foo"},{"name":"multi","value":"bar"},{"name":"multi","value":"baz"}],' +
@@ -119,8 +139,8 @@ describe(__filename, () => {
     })
 
     it('serialization magic should sustain object manipulation', () => {
-      r.setValues([{simple: 'foo', multi: ['bar', 'baz']}])
-      const {values} = r
+      r.setValues([{ simple: 'foo', multi: ['bar', 'baz'] }])
+      const { values } = r
 
       expect(JSON.stringify(values)).to.equal(
         '[{"name":"simple","value":"foo"},{"name":"multi","value":"bar"},{"name":"multi","value":"baz"}]')

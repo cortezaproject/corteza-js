@@ -14,7 +14,7 @@ const reservedFieldNames = [
 interface FieldIndex {
   isMulti: boolean;
   kind: string;
-  defaultValue: string|string[]|undefined;
+  defaultValue: Array<{ value: string }>;
 }
 
 interface RawValue {
@@ -31,7 +31,7 @@ interface PartialRecord extends Partial<Omit<Record, 'values' | 'createdAt' | 'u
 }
 
 export interface Values {
-  [name: string]: string|string[];
+  [name: string]: string|string[]|undefined;
 }
 
 type RecordCtorCombo = Record | Module | RawValue | RawValue[] | PartialRecord | Values | Values[]
@@ -150,6 +150,9 @@ export class Record {
       throw new Error('module used to initialize a record does not contain any fields')
     }
 
+    this.moduleID = m.moduleID
+    this.namespaceID = m.namespaceID
+
     this[fieldIndex] = new Map()
 
     if (Object.isFrozen(m)) {
@@ -175,6 +178,8 @@ export class Record {
     })
 
     Object.freeze(this[fieldIndex])
+
+    this.values = this.initValues()
   }
 
   /**
@@ -184,16 +189,22 @@ export class Record {
     const vv: RawValue[] = []
 
     this[fieldIndex].forEach(({ isMulti }, name) => {
+      if (iv[name] === undefined) {
+        return
+      }
+
+      const val = iv[name] as string|string[]
+
       if (isMulti) {
         if (Array.isArray(iv[name])) {
-          for (let i = 0; i < iv[name].length; i++) {
-            if (iv[name][i] !== undefined) {
-              vv.push({ name, value: iv[name][i].toString() })
+          for (let i = 0; i < val.length; i++) {
+            if (val[i] !== undefined) {
+              vv.push({ name, value: val[i].toString() })
             }
           }
         }
-      } else if (iv[name] !== undefined) {
-        vv.push({ name, value: iv[name].toString() })
+      } else {
+        vv.push({ name, value: val.toString() })
       }
     })
 
@@ -202,14 +213,41 @@ export class Record {
 
   public setValues (input?: Values|Values[]|RawValue[]): void {
     if (input) {
-      this.prepareValues(input, this.values)
+      this.prepareValues(input)
     }
+  }
+
+  /**
+   * Makes destination values
+   */
+  protected initValues (): Values {
+    const dst: Values = {}
+    // TypeScript complains about incompatibility between
+    // indexed object and toJSON function
+    // @ts-ignore
+    dst.toJSON = (): RawValue[] => this.serializeValues(dst)
+
+    this[fieldIndex].forEach(({ isMulti, defaultValue }, name) => {
+      if (defaultValue && Array.isArray(defaultValue) && defaultValue.length > 0) {
+        if (isMulti) {
+          dst[name] = defaultValue.map(({ value }) => value)
+        } else {
+          dst[name] = defaultValue[0].value
+        }
+      } else if (isMulti) {
+        dst[name] = []
+      } else {
+        dst[name] = undefined
+      }
+    })
+
+    return dst
   }
 
   /**
    * Updates record's values object with provided input
    */
-  private prepareValues (src: Values|Values[]|RawValue[], dst = this.values): void {
+  protected prepareValues (src: Values|Values[]|RawValue[], dst = this.values): void {
     if (AreObjectsOf<RawValue>(src, 'name')) {
       // Assign values from RawValues to Values like struct
       src = src.reduce((vv, { name, value }) => {
@@ -247,17 +285,12 @@ export class Record {
       if (isMulti && !Array.isArray(src[name])) {
         // help assigning single value to a multi-value field
         dst[name] = [src[name] as string]
-      } else if (!isMulti && Array.isArray(src[name]) && src[name].length > 0) {
+      } else if (!isMulti && Array.isArray(src[name]) && src[name] && src[name]!.length > 0) {
         // help assigning single value to a multi-value field
-        dst[name] = src[name][0]
+        dst[name] = src[name]![0]
       } else {
         dst[name] = src[name]
       }
     }
-
-    // TypeScript complains about incompatibility between
-    // indexed object and toJSON function
-    // @ts-ignore
-    dst.toJSON = (): RawValue[] => this.serializeValues(dst)
   }
 }

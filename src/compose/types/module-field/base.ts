@@ -10,13 +10,17 @@ export interface Capabilities {
   writable: boolean;
 }
 
+interface DefaultValue {
+  value: string;
+}
+
 export class ModuleField {
   public fieldID = NoID
   public name = ''
   public kind = ''
   public label = ''
 
-  public defaultValue: string | string[] | undefined
+  public defaultValue: Array<DefaultValue> = []
   public maxLength = 0
 
   public isRequired = false
@@ -45,8 +49,16 @@ export class ModuleField {
     Apply(this, f, Number, 'maxLength')
     Apply(this, f, Boolean, 'isRequired', 'isPrivate', 'isMulti', 'isSystem')
 
-    if (f.defaultValue) {
+    if (f.defaultValue && Array.isArray(f.defaultValue)) {
+      /**
+       * Converting default value into proper format
+       * so we can use it without convertion
+       */
       this.defaultValue = f.defaultValue
+        // Remove nulls & undefineds
+        .filter(({ value }) => value !== undefined && value !== null)
+        // Trim def. value object to bare minimum, we only need "value"
+        .map(({ value }) => ({ value }))
     }
 
     if (this.isSystem) {
