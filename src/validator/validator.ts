@@ -129,7 +129,7 @@ export class Validated {
   }
 
   public valid (): boolean {
-    return this.length > 0
+    return this.length === 0
   }
 
   public push (...r: ValidatorResult[]): void {
