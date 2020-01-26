@@ -22,6 +22,16 @@
 import { Handler } from './handlers'
 import { Event, HandlerFn, onManual, scriptSorter, Trigger } from './shared'
 
+interface WellKnownPairs {
+  [resource: string]: Array<string>;
+}
+
+interface Options {
+  pairs: WellKnownPairs;
+  strict: boolean;
+  verbose: boolean;
+}
+
 /**
  * EventBus for event dispatching and handling
  *
@@ -29,7 +39,22 @@ import { Event, HandlerFn, onManual, scriptSorter, Trigger } from './shared'
  * we can afford some optimisation (in comparison to backend's pkg/eventbus)
  */
 export class EventBus {
+  /**
+   * List of wellknown resource & event type pairs
+   *
+   * If set, eventbus will throw error if unresognized pair is registered or dispatched
+   */
+  readonly pairs?: WellKnownPairs
+  readonly strict: boolean
+  readonly verbose: boolean
+
   private handlers: Handler[] = []
+
+  constructor (opt?: Partial<Options>) {
+    this.pairs = opt?.pairs || {}
+    this.strict = !!opt?.strict
+    this.verbose = !!opt?.verbose
+  }
 
   /**
    * Dispatches event and sequentially calls all handlers.
@@ -41,6 +66,8 @@ export class EventBus {
    * @param {Event} ev Event to dispatch
    */
   async Dispatch (ev: Event, script?: string): Promise<null> {
+    if (this.verbose) console.debug('EventBus: event dispatched', { ev, script })
+
     if (script) {
       if (ev.eventType !== onManual) {
         return null
@@ -51,9 +78,12 @@ export class EventBus {
       }
     }
 
+    this.checkPairs([ev.resourceType], [ev.eventType])
+
     const matched = this.find(ev, script)
 
     if (matched.length === 0) {
+      if (this.verbose) console.debug('EventBus: no handlers found event', { ev, script })
       return null
     }
 
@@ -65,6 +95,7 @@ export class EventBus {
 
     try {
       for (const t of matched) {
+        if (this.verbose) console.debug('EventBus: handling event', { ev, trigger: t })
         const result = await t.Handle(ev)
         if (result === false) {
           return Promise.reject(new Error('aborted'))
@@ -93,6 +124,9 @@ export class EventBus {
    * @param trigger Trigger definition
    */
   Register (handler: HandlerFn, trigger: Trigger): EventBus {
+    console.debug('EventBus: event handler registration', { handler, trigger })
+    this.checkPairs(trigger.resourceTypes, trigger.eventTypes)
+
     this.handlers.push(new Handler(handler, trigger))
     return this
   }
@@ -103,5 +137,24 @@ export class EventBus {
   UnregisterAll (): EventBus {
     this.handlers = []
     return this
+  }
+
+  protected checkPairs (resourceTypes: string[], eventTypes: string[]): void {
+    if (this.pairs === undefined || !this.strict) {
+      return
+    }
+
+    resourceTypes.forEach(resourceType => {
+      const wket = (this.pairs as WellKnownPairs)[resourceType]
+      if (wket === undefined) {
+        throw new TypeError('unknown resource type "' + resourceType + "'")
+      }
+
+      eventTypes.forEach(eventTypes => {
+        if (!wket.includes(eventTypes)) {
+          throw new TypeError('unknown event type "' + eventTypes + '" for "' + resourceType + '" resource type')
+        }
+      })
+    })
   }
 }
