@@ -5,3 +5,9 @@ export { Namespace } from './types/namespace'
 export { Page } from './types/page'
 export * from './types/page-block'
 export { RecordValidator } from './validators/record'
+export {
+  NamespaceEvent,
+  ModuleEvent,
+  RecordEvent,
+  TriggerComposeScriptOnManual,
+} from './events'
