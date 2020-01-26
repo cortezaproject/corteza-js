@@ -1,6 +1,9 @@
 import { ModuleField, ModuleFieldMaker } from './module-field'
 import { CortezaID, NoID, ISO8601Date, Apply } from '../../cast'
 import { AreObjects, AreStrings, IsOf } from '../../guards'
+import { Namespace } from './namespace'
+
+const propNamespace = Symbol('namespace')
 
 interface MetaAdminRecordList {
   columns: string[];
@@ -56,7 +59,13 @@ export class Module {
   public canDeleteRecord = false;
   public canGrant = false;
 
-  constructor (i?: PartialModule) {
+  private [propNamespace]?: Namespace
+
+  constructor (i?: PartialModule, ns?: Namespace) {
+    if (ns) {
+      this.namespace = ns
+    }
+
     this.apply(i)
   }
 
@@ -66,6 +75,10 @@ export class Module {
 
   apply (m?: PartialModule): void {
     if (!m) return
+
+    if (this.namespace && m.namespaceID && m.namespaceID !== this.namespace.namespaceID) {
+      throw new Error('module can not change namespace')
+    }
 
     Apply(this, m, CortezaID, 'moduleID', 'namespaceID')
     Apply(this, m, String, 'name', 'handle')
@@ -107,6 +120,29 @@ export class Module {
    */
   get resourceType (): string {
     return 'compose:module'
+  }
+
+  public get module (): Namespace {
+    return this[propNamespace] as Namespace
+  }
+
+  public set namespace (ns: Namespace) {
+    if (this[propNamespace]) {
+      if ((this[propNamespace] as Namespace).namespaceID !== ns.namespaceID) {
+        throw new Error('namespace for this module already set')
+      }
+    }
+
+    this.namespaceID = ns.namespaceID
+
+    if (Object.isFrozen(ns)) {
+      this[propNamespace] = ns
+    } else {
+      // Making a copy and freezing it
+      this[propNamespace] = Object.freeze(new Namespace(ns))
+    }
+
+    this[propNamespace] = ns
   }
 
   /**

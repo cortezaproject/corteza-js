@@ -2,6 +2,7 @@
 import { AreObjectsOf, IsOf } from '../../guards'
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
 import { Module } from './module'
+import { Namespace } from './namespace'
 
 const fieldIndex = Symbol('fieldIndex')
 const propModule = Symbol('module')
@@ -112,6 +113,18 @@ export class Record {
 
     r = r as PartialRecord
 
+    if (this.module && r.moduleID && r.moduleID !== this.module.moduleID) {
+      throw new Error('can not change module on a record')
+    }
+
+    if (this.namespace && r.namespaceID && r.namespaceID !== this.namespace.namespaceID) {
+      throw new Error('can not change namespace on a record')
+    }
+
+    if (r.namespaceID && r.namespaceID !== this.module.namespaceID) {
+      throw new Error('record and module namespace do not match')
+    }
+
     Apply(this, r, CortezaID, 'recordID', 'moduleID', 'namespaceID')
     Apply(this, r, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt')
     Apply(this, r, CortezaID, 'ownedBy', 'createdBy', 'updatedBy', 'deletedBy')
@@ -180,6 +193,10 @@ export class Record {
     Object.freeze(this[fieldIndex])
 
     this.values = this.initValues()
+  }
+
+  public get namespace (): Namespace {
+    return this.module.namespace
   }
 
   /**
@@ -292,5 +309,19 @@ export class Record {
         dst[name] = src[name]
       }
     }
+  }
+
+  /**
+   * Returns resource ID
+   */
+  get resourceID (): string {
+    return `${this.resourceType}:${this.recordID}`
+  }
+
+  /**
+   * Resource type
+   */
+  get resourceType (): string {
+    return 'compose:record'
   }
 }
