@@ -18,17 +18,14 @@ interface Meta {
  * System fields that are present in every object.
  */
 export const systemFields = Object.freeze([
-  { name: 'ownedBy', label: 'Owned by', kind: 'User' },
-  { name: 'createdBy', label: 'Created by', kind: 'User' },
-  { name: 'createdAt', label: 'Created at', kind: 'DateTime' },
-  { name: 'updatedBy', label: 'Updated by', kind: 'User' },
-  { name: 'updatedAt', label: 'Updated at', kind: 'DateTime' },
-  { name: 'deletedBy', label: 'Deleted by', kind: 'User' },
-  { name: 'deletedAt', label: 'Deleted at', kind: 'DateTime' },
-].map(f => new ModuleField({
-  ...f,
-  isSystem: true,
-})))
+  { isSystem: true, name: 'ownedBy', label: 'Owned by', kind: 'User' },
+  { isSystem: true, name: 'createdBy', label: 'Created by', kind: 'User' },
+  { isSystem: true, name: 'createdAt', label: 'Created at', kind: 'DateTime' },
+  { isSystem: true, name: 'updatedBy', label: 'Updated by', kind: 'User' },
+  { isSystem: true, name: 'updatedAt', label: 'Updated at', kind: 'DateTime' },
+  { isSystem: true, name: 'deletedBy', label: 'Deleted by', kind: 'User' },
+  { isSystem: true, name: 'deletedAt', label: 'Deleted at', kind: 'DateTime' },
+].map(f => ModuleFieldMaker(f)))
 
 interface PartialModule extends Partial<Omit<Module, 'fields' | 'meta' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
   fields?: Array<Partial<ModuleField>> | Array<ModuleField>;
