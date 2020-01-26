@@ -1,6 +1,7 @@
 /**
  * Exporting compose-related symbols, events...
  */
+import { NoID } from './cast'
 import { EventBus } from './eventbus'
 import * as corredor from './corredor'
 import * as validator from './validator/validator'
@@ -19,4 +20,5 @@ export {
   system,
   shared,
   apiClients,
+  NoID,
 }
