@@ -74,7 +74,8 @@ export class PageBlockRecordList extends PageBlock {
 
     return api
       .recordList(filter)
-      .then(({ filter = {}, set: records = [] }: { filter: object; set: object[] }) => {
+      .then(r => {
+        const { set: records, filter } = r as { filter: object; set: object[] }
         return { records, filter }
       })
   }

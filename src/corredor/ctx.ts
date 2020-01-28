@@ -54,7 +54,7 @@ export class Ctx {
   get $authUser (): Promise<User> {
     return this.SystemAPI
       .authCheck()
-      .then(({ user }: { user: User }) => user)
+      .then(r => (r as { user: User }).user)
   }
 
   /**

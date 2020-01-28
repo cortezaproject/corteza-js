@@ -34,16 +34,47 @@ const namespaces = [
   },
 ]
 
-const tpl = handlebars.compile(`import axios from 'axios'
-
-/* eslint-disable */
+const tpl = handlebars.compile(`
+/* eslint-disable padded-blocks */
 
 // This is a generated file.
 // See README.md file for update instructions
 
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+
+interface KV { 
+  [header: string]: unknown; 
+}
+
+interface Headers { 
+  [header: string]: string; 
+}
+
+interface Ctor {
+  baseURL?: string;
+  jwt?: string;
+  headers?: Headers;
+}
+
+interface CortezaResponse {
+  error?: string;
+  response?: unknown;
+}
+
+function stdResolve (response: AxiosResponse<CortezaResponse>): KV|Promise<never> {
+  if (response.data.error) {
+    return Promise.reject(response.data.error)
+  } else {
+    return response.data.response as KV
+  }
+}
+
 export default class {{className}} {
-  constructor ({ baseURL, headers, jwt } = {}) {
-    this.jwt = null
+  protected baseURL?: string
+  protected jwt?: string
+  protected headers: Headers = {}
+
+  constructor ({ baseURL, headers, jwt }: Ctor) {
     this.baseURL = baseURL
 
     this.headers = {
@@ -57,18 +88,18 @@ export default class {{className}} {
     }
   }
 
-  setJWT(jwt) {
+  setJWT (jwt?: string): {{className}} {
     if (this.isValidJWT(jwt)) {
       this.jwt = jwt
-      this.headers['Authorization'] = 'Bearer ' + jwt
+      this.headers.Authorization = 'Bearer ' + jwt
     } else {
-      throw new Error('JWT value too short', { jwt })
+      throw new Error('JWT value too short')
     }
 
     return this
   }
 
-  setHeaders (headers) {
+  setHeaders (headers?: Headers): {{className}} {
     if (typeof headers === 'object') {
       this.headers = headers
     }
@@ -76,27 +107,11 @@ export default class {{className}} {
     return this
   }
 
-  isValidJWT (jwt) {
-    return jwt && jwt.length > 100
+  isValidJWT (jwt?: string): boolean {
+    return !!jwt && jwt.length > 100
   }
 
-  stdReject (reject) {
-    return (error) => {
-      reject(error)
-    }
-  }
-
-  stdResolve (resolve, reject) {
-    return (response) => {
-      if (response.data.error) {
-        reject(response.data.error)
-      } else {
-        resolve(response.data.response)
-      }
-    }
-  }
-
-  api () {
+  api (): AxiosInstance {
     return axios.create({
       withCredentials: true,
       baseURL: this.baseURL,
@@ -107,32 +122,53 @@ export default class {{className}} {
 {{#endpoints}}
   // {{title}}{{#description}}
   // {{description}}{{/description}}
-  async {{fname}} () {
-    {{#if fargs}}const { {{#fargs}}{{.}},{{/fargs}} } = arguments[0] || {}{{/if}}
+  async {{fname}} ({{#if fargs}}a: KV{{/if}}): Promise<KV> {
+    {{#if fargs}}const { 
+      {{#fargs}}
+      {{.}},
+      {{/fargs}} 
+    } = (a as KV) || {}{{/if}}
     {{#required}}
     if (!{{.}}) {
-      console.error('{{../fname}} failed, field {{.}} is empty', arguments) // log error so we can debug/trace it
+      console.error('{{../fname}} failed, field {{.}} is empty', a)
       throw Error('field {{.}} is empty')
-    }{{/required}}
-    
-    let cfg = {
-      method: '{{method}}',
-      url: this.{{fname}}Endpoint({ {{#pathParams}}{{.}}, {{/pathParams}} }),
     }
-    {{#hasParams}}cfg.params = { {{#params}}{{.}}, {{/params}} }{{/hasParams}}
-    {{#hasData}}cfg.data = { {{#data}}{{.}}, {{/data}} }{{/hasData}}
-    return new Promise((resolve, reject) => {
-      this.api().request(cfg).then(this.stdResolve(resolve, reject), this.stdReject(reject))
-    })
+    {{/required}}
+    const cfg: AxiosRequestConfig = {
+      method: '{{method}}',
+      url: this.{{fname}}Endpoint({{#if pathParams}}{ 
+        {{#pathParams}}{{.}}, {{/pathParams}} 
+      }{{/if}}),
+    }
+    {{#hasParams}}cfg.params = { 
+      {{#params}}
+      {{.}}, 
+      {{/params}} 
+    }
+    {{/hasParams}}{{#hasData}}cfg.data = { 
+      {{#data}}
+      {{.}},
+      {{/data}} 
+    }{{/hasData}}
+    return this.api().request(cfg).then(result => stdResolve(result))
   }
   
-  {{fname}}Endpoint ({{#if pathParams}}{ {{#pathParams}}{{.}},{{/pathParams}} } = {}{{/if}}) {
+  {{fname}}Endpoint ({{#if pathParams}}a: KV{{/if}}): string {
+  {{#if pathParams}}
+    const { 
+      {{#pathParams}}
+      {{.}},
+      {{/pathParams}} 
+    } = a || {}
     return \`{{path}}\`
+  {{else}}
+    return '{{path}}'
+  {{/if}}
   }
 
 {{/endpoints}}
 }
-`)
+`.trimStart())
 
 esFormatterOptions.plugins = ['esformatter-add-trailing-commas']
 esFormatterOptions.whiteSpace.after = {
@@ -198,10 +234,10 @@ namespaces.forEach(({ path, namespace, className }) => {
 
   try {
     let gen = tpl({ endpoints, className, namespace })
-    gen = esformatter.format(gen, esFormatterOptions)
+    // gen = esformatter.format(gen, esFormatterOptions)
     gen = gen.replace(/[^\S\n]+$/gm, '')
 
-    fs.writeFileSync(`${dst}/${namespace}.js`, gen)
+    fs.writeFileSync(`${dst}/${namespace}.ts`, gen)
   } catch (err) {
     console.error(err)
   }
