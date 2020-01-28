@@ -6,8 +6,10 @@ export const FieldNameValidator = /^\w{1,}$/
 
 export interface Capabilities {
   configurable: true;
-  multiValue: boolean;
+  multi: boolean;
   writable: boolean;
+  required: boolean;
+  private: boolean;
 }
 
 interface DefaultValue {
@@ -48,6 +50,11 @@ export class ModuleField {
     Apply(this, f, String, 'name', 'label', 'kind')
     Apply(this, f, Number, 'maxLength')
     Apply(this, f, Boolean, 'isRequired', 'isPrivate', 'isMulti', 'isSystem')
+
+    // Make sure field is align with it's capabilities
+    if (!this.cap.multi) this.isMulti = false
+    if (!this.cap.required) this.isRequired = false
+    if (!this.cap.private) this.isPrivate = false
 
     if (f.defaultValue && Array.isArray(f.defaultValue)) {
       /**
@@ -92,8 +99,10 @@ export class ModuleField {
   public get cap (): Readonly<Capabilities> {
     return {
       configurable: true,
-      multiValue: true,
+      multi: true,
       writable: true,
+      required: true,
+      private: true,
     }
   }
 

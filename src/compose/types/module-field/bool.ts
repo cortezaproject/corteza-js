@@ -35,7 +35,7 @@ export class ModuleFieldBool extends ModuleField {
   public get cap (): Readonly<Capabilities> {
     return {
       ...super.cap,
-      multiValue: false,
+      multi: false,
     }
   }
 }

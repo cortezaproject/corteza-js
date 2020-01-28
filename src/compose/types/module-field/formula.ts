@@ -1,4 +1,4 @@
-import { ModuleField, Registry } from './base'
+import { Capabilities, ModuleField, Registry } from './base'
 import { Apply } from '../../../cast'
 
 const kind = 'Formula'
@@ -25,6 +25,17 @@ export class ModuleFieldFormula extends ModuleField {
     // if (!o) return
 
     Apply(this.options, o, String, 'multiDelimiter')
+  }
+
+  /**
+   * Per module field type capabilities
+   */
+  public get cap (): Readonly<Capabilities> {
+    return {
+      ...super.cap,
+      required: false,
+      private: false,
+    }
   }
 }
 
