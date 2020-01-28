@@ -40,10 +40,10 @@ export class Calendar extends PageBlock {
   readonly kind = kind
   public options = new CalendarOptions()
 
-  readonly feedResources = {
+  static feedResources = Object.freeze({
     record: 'compose:record',
     reminder: 'system:reminder',
-  }
+  })
 
   constructor (i?: PageBlock | Partial<PageBlock>) {
     super(i)
