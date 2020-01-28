@@ -1,1 +1,1 @@
-export { Validator } from './validator'
+export { Validator, Validated } from './validator'
