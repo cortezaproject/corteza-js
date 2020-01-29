@@ -1,5 +1,11 @@
-export const IsOf = <T>(v: unknown, prop: keyof T): v is T => {
-  return (v as T)[prop] !== undefined
+export const IsOf = <T>(v: unknown, ...props: (keyof T)[]): v is T => {
+  for (const prop of props) {
+    if (!Object.prototype.hasOwnProperty.call(v, prop)) {
+      return false
+    }
+  }
+
+  return true
 }
 
 // eslint-disable-next-line valid-typeof
@@ -10,7 +16,7 @@ export const AreBooleans = (a: unknown|unknown[]): a is boolean[] => every(a, 'b
 export const AreNumbers = (a: unknown|unknown[]): a is number[] => every(a, 'number')
 export const AreObjects = (a: unknown|unknown[]): a is object[] => every(a, 'object')
 
-export function AreObjectsOf<T> (a: unknown|unknown[], prop: keyof T): a is T[] {
+export function AreObjectsOf<T> (a: unknown|unknown[], ...props: (keyof T)[]): a is T[] {
   if (!Array.isArray(a)) {
     return false
   }
@@ -19,5 +25,5 @@ export function AreObjectsOf<T> (a: unknown|unknown[], prop: keyof T): a is T[] 
     return true
   }
 
-  return AreObjects(a) && a.every(i => IsOf<T>(i, prop))
+  return AreObjects(a) && a.every(i => IsOf<T>(i, ...props))
 }
