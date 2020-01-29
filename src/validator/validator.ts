@@ -81,7 +81,8 @@ export function NormalizeValidatorResults (...r: ValidatorResult[]): ValidatorEr
       return
     }
 
-    if (IsOf<ValidatorResultGetter>(r, 'get')) {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    if (r instanceof Validated) {
       out.push(...r.get())
       return
     }
@@ -91,12 +92,10 @@ export function NormalizeValidatorResults (...r: ValidatorResult[]): ValidatorEr
       return
     }
 
-    if (typeof r === 'object') {
+    if (IsOf<ValidatorRawResult>(r, 'message')) {
       const { message, i18n, meta } = (r as ValidatorRawResult)
-      if (message) {
-        out.push(new ValidatorError({ message, i18n }, meta || {}))
-        return
-      }
+      out.push(new ValidatorError({ message, i18n }, meta || {}))
+      return
     }
 
     // Catch-all for non object errors

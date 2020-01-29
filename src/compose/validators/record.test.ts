@@ -6,10 +6,10 @@ import { Validated, ValidatorError } from '../../validator/validator'
 
 const m = Object.freeze(new Module({
   fields: [
-    { name: 'simple' },
-    { name: 'required', isRequired: true, kind: 'String' },
-    { name: 'multi', isMulti: true },
-    { name: 'multiRequired', isRequired: true, isMulti: true },
+    { kind: 'String', name: 'simple' },
+    { kind: 'String', name: 'required', isRequired: true },
+    { kind: 'String', name: 'multi', isMulti: true },
+    { kind: 'String', name: 'multiRequired', isRequired: true, isMulti: true },
   ],
 }))
 

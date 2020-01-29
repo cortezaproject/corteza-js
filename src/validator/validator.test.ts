@@ -82,6 +82,7 @@ describe('Validated class', () => {
     expect(v.length).to.equal(0)
     expect(v.get().length).to.equal(0)
     v.push(new Validated())
+    console.log(v)
     expect(v.length).to.equal(0)
   })
 })

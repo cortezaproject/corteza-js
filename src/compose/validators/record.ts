@@ -74,7 +74,7 @@ export class RecordValidator extends Validator<Record> {
       // Fields are not explicitly provided,
       // we can run record-wide validators:
       const result = super.run(r)
-      out.push(result)
+      out.push(result.get())
 
       // get list of fields from registered field validators
       fields = Object.getOwnPropertyNames(this.rfv)
@@ -83,7 +83,7 @@ export class RecordValidator extends Validator<Record> {
     for (const field of fields) {
       const results = this.rfv[field].run(r, r.values[field], field)
       results.applyMeta({ field })
-      out.push(results)
+      out.push(results.get())
     }
 
     return out
