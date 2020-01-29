@@ -2,12 +2,35 @@ import { PageBlock, PageBlockInput, Registry } from './base'
 
 const kind = 'Automation'
 
+interface Button {
+  script: string;
+
+  // resource type (copied from ui hook)
+  resourceType: string;
+
+  // Can override hook's label
+  label?: string;
+
+  // can override hooks's variant
+  variant?: string;
+
+  enabled?: boolean;
+}
+
 interface Options {
-  buttons: string[];
+  // Ordered list of buttons to display in the block
+  buttons: Button[];
+
+  // When true, new compatible buttons (ui-hooks) are NOT
+  // added automatically to the block
+  //
+  // Default behaviour is to add new buttons automatically.
+  sealed: boolean;
 }
 
 const defaults: Readonly<Options> = Object.freeze({
   buttons: [],
+  sealed: false,
 })
 
 export class PageBlockAutomation extends PageBlock {
