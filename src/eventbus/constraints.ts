@@ -1,4 +1,5 @@
 import minimatch from 'minimatch'
+import { IsOf } from '../guards'
 
 interface Constraint {
   name?:
@@ -91,28 +92,34 @@ export class Match extends Equal {
   }
 }
 
-export function ConstraintMaker (c: Constraint): ConstraintMatcher {
-  switch ((c.op || '').toLowerCase()) {
+export function ConstraintMaker (c: Constraint|unknown): ConstraintMatcher {
+  if (!IsOf<Constraint>(c, 'value')) {
+    throw new Error('invalid constraint input')
+  }
+
+  const { name = '', op = '', value } = c
+
+  switch (op.toLowerCase()) {
     case '':
     case 'eq':
     case '=':
     case '==':
     case '===':
-      return new Equal(c.name, c.value)
+      return new Equal(name, value)
     case 'not eq':
     case 'ne':
     case '!=':
     case '!==':
-      return new Equal(c.name, c.value, true)
+      return new Equal(name, value, true)
     case 'like':
-      return new Like(c.name, c.value)
+      return new Like(name, value)
     case 'not like':
-      return new Like(c.name, c.value, true)
+      return new Like(name, value, true)
     case '~':
-      return new Match(c.name, c.value)
+      return new Match(name, value)
     case '!~':
-      return new Match(c.name, c.value, true)
+      return new Match(name, value, true)
     default:
-      throw new Error('unsupported operator')
+      throw new Error('unsupported constraint operator')
   }
 }
