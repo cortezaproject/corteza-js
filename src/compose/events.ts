@@ -1,6 +1,6 @@
 import { Event, onManual } from '../eventbus/shared'
 import { Module } from './types/module'
-import { Record } from './types/record'
+import { Record, Values } from './types/record'
 import { Namespace } from './types/namespace'
 import { ConstraintMatcher } from '../eventbus/constraints'
 import { IsOf } from '../guards'
@@ -9,7 +9,7 @@ interface TriggerEndpoints {
   automationTriggerScript (params: { script: string }): Promise<object>;
   namespaceTriggerScript (params: { namespaceID: string; script: string }): Promise<object>;
   moduleTriggerScript (params: { namespaceID: string; moduleID: string; script: string }): Promise<object>;
-  recordTriggerScript (params: { namespaceID: string; moduleID: string; recordID: string; script: string }): Promise<object>;
+  recordTriggerScript (params: { namespaceID: string; moduleID: string; recordID: string; values: Values; script: string }): Promise<object>;
 }
 
 function namespaceMatcher (r: Namespace, c: ConstraintMatcher, def: boolean): boolean {
@@ -89,11 +89,12 @@ export function RecordEvent (res: Record, event?: Partial<Event>): Event {
   }
 }
 
-export async function TriggerComposeScriptOnManual (api: TriggerEndpoints, ev: Event, script: string): Promise<object|Record> {
+export async function TriggerComposeScriptOnManual (api: TriggerEndpoints, ev: Event, script: string): Promise<unknown> {
   const params = { script, args: ev.args }
 
   if (ev.resourceType === 'compose') {
-    return api.automationTriggerScript({ ...params })
+    return api
+      .automationTriggerScript({ ...params })
   }
 
   if (!ev.args) {
@@ -101,14 +102,13 @@ export async function TriggerComposeScriptOnManual (api: TriggerEndpoints, ev: E
   }
 
   if (ev.resourceType === 'compose:namespace') {
-    if (!IsOf<Module>(ev.args.namespace,'namespaceID')) {
+    if (!IsOf<Namespace>(ev.args.namespace, 'namespaceID')) {
       throw new Error('expecting args.namespace in event arguments')
     }
 
-    const { namespaceID } = ev.args.namespace
+    const { namespaceID } = ev.args.namespace as Namespace
     return api
       .namespaceTriggerScript({ namespaceID, ...params })
-      .then(rval => new Module(rval))
   }
 
   if (ev.resourceType === 'compose:module') {
@@ -116,10 +116,10 @@ export async function TriggerComposeScriptOnManual (api: TriggerEndpoints, ev: E
       throw new Error('expecting args.module in event arguments')
     }
 
-    const { namespaceID, moduleID } = ev.args.module
+    const { namespaceID, moduleID } = ev.args.module as Module
+
     return api
       .moduleTriggerScript({ namespaceID, moduleID, ...params })
-      .then(rval => new Module(rval))
   }
 
   if (ev.resourceType === 'compose:record') {
@@ -127,10 +127,12 @@ export async function TriggerComposeScriptOnManual (api: TriggerEndpoints, ev: E
       throw new Error('expecting args.record in event arguments')
     }
 
-    const { namespaceID, moduleID, recordID } = ev.args.record
+    const record = ev.args.record as Record
+    const { namespaceID, moduleID, recordID, values } = record
+
     return api
-      .recordTriggerScript({ namespaceID, moduleID, recordID, ...params })
-      .then(rval => new Record(rval))
+      .recordTriggerScript({ namespaceID, moduleID, recordID, values, ...params })
+      .then(rval => record.apply(rval))
   }
 
   throw Error(`cannot trigger server script: unknown resource type '${ev.resourceType}'`)
