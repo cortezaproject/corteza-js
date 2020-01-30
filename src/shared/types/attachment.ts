@@ -17,6 +17,7 @@ export class Attachment {
   public name = '';
   public url = '';
   public previewUrl = '';
+  public download = '';
   public meta: Meta = {};
 
   public createdAt?: Date = undefined;
@@ -39,12 +40,9 @@ export class Attachment {
     Apply(this, i, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt')
   }
 
-  get download (): string {
-    return this.url + '&download=1'
-  }
-
   setBaseURL (baseURL: string) {
     this.url = baseURL + this.url
     this.previewUrl = baseURL + this.previewUrl
+    this.download = this.url + '&download=1'
   }
 }
