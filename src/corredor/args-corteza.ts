@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
-import { User, Role, Application } from '../system'
+import { User, Role, Application, SinkResponse, SinkRequest } from '../system'
 import { Module, Page, Namespace, Record } from '../compose'
 import { Channel, Message } from '../messaging'
 import { Caster, GenericCaster, GenericCasterFreezer } from './shared'
@@ -50,4 +50,6 @@ CortezaTypes.set('oldChannel', GenericCasterFreezer(Channel))
 CortezaTypes.set('message', GenericCaster(Message))
 CortezaTypes.set('oldMessage', GenericCasterFreezer(Message))
 CortezaTypes.set('record', recordCaster)
+CortezaTypes.set('request', GenericCasterFreezer(SinkRequest))
+CortezaTypes.set('response', GenericCaster(SinkResponse))
 CortezaTypes.set('oldRecord', recordCasterFreezer)
