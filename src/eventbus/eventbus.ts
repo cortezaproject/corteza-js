@@ -22,11 +22,11 @@
 import { Handler } from './handlers'
 import { Event, HandlerFn, onManual, scriptSorter, Trigger } from './shared'
 
-interface WellKnownPairs {
+export interface WellKnownPairs {
   [resource: string]: Array<string>;
 }
 
-interface Options {
+export interface Options {
   pairs: WellKnownPairs;
   strict: boolean;
   verbose: boolean;
