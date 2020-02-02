@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import { expect } from 'chai'
 import { Record, Values } from './record'
 import { Module } from './module'
@@ -64,6 +65,21 @@ describe(__filename, () => {
 
     it('raw values with module', () => {
       assertSimpleSet(new Record(rawValues, m))
+    })
+
+    it('should not corrupt recordID when there are no values', () => {
+      expect(new Record({ recordID: '42' }, m)).to.have.property('recordID').equal('42')
+    })
+
+    it('should handle garbage input', () => {
+      // @ts-ignore
+      expect(() => new Record(false, m)).to.throw
+      // @ts-ignore
+      expect(() => new Record(null, m)).to.throw
+      // @ts-ignore
+      expect(() => new Record('some string', m)).to.throw
+      // @ts-ignore
+      expect(() => new Record(42, m)).to.throw
     })
   })
 

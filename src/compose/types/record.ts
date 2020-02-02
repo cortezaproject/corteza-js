@@ -91,18 +91,18 @@ export class Record {
   }
 
   apply (p?: unknown): void {
-    if (!p) return
+    if (p === undefined) return
 
     let r
 
     // Determine what kind of value we got
     switch (true) {
-      case typeof p === 'object' && Object.prototype.hasOwnProperty.call(p, 'values'):
+      case IsOf<Record>(p, 'recordID') || IsOf<Record>(p, 'values'):
         // p1 is something that looks like a record object
         r = p as Record
         break
 
-      case AreObjectsOf(p, 'name'):
+      case AreObjectsOf<RawValue>(p, 'name'):
         // assuming p1 is array of raw values
         r = ({ values: p as RawValue[] }) as PartialRecord
         break
@@ -129,7 +129,7 @@ export class Record {
     Apply(this, r, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt')
     Apply(this, r, CortezaID, 'ownedBy', 'createdBy', 'updatedBy', 'deletedBy')
 
-    if (r.values) {
+    if (r.values !== undefined) {
       this.prepareValues(r.values)
     }
 
