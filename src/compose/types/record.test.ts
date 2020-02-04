@@ -83,6 +83,48 @@ describe(__filename, () => {
     })
   })
 
+  describe('multi value reading', () => {
+    const bars = ['bar1', 'bar2', 'bar3', 'bar4']
+
+    it('should have all values from explicit value setting', () => {
+      const r = new Record(m)
+      r.values.multi = bars
+      expect(r.values.multi).to.be.lengthOf(4)
+      expect(r.values.multi).to.deep.eq(bars)
+    })
+
+    it('should have all values from setValues (with Values)', () => {
+      const r = new Record(m)
+      r.setValues({ multi: bars })
+      expect(r.values.multi).to.be.lengthOf(4)
+      expect(r.values.multi).to.deep.eq(bars)
+    })
+
+    it('should have all values from setValues (with RawValue[])', () => {
+      const r = new Record(m)
+      r.setValues([
+        { name: 'multi', value: 'bar1' },
+        { name: 'multi', value: 'bar2' },
+        { name: 'multi', value: 'bar3' },
+        { name: 'multi', value: 'bar4' },
+      ])
+      expect(r.values.multi).to.be.lengthOf(4)
+      expect(r.values.multi).to.deep.eq(bars)
+    })
+
+    it('should have all values from record initialization', () => {
+      const r = new Record(m, [
+        { name: 'multi', value: 'bar1' },
+        { name: 'multi', value: 'bar2' },
+        { name: 'multi', value: 'bar3' },
+        { name: 'multi', value: 'bar4' },
+      ])
+
+      expect(r.values.multi).to.be.lengthOf(4)
+      expect(r.values.multi).to.deep.eq(bars)
+    })
+  })
+
   describe('value setting', () => {
     let r: Record
     beforeEach(() => {
@@ -96,11 +138,6 @@ describe(__filename, () => {
 
     it('should properly set from values object', () => {
       r.setValues({ simple: 'foo' })
-      expect(r.values.simple).to.eq('foo')
-    })
-
-    it('should properly set from array of values objects', () => {
-      r.setValues([{ simple: 'foo' }])
       expect(r.values.simple).to.eq('foo')
     })
 

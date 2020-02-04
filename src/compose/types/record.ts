@@ -35,13 +35,19 @@ export interface Values {
   [name: string]: string|string[]|undefined;
 }
 
-type RecordCtorCombo = Record | Module | RawValue | RawValue[] | PartialRecord | Values | Values[]
+type ValueCombo = RawValue | RawValue[] | Values | Values[]
+type RecordCtorCombo = Record | Module | PartialRecord | ValueCombo
 
 /**
  * For something to be useful module (for a Record), it needs to contain fields
  */
 function isModule (m?: unknown): m is Module {
   return m && IsOf<Module>(m, 'fields') && Array.isArray(m.fields) && m.fields.length > 0
+}
+
+function isRawValue (v: object): v is RawValue {
+  const props = Object.getOwnPropertyNames(v)
+  return props.length === 2 && props.includes('name') && props.includes('value')
 }
 
 /**
@@ -130,7 +136,7 @@ export class Record {
     Apply(this, r, CortezaID, 'ownedBy', 'createdBy', 'updatedBy', 'deletedBy')
 
     if (r.values !== undefined) {
-      this.prepareValues(r.values)
+      this.updateValues(r.values)
     }
 
     if (!this[cleanValues]) {
@@ -192,7 +198,7 @@ export class Record {
 
     Object.freeze(this[fieldIndex])
 
-    this.values = this.initValues()
+    this.initValues()
   }
 
   public get namespace (): Namespace {
@@ -202,18 +208,18 @@ export class Record {
   /**
    * Converts internal representation of values into array of RawValue objects
    */
-  serializeValues (iv = this.values): RawValue[] {
+  serializeValues (): RawValue[] {
     const vv: RawValue[] = []
 
     this[fieldIndex].forEach(({ isMulti }, name) => {
-      if (iv[name] === undefined) {
+      if (this.values[name] === undefined) {
         return
       }
 
-      const val = iv[name] as string|string[]
+      const val = this.values[name] as string|string[]
 
       if (isMulti) {
-        if (Array.isArray(iv[name])) {
+        if (Array.isArray(this.values[name])) {
           for (let i = 0; i < val.length; i++) {
             if (val[i] !== undefined) {
               vv.push({ name, value: val[i].toString() })
@@ -228,21 +234,21 @@ export class Record {
     return vv
   }
 
-  public setValues (input?: Values|Values[]|RawValue[]): void {
-    if (input) {
-      this.prepareValues(input)
-    }
+  // Removes and resets all values
+  public setValues (...i: ValueCombo[]): void {
+    this.initValues()
+    this.updateValues(...i)
   }
 
   /**
    * Makes destination values
    */
-  protected initValues (): Values {
+  protected initValues (): void {
     const dst: Values = {}
     // TypeScript complains about incompatibility between
     // indexed object and toJSON function
     // @ts-ignore
-    dst.toJSON = (): RawValue[] => this.serializeValues(dst)
+    dst.toJSON = (): RawValue[] => this.serializeValues()
 
     this[fieldIndex].forEach(({ isMulti, defaultValue }, name) => {
       if (defaultValue && Array.isArray(defaultValue) && defaultValue.length > 0) {
@@ -258,57 +264,86 @@ export class Record {
       }
     })
 
-    return dst
+    this.values = dst
   }
 
   /**
    * Updates record's values object with provided input
    */
-  protected prepareValues (src: Values|Values[]|RawValue[], dst = this.values): void {
-    if (AreObjectsOf<RawValue>(src, 'name')) {
-      // Assign values from RawValues to Values like struct
-      src = src.reduce((vv, { name, value }) => {
-        vv[name] = value
-        return vv
-      }, {} as Values)
-    } else if (Array.isArray(src)) {
-      // Merge all given Values objects
-      src = src.reduce((vv, v) => {
-        for (const name of Object.getOwnPropertyNames(v)) {
-          vv[name] = v[name]
+  protected updateValues (...combo: ValueCombo[]): void {
+    combo.forEach(v => {
+      if (Array.isArray(v)) {
+        this.updateValues(...v)
+        return
+      }
+
+      if (isRawValue(v)) {
+        const { name, value } = v
+        this.setValue(name, value)
+        return
+      }
+
+      if (typeof v !== 'object') {
+        throw Error('expecting array of values or values object')
+      }
+
+      // Handle Values
+      for (const name of Object.getOwnPropertyNames(v)) {
+        this.setValue(name, v[name])
+      }
+    })
+  }
+
+  /**
+   * Sets single value
+   *
+   * @param name
+   * @param value
+   */
+  public setValue (name: string, value: undefined|string|string[], index = -1): void {
+    // Skip reserved names
+    if (reservedFieldNames.includes(name)) {
+      return
+    }
+
+    // Skip unknown fields
+    if (!this[fieldIndex].has(name)) {
+      return
+    }
+    const { isMulti } = this[fieldIndex].get(name) as FieldIndex
+
+    if (value === undefined || value.length === 0) {
+      // nothing given, nothing set
+      this.values[name] = isMulti ? [] : undefined
+      return
+    }
+
+    if (isMulti) {
+      if (Array.isArray(value)) {
+        if (index < -1) {
+          // assigning [] to [i]
+          throw Error('can not set array of values to a single value 2')
         }
 
-        return vv
-      }, {} as Values)
-    } else if (typeof src !== 'object') {
-      throw Error('expecting array of values or values object')
+        this.values[name] = Array.isArray(value) ? value : [value]
+        return
+      }
+
+      if (index === -1) {
+        (this.values[name] as string[]).push(value)
+        return
+      }
+
+      (this.values[name] as string[])[index] = value
+      return
     }
 
-    // src is now aggregated (and narrowed to Values)
-    // we need to make sure only valid fields are assigned to values
-    for (const name of Object.getOwnPropertyNames(src)) {
-      // Skip reserved names
-      if (reservedFieldNames.includes(name)) {
-        continue
-      }
-
-      // Skip unknown fields
-      if (!this[fieldIndex].has(name)) {
-        continue
-      }
-
-      const { isMulti } = this[fieldIndex].get(name) as FieldIndex
-
-      if (isMulti && !Array.isArray(src[name])) {
-        // help assigning single value to a multi-value field
-        dst[name] = [src[name] as string]
-      } else if (!isMulti && Array.isArray(src[name]) && src[name] && src[name]!.length > 0) {
-        // help assigning single value to a multi-value field
-        dst[name] = src[name]![0]
-      } else {
-        dst[name] = src[name]
-      }
+    if (Array.isArray(value)) {
+      value = value[0]
     }
+
+    // Update with first item or set to undefined
+    this.values[name] = value
   }
 
   /**
