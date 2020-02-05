@@ -52,7 +52,7 @@ export default class Feed {
       Apply(this, i, Boolean, 'allDay')
 
       if (i.options) {
-        Object.assign(this.options, i!.options)
+        this.options = { ...this.options, ...i.options }
       }
     }
   }

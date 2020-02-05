@@ -7,10 +7,7 @@ export { PageBlockRecord } from './record'
 export { PageBlockRecordList } from './record-list'
 export { PageBlockRecordOrganizer } from './record-organizer'
 export { PageBlockSocialFeed } from './social-feed'
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-export { Calendar as PageBlockCalendar } from './calendar'
+export { PageBlockCalendar } from './calendar'
 
 export function PageBlockMaker (i: { kind: string }): PageBlock {
   if (!Registry.has(i.kind)) {

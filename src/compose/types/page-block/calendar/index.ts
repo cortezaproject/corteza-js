@@ -1,1 +1,1 @@
-export { Calendar } from './page-block'
+export { PageBlockCalendar } from './page-block'

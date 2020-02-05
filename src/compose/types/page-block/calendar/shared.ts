@@ -33,11 +33,11 @@ export function makeColors (hex: string): Colors {
 }
 
 export interface Event {
-  groupId: string;
+  groupId?: string;
   id: string;
   title: string;
-  start: string|null;
-  end: string|null;
+  start?: string;
+  end?: string;
   allDay: boolean;
   backgroundColor: string;
   borderColor: string;

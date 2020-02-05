@@ -1,5 +1,8 @@
+import { merge } from 'lodash'
 import { PageBlock, Registry } from '../base'
 import Feed, { FeedInput } from './feed'
+import { ReminderFeed } from './feed-reminder'
+import { RecordFeed } from './feed-record'
 
 const kind = 'Calendar'
 
@@ -36,7 +39,7 @@ class CalendarOptions {
 /**
  * Helper class to help define calendar's functionality
  */
-export class Calendar extends PageBlock {
+export class PageBlockCalendar extends PageBlock {
   readonly kind = kind
   public options = new CalendarOptions()
 
@@ -53,14 +56,17 @@ export class Calendar extends PageBlock {
   applyOptions (o?: Partial<CalendarOptions>): void {
     if (!o) return
 
-    this.options.defaultView = Calendar.handleLegacyView(o.defaultView) || 'dayGridMonth'
+    this.options.defaultView = PageBlockCalendar.handleLegacyView(o.defaultView) || 'dayGridMonth'
     this.options.feeds = (o.feeds || []).map(f => new Feed(f))
-    this.options.header = o.header || {}
-    this.options.header = { ...this.options.header, views: Calendar.handleLegacyViews(this.options.header.views || []) }
-    this.options.locale = o.locale || 'en-gb'
+    this.options.header = merge(
+      {},
+      this.options.header,
+      o.header,
+      { views: PageBlockCalendar.handleLegacyViews(o.header?.views || []) },
+    )
 
-    // this.options.reminderFeed = reminderFeed
-    // this.options.recordFeed = recordFeed
+
+    this.options.locale = o.locale || 'en-gb'
   }
 
   /**
@@ -75,6 +81,7 @@ export class Calendar extends PageBlock {
 
     // Show view buttons only when 2 or more are selected
     let right = ''
+
     if (h.views && h.views.length >= 2) {
       right = this.reorderViews(h.views).join(',')
     }
@@ -105,7 +112,7 @@ export class Calendar extends PageBlock {
    * @param {Array} views Array of views to filter & sort
    */
   reorderViews (views: string[] = []): Array<string> {
-    return Calendar.availableViews()
+    return PageBlockCalendar.availableViews()
       .filter(v => views.find(fv => fv === v))
       .map(v => v)
   }
@@ -128,9 +135,12 @@ export class Calendar extends PageBlock {
     return views.map(v => legacyViewMapping[v] || v)
   }
 
-  static makeFeed(f?: FeedInput): Feed {
+  static makeFeed (f?: FeedInput): Feed {
     return new Feed(f)
   }
+
+  static ReminderFeed = ReminderFeed
+  static RecordFeed = RecordFeed
 }
 
-Registry.set(kind, Calendar)
+Registry.set(kind, PageBlockCalendar)

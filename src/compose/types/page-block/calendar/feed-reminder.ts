@@ -1,7 +1,7 @@
 import { System as SystemAPI } from '../../../../api-clients'
-import { User } from '../../../../system'
-import { Reminder } from '../../../../system/types/reminder'
+import { User, Reminder } from '../../../../system'
 import { makeColors, Event } from './shared'
+import { AreObjectsOf } from '../../../../guards'
 
 // import variables from 'corteza-webapp-compose/src/themes/corteza-base/variables.scss'
 // const defaultColor = variables.secondary
@@ -38,10 +38,16 @@ export async function ReminderFeed ($SystemAPI: SystemAPI, user: User, feed: Fee
     scheduledOnly: true,
     excludeDismissed: true,
     assignedTo: user.userID,
-  }).then(({ set: reminders = [] }: { set: Reminder[] }) => {
+  }).then(({ set }) => {
     const { backgroundColor, borderColor, isLight } = makeColors(feed.options.color)
 
-    return reminders.map(r => {
+    if (!AreObjectsOf<Reminder>(set, 'reminderID', 'assignedTo', 'remindAt', 'payload')) {
+      return []
+    }
+
+    return set.map(r => {
+      r = new Reminder(r)
+
       const classNames = ['event', 'event-reminder']
       if (r.assignedTo !== user.userID) {
         classNames.push('event-not-owner')
@@ -52,17 +58,20 @@ export async function ReminderFeed ($SystemAPI: SystemAPI, user: User, feed: Fee
         classNames.push('text-white')
       }
 
-      return {
+      const e: Event = {
         id: r.reminderID,
-        title: r.payload.title || r.reminderID,
-        start: r.remindAt,
+        title: (r.payload.title as string) ?? r.reminderID ?? '-',
+        start: r.remindAt?.toISOString(),
         backgroundColor,
         borderColor,
         classNames,
+        allDay: false,
         extendedProps: {
           reminderID: r.reminderID,
         },
       }
+
+      return e
     })
   })
 }
