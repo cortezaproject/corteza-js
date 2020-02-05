@@ -1,7 +1,18 @@
+import { merge } from 'lodash'
 import { Apply } from '../../../cast'
 
-interface PageBlockStyleVariants { [_: string]: string }
-interface PageBlockStyle { variants: PageBlockStyleVariants }
+interface PageBlockStyleVariants {
+  [_: string]: string;
+}
+
+interface PageBlockStyleWrap {
+  kind: string;
+}
+
+interface PageBlockStyle {
+  variants: PageBlockStyleVariants;
+  wrap?: PageBlockStyleWrap;
+}
 
 export type PageBlockInput = PageBlock | Partial<PageBlock>
 
@@ -17,6 +28,9 @@ export class PageBlock {
   public options = {}
   public style: PageBlockStyle = {
     variants: {},
+    wrap: {
+      kind: 'card',
+    },
   }
 
   constructor (i?: PageBlockInput) {
@@ -46,11 +60,11 @@ export class PageBlock {
     }
 
     if (i.options) {
-      // Object.assign(this.options, i.options)
+      this.options = merge({}, this.options, i.options)
     }
 
     if (i.style) {
-      Object.assign(this.style, i.style)
+      this.style = merge({}, this.style, i.style)
     }
   }
 }
