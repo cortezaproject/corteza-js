@@ -129,7 +129,7 @@ export function Apply<DST, SRC, T extends keyof DST> (dst: DST, src: SRC, cast: 
     const sProp = (prop as unknown) as keyof SRC
 
     // value on src should be defined
-    if (src[sProp] === undefined) {
+    if (src[sProp] === undefined || src[sProp] === null) {
       return
     }
 
