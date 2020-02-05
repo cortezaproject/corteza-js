@@ -1,4 +1,5 @@
 import typescript from 'rollup-plugin-typescript2'
+import resolve from '@rollup/plugin-node-resolve'
 import pkg from './package.json'
 
 export default {
@@ -24,6 +25,11 @@ export default {
   plugins: [
     typescript({
       typescript: require('typescript'),
+    }),
+
+    resolve({
+      main: true,
+      preferBuiltins: true,
     }),
   ],
 }
