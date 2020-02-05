@@ -1,4 +1,5 @@
 import { IsOf } from '../guards'
+import { merge } from 'lodash'
 
 interface Meta { [key: string]: unknown }
 
@@ -23,12 +24,13 @@ export class ValidatorError {
     if (typeof message === 'string') {
       this.message = message
     } else {
+      // this explicit assignment only to satisfy lint/ts checks (TS2564)
       this.message = message.message
-      Object.assign(this, message)
+      this.i18n = message.i18n
     }
 
     if (meta) {
-      Object.assign(this.meta, meta)
+      this.meta = merge({}, this.meta, meta)
     }
   }
 }

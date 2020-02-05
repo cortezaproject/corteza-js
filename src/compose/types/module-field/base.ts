@@ -1,3 +1,4 @@
+import { merge } from 'lodash'
 import { IsOf } from '../../../guards'
 import { Apply, CortezaID, NoID } from '../../../cast'
 import { IsEmpty, ValidatorError, ValidatorResult } from '../../../validator/validator'
@@ -80,7 +81,7 @@ export class ModuleField {
     }
 
     if (IsOf(f, 'options')) {
-      Object.assign(this.options, f.options)
+      this.options = merge({}, this.options, f.options)
     }
   }
 

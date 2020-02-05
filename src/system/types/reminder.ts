@@ -1,3 +1,4 @@
+import { merge } from 'lodash'
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
 
 interface KV {
@@ -39,9 +40,9 @@ export class Reminder {
     Apply(this, r, CortezaID, 'assignedTo', 'assignedBy', 'dismissedBy')
 
     // @todo actions, options, payload... all 3?
-    if (r.payload) Object.assign(this.payload, r.payload)
-    if (r.actions) Object.assign(this.actions, r.actions)
-    if (r.options) Object.assign(this.options, r.options)
+    this.payload = merge({}, this.payload, r.payload)
+    this.actions = merge({}, this.actions, r.actions)
+    this.options = merge({}, this.options, r.options)
 
     Apply(this, r, ISO8601Date, 'assignedAt', 'dismissedAt', 'remindAt', 'createdAt')
     Apply(this, r, Boolean, 'processed')

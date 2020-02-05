@@ -1,3 +1,5 @@
+import { merge } from 'lodash'
+
 interface KVV {
   [key: string]: string[];
 }
@@ -15,7 +17,7 @@ export class SinkRequest {
   rawBody = ''
 
   constructor (r: Partial<SinkRequest> = {}) {
-    Object.assign(this, r)
+    merge(this, r)
   }
 }
 
@@ -25,6 +27,6 @@ export class SinkResponse {
   body: unknown
 
   constructor (r: Partial<SinkResponse> = {}) {
-    Object.assign(this, r)
+    merge(this, r)
   }
 }
