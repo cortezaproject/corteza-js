@@ -17,6 +17,10 @@ interface Options {
   hideSorting: boolean;
   allowExport: boolean;
   perPage: number;
+
+  // Are table rows selectable
+  selectable: boolean;
+  selectMode: 'multi' | 'single' | 'range';
 }
 
 const defaults: Readonly<Options> = Object.freeze({
@@ -32,6 +36,9 @@ const defaults: Readonly<Options> = Object.freeze({
   hideSorting: false,
   allowExport: false,
   perPage: 20,
+
+  selectable: false,
+  selectMode: 'multi',
 })
 
 export class PageBlockRecordList extends PageBlock {
@@ -48,7 +55,7 @@ export class PageBlockRecordList extends PageBlock {
     if (!o) return
 
     Apply(this.options, o, CortezaID, 'pageID', 'moduleID')
-    Apply(this.options, o, String, 'prefilter', 'presort')
+    Apply(this.options, o, String, 'prefilter', 'presort', 'selectMode')
 
     if (o.fields) {
       this.options.fields = o.fields
@@ -61,6 +68,7 @@ export class PageBlockRecordList extends PageBlock {
       'hidePaging',
       'hideSorting',
       'allowExport',
+      'selectable',
     )
   }
 
