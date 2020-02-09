@@ -1,15 +1,43 @@
 /* eslint-disable */
 
-import { Channel } from '../../messaging/types/channel'
-import { User } from '../../system/types/user'
-import { extractID, genericPermissionUpdater, isFresh } from './shared'
+import { extractID, genericPermissionUpdater, isFresh, Rule } from './shared'
+import { Messaging as MessagingAPI } from '../../api-clients'
+import { Channel, Message } from '../../messaging/'
+import { User } from '../../system'
+
+interface KV {
+  [_: string]: unknown;
+}
+
+interface MessagingContext {
+  MessagingAPI: MessagingAPI;
+  $authUser?: User;
+  $channel?: Channel;
+  $message?: Message;
+}
+
+interface ChannelFilter {
+  [key: string]: string|undefined;
+  query?: string;
+}
+
+interface ChannelResponse {
+  filter: ChannelFilter;
+  set: Array<Channel>;
+}
+
 
 /**
  * MessagingHelper provides layer over Messaging API and utilities that simplify automation script writing
  *
  */
 export class Messaging {
-  constructor (ctx = {}) {
+  private MessagingAPI: MessagingAPI;
+  private $authUser?: User;
+  private $channel?: Channel;
+  private $message?: Message;
+
+  constructor (ctx: MessagingContext) {
     this.MessagingAPI = ctx.MessagingAPI
 
     this.$authUser = ctx.$authUser
@@ -40,9 +68,9 @@ export class Messaging {
    * @param {string|Channel|User} ch User, Channel object or ID
    * @returns {Promise<Message>}
    */
-  async sendMessage (message, ch) {
+  async sendMessage (message: string|Message, ch: string|Channel|User): Promise<any> {
     if (ch instanceof User) {
-      ch = this.directChannel(ch)
+      ch = await this.directChannel(ch)
     }
 
     this.resolveChannel(ch, this.$channel).then(ch => {
@@ -61,13 +89,18 @@ export class Messaging {
    * @param filter
    * @returns {Promise<{filter: Object, set: Channel[]}>}
    */
-  async findChannels (filter) {
+  async findChannels (filter: string|ChannelFilter): Promise<ChannelResponse> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
 
-    return this.MessagingAPI.channelList(filter).then(set => {
-      return set.map(m => new Channel(m))
+    return this.MessagingAPI.channelList(filter).then(res => {
+      if (!Array.isArray(res.set) || res.set.length === 0) {
+        return Promise.reject(new Error('channel not found'))
+      }
+      
+      res.set = res.set.map(m => new Channel(m))
+      return res as unknown as ChannelResponse
     })
   }
 
@@ -77,7 +110,7 @@ export class Messaging {
    * @param {string|Channel} channel
    * @return {Promise<Channel>}
    */
-  async findChannelByID (channel) {
+  async findChannelByID (channel: string|Channel): Promise<Channel> {
     const channelID = extractID(channel, 'channelID')
     return this.MessagingAPI.channelRead({ channelID }).then(r => new Channel(r))
   }
@@ -89,7 +122,7 @@ export class Messaging {
    * @param {User|Object|string} [second] user - object or string with ID, defaults to current user
    * @returns {Promise<Channel>}
    */
-  async directChannel (first, second = this.$authUser) {
+  async directChannel (first: User|object|string, second: User|object|string = this.$authUser!): Promise<Channel> {
     const firstUserID = extractID(first, 'userID')
     const secondUserID = extractID(second, 'userID')
 
@@ -102,7 +135,7 @@ export class Messaging {
     return this.saveChannel({
       type: 'group',
       members: [firstUserID, secondUserID],
-    })
+    } as Channel)
   }
 
   /**
@@ -119,12 +152,12 @@ export class Messaging {
    * @param {Channel} channel
    * @returns {Promise<Channel>}
    */
-  async saveChannel (channel) {
+  async saveChannel (channel: Channel): Promise<Channel> {
     return Promise.resolve(channel).then(channel => {
       if (isFresh(channel.channelID)) {
-        return this.MessagingAPI.channelCreate(channel)
+        return this.MessagingAPI.channelCreate(channel as unknown as KV).then(channel => new Channel(channel))
       } else {
-        return this.MessagingAPI.channelUpdate(channel)
+        return this.MessagingAPI.channelUpdate(channel as unknown as KV).then(channel => new Channel(channel))
       }
     })
   }
@@ -139,16 +172,16 @@ export class Messaging {
    *
    * @param {Channel} channel
    * @returns {Promise<void>}
-   */
-  async deleteChannel (channel) {
-    return Promise.resolve(channel).then(channel => {
-      const channelID = extractID(channel, 'channelID')
-
-      if (!isFresh(channelID)) {
-        return this.MessagingAPI.channelDelete({ channelID })
-      }
-    })
-  }
+   async deleteChannel (channel: Channel): Promise<unknown> {
+     return Promise.resolve(channel).then(channel => {
+       const channelID = extractID(channel, 'channelID')
+       
+       if (!isFresh(channelID)) {
+         return this.MessagingAPI.channelDelete({ channelID })
+        }
+      })
+    }
+  */
 
   /**
    * Resolves channels from the arguments and returns first valid
@@ -161,9 +194,9 @@ export class Messaging {
    *
    * @param {...Channel|Object|string}
    * @property {string} [r.channelID]
-   * @returns {Promise<User|User>}
+   * @returns {Promise<Channel>}
    */
-  async resolveChannel (...args) {
+  async resolveChannel (...args: unknown[]): Promise<Channel> {
     for (let c of args) {
       // Resolve pending promises if any...
       c = await c
@@ -191,7 +224,7 @@ export class Messaging {
       // Other kind of object with properties that might hold channel ID
       const {
         channelID,
-      } = c
+      } = c as Channel
       return this.resolveChannel(channelID)
     }
 
@@ -213,7 +246,7 @@ export class Messaging {
    * @param {PermissionRule[]} rules
    * @returns {Promise<void>}
    */
-  async setPermissions (rules) {
+  async setPermissions (rules: Rule[]): Promise<void> {
     return genericPermissionUpdater(this.MessagingAPI, rules)
   }
 }
