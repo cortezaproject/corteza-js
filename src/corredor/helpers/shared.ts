@@ -1,4 +1,20 @@
 /* eslint-disable */
+import { NoID } from '../../cast'
+import { Compose, Messaging, System } from '../../api-clients'
+
+export interface Rule {
+  role: {
+    roleID: string;
+  };
+}
+
+export interface Permissions {
+  [key: string]: Rule[];
+}
+
+interface  PermissionUpdater {
+  permissionsUpdate({ roleID, rules }: { roleID: string, rules: Array<object>}): void;
+}
 
 /**
  * Extracts ID-like (numeric) value from string or object
@@ -8,13 +24,13 @@
  * @param key
  * @returns {*}
  */
-export function extractID (value, key) {
+export function extractID (value: any, key: string): string {
   if (typeof value === 'object') {
     value = value[key]
   }
 
-  if (!value || Array.isArray(value) || typeof value === 'object') {
-    return '0'
+  if (!value || Array.isArray(value)) {
+    return NoID
   }
 
   if (typeof value === 'number') {
@@ -32,12 +48,12 @@ export function extractID (value, key) {
   return value
 }
 
-export function isFresh (ID) {
-  return !ID || ID === '0'
+export function isFresh (ID: string): boolean {
+  return !ID || ID === NoID
 }
 
-export function genericPermissionUpdater (API, rules) {
-  const g = rules.reduce((acc, p) => {
+export function genericPermissionUpdater (API: PermissionUpdater, rules: Rule[]) {
+  const g:Permissions = rules.reduce((acc: Permissions, p: Rule) => {
     if (!acc[p.role.roleID]) {
       acc[p.role.roleID] = []
     }
