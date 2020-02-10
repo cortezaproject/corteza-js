@@ -1,9 +1,10 @@
 /* eslint-disable */
 
-import { extractID, genericPermissionUpdater, isFresh } from './shared'
-import { Namespace } from '../../compose/types/namespace'
-import { Record } from '../../compose/types/record'
-import { Module } from '../../compose/types/module'
+import { extractID, genericPermissionUpdater, isFresh, Rule } from './shared'
+import { Attachment } from '../../shared'
+import { Compose as ComposeAPI } from '../../api-clients'
+import { Namespace, Record, Module, Page } from '../../compose'
+import { Values } from '../../compose/types/record'
 
 const emailStyle = `
 body { -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #3A393C; font-family: Verdana,Arial,sans-serif; font-size: 14px; height: 100%; margin: 0; padding: 0; width: 100% !important; }
@@ -17,6 +18,100 @@ tbody td:nth-child(2) { width: 70%; }
 h2, p { padding: 10px 20px; }
 p { text-align: justify; line-height: 1.4;}
 `
+interface KV {
+  [_: string]: unknown;
+}
+
+interface ComposeContext {
+  ComposeAPI: ComposeAPI;
+  $namespace?: Namespace;
+  $module?: Module;
+  $record?: Record;
+}
+
+interface PageFilter {
+  [key: string]: string|number|undefined;
+  namespaceID?: string;
+  selfID?: string;
+  query?: string;
+  handle?: string;
+  page?: number;
+  perPage?: number;
+  sort?: string;
+}
+
+interface PageResponse {
+  filter: PageFilter;
+  set: Array<Page>;
+}
+
+interface RecordFilter {
+  [key: string]: string|number|undefined;
+  namespaceID?: string;
+  moduleID?: string;
+  filter?: string;
+  page?: number;
+  perPage?: number;
+  sort?: string;}
+
+interface RecordResponse {
+  filter: RecordFilter;
+  set: Array<Record>;
+}
+
+interface ModuleFilter {
+  [key: string]: string|undefined;
+  query?: string;
+}
+
+interface ModuleResponse {
+  filter: ModuleFilter;
+  set: Array<Module>;
+}
+
+
+interface Mail {
+  to: string|string[];
+  subject: string;
+  options?: {
+    header?: string;
+    footer?: string;
+    style?: string;
+    fields?: string[]|null;
+  };
+  record?: Promise<unknown>|Record;
+}
+
+interface NamespaceFilter {
+  [key: string]: string|number|undefined;
+  query?: string;
+  slug?: string;
+  page?: number;
+  perPage?: number;
+  sort?: number;
+}
+
+interface NamespaceResponse {
+  [key: string]: unknown;
+  filter: NamespaceFilter;
+  set: Array<Namespace>;
+}
+
+interface PageBlock {
+  module?: Module;
+  index?: number;
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+  xywh?: number[];
+  fields?: object;
+  kind?: string;
+  title?: string|null;
+  style?: object;
+  options?: object;
+}
+
 
 /**
  * ComposeHelper provides layer over Compose API and utilities that simplify automation script writing
@@ -25,12 +120,17 @@ p { text-align: justify; line-height: 1.4;}
  * to rapidly develop your automation scripts.
  */
 export class Compose {
+  private ComposeAPI: ComposeAPI;
+  private $namespace?: Namespace;
+  private $module?: Module;
+  private $record?: Record;
+
   /**
    * @param {Namespace} ctx.$namespace - Current namespace
    * @param {Module} ctx.$module - Current module
    * @param {Record} ctx.$record - Current record
    */
-  constructor (ctx = {}) {
+  constructor (ctx: ComposeContext) {
     this.ComposeAPI = ctx.ComposeAPI
     this.$namespace = ctx.$namespace
     this.$module = ctx.$module
@@ -52,11 +152,9 @@ export class Compose {
    * @param {Namespace} ns - defaults to current $namespace
    * @return {Promise<Page>}
    */
-  async makePage (values = {}, ns = this.$namespace) {
-    return this.resolveNamespace(ns).then((ns) => {
-      // @todo cast to Page
-      return { ...values, namespaceID: ns.namespaceID }
-      // return new Page({ ...values, namespaceID: ns.namespaceID })
+  async makePage (values: Partial<Page> = {}, ns: Namespace|undefined = this.$namespace): Promise<Page> {
+    return this.resolveNamespace(ns).then(ns => {
+      return new Page({ ...values, namespaceID: ns.namespaceID })
     })
   }
 
@@ -66,17 +164,16 @@ export class Compose {
    * @param {Promise<*>|Page} page
    * @returns {Promise<Page>}
    */
-  async savePage (page) {
+  async savePage (page: Promise<Page>|Page|Partial<Page>): Promise<Page> {
     return Promise.resolve(page).then(page => {
-      // @todo cast to Page
-      // if (!(page instanceof Page)) {
-      //   throw Error('expecting Page type')
-      // }
+      if (!(page instanceof Page)) {
+         throw Error('expecting Page type')
+      }
 
       if (isFresh(page.pageID)) {
-        return this.ComposeAPI.pageCreate(page)
+        return this.ComposeAPI.pageCreate(page as unknown as KV).then(page => new Page(page))
       } else {
-        return this.ComposeAPI.pageUpdate(page)
+        return this.ComposeAPI.pageUpdate(page as unknown as KV).then(page => new Page(page))
       }
     })
   }
@@ -90,14 +187,14 @@ export class Compose {
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async deletePage (page) {
+  async deletePage (page: Page): Promise<unknown> {
     return Promise.resolve(page).then(page => {
       // if (!(page instanceof Page)) {
       //   throw Error('expecting Page type')
       // }
 
       if (!isFresh(page.pageID)) {
-        return this.ComposeAPI.pageDelete(page)
+        return this.ComposeAPI.pageDelete(page as unknown as KV)
       }
     })
   }
@@ -110,19 +207,22 @@ export class Compose {
    * @param {Promise<*>|string|Namespace|Object} ns
    * @returns {Promise<{filter: Object, set: Page[]}>}
    */
-  async findPages (filter = null, ns = this.$namespace) {
+  async findPages (filter: string|PageFilter = {}, ns: Namespace|undefined = this.$namespace): Promise<PageResponse> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
 
-    return this.resolveNamespace(ns).then((ns) => {
+    return this.resolveNamespace(ns).then(ns => {
       const namespaceID = extractID(ns, 'namespaceID')
-      return this.ComposeAPI.pageList({ namespaceID, ...filter }).then(rval => {
-        // @todo cast to Page
-        // Casting all we got to to Page
-        // rval.set = rval.set.map(m => new Page(m))
-        return rval
-      })
+        return this.ComposeAPI.pageList({ namespaceID, ...filter as object }).then(rval => {
+          if (!Array.isArray(rval.set) || rval.set.length === 0) {
+            return Promise.reject(new Error('pages not found'))
+          }
+
+          // Casting all we got to to Page
+          rval.set = rval.set.map(m => new Page(m))
+          return rval as unknown as PageResponse
+        })
     })
   }
 
@@ -141,14 +241,12 @@ export class Compose {
    * @param {string|Namespace|Object} ns - namespace, defaults to current $namespace
    * @returns {Promise<Page>}
    */
-  async findPageByID (page, ns = this.$namespace) {
+  async findPageByID (page: string|Page, ns: Namespace = this.$namespace!): Promise<Page> {
     return this.resolveNamespace(ns).then((ns) => {
       const pageID = extractID(page, 'pageID')
       const namespaceID = extractID(ns, 'namespaceID')
 
-      return this.ComposeAPI.pageRead({ namespaceID, pageID })
-        // @todo cast to Page
-        .then(p => p)
+      return this.ComposeAPI.pageRead({ namespaceID, pageID }).then(page => new Page(page))
     })
   }
 
@@ -159,7 +257,7 @@ export class Compose {
    * @returns {String}
    * @private
    */
-  makeRecordPageTitle ({ name }) {
+  makeRecordPageTitle ({ name }: { name: string}) {
     return `Record page for module "${name}"`
   }
 
@@ -181,7 +279,7 @@ export class Compose {
     title = null,
     style = {},
     fields,
-  }) {
+  }: PageBlock): PageBlock {
     return {
       kind,
       title,
@@ -189,7 +287,7 @@ export class Compose {
       style,
       options: {
         ...options,
-        fields: fields || module.fields,
+        fields: fields || module!.fields,
       },
     }
   }
@@ -227,7 +325,7 @@ export class Compose {
    * @param {Module} module - defaults to current $module
    * @return {Promise<Record>}
    */
-  async makeRecord (values = {}, module = null) {
+  async makeRecord (values: Values = {}, module: Module|null = null): Promise<Record> {
     return this.resolveModule(module, this.$module).then(module => {
       const record = new Record(module)
 
@@ -267,16 +365,16 @@ export class Compose {
    * @param {Record|Promise<Record>} record
    * @return {Promise<Record>}
    */
-  async saveRecord (record) {
+  async saveRecord (record: Record|Promise<Record>): Promise<Record> {
     return Promise.resolve(record).then(record => {
       if (!(record instanceof Record)) {
         throw Error('expecting Record type')
       }
 
       if (isFresh(record.recordID)) {
-        return this.ComposeAPI.recordCreate(record).then(r => new Record(record.module, r))
+        return this.ComposeAPI.recordCreate(record as unknown as KV).then(r => new Record(record.module, r))
       } else {
-        return this.ComposeAPI.recordUpdate(record).then(r => new Record(record.module, r))
+        return this.ComposeAPI.recordUpdate(record as unknown as KV).then(r => new Record(record.module, r))
       }
     })
   }
@@ -292,14 +390,14 @@ export class Compose {
    * @param {Record} record
    * @returns {Promise<void>}
    */
-  async deleteRecord (record) {
+  async deleteRecord (record: Record): Promise<unknown> {
     return Promise.resolve(record).then(record => {
       if (!(record instanceof Record)) {
         throw Error('expecting Record type')
       }
 
       if (!isFresh(record.recordID)) {
-        return this.ComposeAPI.recordDelete(record)
+        return this.ComposeAPI.recordDelete(record as unknown as KV)
       }
     })
   }
@@ -351,14 +449,14 @@ export class Compose {
    * @param {Module} [module] - if not set, defaults to $module
    * @returns {Promise<{filter: Object, set: Record[]}>}
    */
-  async findRecords (filter = '', module = this.$module) {
-    return this.resolveModule(module).then((module) => {
+  async findRecords (filter: string|RecordFilter = '', module: Module|undefined = this.$module): Promise<RecordResponse> {
+    return this.resolveModule(module).then(module => {
       const { moduleID, namespaceID } = module
 
       let params = {
         moduleID,
         namespaceID,
-      }
+      } as { moduleID: string, namespaceID: string, filter: string}
 
       if (typeof filter === 'string') {
         params.filter = filter
@@ -366,10 +464,14 @@ export class Compose {
         params = { ...params, ...filter }
       }
 
-      return this.ComposeAPI.recordList(params).then((rval) => {
+      return this.ComposeAPI.recordList(params).then(rval => {
+        if (!Array.isArray(rval.set) || rval.set.length === 0) {
+          throw new Error('records not found')
+        }
+
         // Casting all we got to to Record
         rval.set = rval.set.map(m => new Record(module, m))
-        return rval
+        return rval as unknown as RecordResponse
       })
     })
   }
@@ -385,13 +487,13 @@ export class Compose {
    * @param {Module} module
    * @returns {Promise<Record>}
    */
-  async findLastRecord (module = this.$module) {
-    return this.findRecords({ sort: 'recordID DESC', page: 1, perPage: 1 }, module).then(({ set, filter }) => {
-      if (filter.count > 0) {
-        return set[0]
+  async findLastRecord (module: Module|undefined = this.$module): Promise<Record> {
+    return this.findRecords({ sort: 'recordID DESC', page: 1, perPage: 1 }, module).then(rval => {
+      if (!Array.isArray(rval.set) || rval.set.length === 0) {
+        throw new Error('records not found')
       }
 
-      return null
+      return rval.set[0]
     })
   }
 
@@ -406,13 +508,13 @@ export class Compose {
    * @param {Module} module
    * @returns {Promise<Record>}
    */
-  async findFirstRecord (module = this.$module) {
-    return this.findRecords({ sort: 'recordID ASC', page: 1, perPage: 1 }, module).then(({ set, filter }) => {
-      if (filter.count > 0) {
-        return set[0]
+  async findFirstRecord (module: Module|undefined = this.$module): Promise<Record|null> {
+    return this.findRecords({ sort: 'recordID ASC', page: 1, perPage: 1 }, module).then(rval => {
+      if (!Array.isArray(rval.set) || rval.set.length === 0) {
+        throw new Error('records not found')
       }
 
-      return null
+      return rval.set[0]
     })
   }
 
@@ -428,10 +530,10 @@ export class Compose {
    * @param {Module} module
    * @returns {Promise<Record>}
    */
-  async findRecordByID (record, module = null) {
+  async findRecordByID (record: string|object|Record, module: Module|null = null): Promise<Record>{
     // We're handling module default a bit differently here
     // because we want to allow users to use record's module
-    return this.resolveModule(module, (record || {}).module, this.$module).then((module) => {
+    return this.resolveModule(module, (record as Record || {}).module, this.$module).then((module) => {
       const { moduleID, namespaceID } = module
       return this.ComposeAPI.recordRead({
         moduleID,
@@ -446,16 +548,16 @@ export class Compose {
    * Finds a single attachment
    *
    * @param {string|Object|Attachment} attachment Attachment to find
-   * @param {Namespace} ns
+   * @param {Promise<Attachment>} ns
    */
-  async findAttachmentByID (attachment, ns = this.$namespace) {
+  async findAttachmentByID (attachment: string|object|Attachment, ns: Namespace|undefined = this.$namespace): Promise<Attachment> {
     return this.resolveNamespace(ns).then(namespace => {
       const { namespaceID } = namespace
       return this.ComposeAPI.attachmentRead({
         kind: 'original',
         attachmentID: extractID(attachment, 'attachmentID'),
         namespaceID,
-      }).then(att => att)
+      }).then(att => new Attachment(att))
     })
   }
 
@@ -464,7 +566,7 @@ export class Compose {
    * @param {String} label Field's label
    * @returns {String}
    */
-  moduleFieldNameFromLabel (label) {
+  moduleFieldNameFromLabel (label: string): string {
     return label.split(/[^a-zA-Z0-9_]/g)
       .filter(p => !!p)
       .map(p => `${p[0].toUpperCase()}${p.slice(1)}`)
@@ -478,7 +580,7 @@ export class Compose {
    * @param {string|Object|Namespace} ns, defaults to current $namespace
    * @returns {Promise<Module>}
    */
-  async makeModule (module = {}, ns = this.$namespace) {
+  async makeModule (module: Promise<Module>|Module = {} as Module, ns: Namespace|undefined = this.$namespace): Promise<Module> {
     return this.resolveNamespace(ns).then((ns) => {
       return new Module({ ...module, namespaceID: ns.namespaceID })
     })
@@ -490,16 +592,16 @@ export class Compose {
    * @param {Promise<*>|Module} module
    * @returns {Promise<Module>}
    */
-  async saveModule (module) {
+  async saveModule (module: Promise<Module>|Module): Promise<Module> {
     return Promise.resolve(module).then(module => {
       if (!(module instanceof Module)) {
-        throw Error('expecting Module type')
+        throw new Error('expecting Module type')
       }
 
       if (isFresh(module.moduleID)) {
-        return this.ComposeAPI.moduleCreate(module)
+        return this.ComposeAPI.moduleCreate(module as unknown as KV).then(m => new Module(m))
       } else {
-        return this.ComposeAPI.moduleUpdate(module)
+        return this.ComposeAPI.moduleUpdate(module as unknown as KV).then(m => new Module(m))
       }
     })
   }
@@ -512,17 +614,22 @@ export class Compose {
    * @param {Promise<*>|string|Namespace|Object} ns
    * @returns {Promise<{filter: Object, set: Module[]}>}
    */
-  async findModules (filter = '', ns = this.$namespace) {
+  async findModules (filter: string|ModuleFilter = '', ns: Namespace|undefined = this.$namespace): Promise<ModuleResponse> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
 
     return this.resolveNamespace(ns).then((ns) => {
       const namespaceID = extractID(ns, 'namespaceID')
-      return this.ComposeAPI.moduleList({ namespaceID, ...filter }).then(rval => {
+
+      return this.ComposeAPI.moduleList({ namespaceID, ...filter as object }).then(rval => {
+        if (!Array.isArray(rval.set) || rval.set.length === 0) {
+          return Promise.reject(new Error('modules not found'))
+        }
+
         // Casting all we got to to Module
         rval.set = rval.set.map(m => new Module(m))
-        return rval
+        return rval as unknown as ModuleResponse
       })
     })
   }
@@ -547,7 +654,7 @@ export class Compose {
    * @param {string|Namespace|Object} ns - namespace, defaults to current $namespace
    * @returns {Promise<Module>}
    */
-  async findModuleByID (module, ns = this.$namespace) {
+  async findModuleByID (module: string|Module|Record, ns: Namespace|undefined = this.$namespace): Promise<Module> {
     return this.resolveNamespace(ns).then((ns) => {
       const moduleID = extractID(module, 'moduleID')
       const namespaceID = extractID(ns, 'namespaceID')
@@ -576,15 +683,15 @@ export class Compose {
    * @param {null|string|Namespace|Object} ns - defaults to current $namespace
    * @returns {Promise<Module>}
    */
-  async findModuleByName (name, ns = this.$namespace) {
+  async findModuleByName (name: string, ns: string|Namespace|object|undefined = this.$namespace): Promise<Module>{
     return this.resolveNamespace(ns).then((ns) => {
       const namespaceID = extractID(ns, 'namespaceID')
-      return this.ComposeAPI.moduleList({ namespaceID, name }).then(({ set, filter }) => {
-        if (filter && filter.count === 0) {
-          return null
+      return this.ComposeAPI.moduleList({ namespaceID, name }).then(rval => {
+        if (!Array.isArray(rval.set) || rval.set.length === 0) {
+          return Promise.reject(new Error('module not found'))
         }
 
-        return new Module(set[0])
+        return new Module(rval.set[0])
       })
     })
   }
@@ -609,15 +716,15 @@ export class Compose {
    * @param {null|string|Namespace|Object} ns - defaults to current $namespace
    * @returns {Promise<Module>}
    */
-  async findModuleByHandle (handle, ns = this.$namespace) {
+  async findModuleByHandle (handle: string, ns: string|Namespace|object|undefined = this.$namespace): Promise<Module> {
     return this.resolveNamespace(ns).then((ns) => {
       const namespaceID = extractID(ns, 'namespaceID')
-      return this.ComposeAPI.moduleList({ namespaceID, handle }).then(({ set, filter }) => {
-        if (filter && filter.count === 0) {
-          return null
+      return this.ComposeAPI.moduleList({ namespaceID, handle }).then(rval => {
+        if (!Array.isArray(rval.set) || rval.set.length === 0) {
+          return Promise.reject(new Error('module not found'))
         }
 
-        return new Module(set[0])
+        return new Module(rval.set[0])
       })
     })
   }
@@ -636,9 +743,9 @@ export class Compose {
    * @param {string|Object|Namespace} namespace, defaults to current $namespace
    * @returns {Promise<Namespace>}
    */
-  async makeNamespace (namespace = {}) {
+  async makeNamespace (namespace: Promise<Namespace>|Namespace = {} as Namespace): Promise<Namespace> {
     return new Namespace({
-      name: namespace.name || namespace.slug,
+      name: (namespace as Namespace).name || (namespace as Namespace).slug,
       meta: {},
       enabled: true,
       ...namespace,
@@ -654,16 +761,16 @@ export class Compose {
    * @param {Promise<*>|Namespace} namespace
    * @returns {Promise<Namespace>}
    */
-  async saveNamespace (namespace) {
+  async saveNamespace (namespace: Promise<Namespace>|Namespace): Promise<Namespace> {
     return Promise.resolve(namespace).then(namespace => {
       if (!(namespace instanceof Namespace)) {
         throw Error('expecting Namespace type')
       }
 
       if (isFresh(namespace.namespaceID)) {
-        return this.ComposeAPI.namespaceCreate(namespace)
+        return this.ComposeAPI.namespaceCreate(namespace as unknown as KV).then(n => new Namespace(n))
       } else {
-        return this.ComposeAPI.namespaceUpdate(namespace)
+        return this.ComposeAPI.namespaceUpdate(namespace as unknown as KV).then(n => new Namespace(n))
       }
     })
   }
@@ -675,15 +782,19 @@ export class Compose {
    * @param {string|Object} filter
    * @returns {Promise<{filter: Object, set: Namespace[]}>}
    */
-  async findNamespaces (filter = '') {
+  async findNamespaces (filter: string|NamespaceFilter = ''): Promise<NamespaceResponse> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
 
     return this.ComposeAPI.namespaceList({ ...filter }).then(rval => {
+      if (!Array.isArray(rval.set) || rval.set.length === 0) {
+        return Promise.reject(new Error('namespaces not found'))
+      }
+
       // Casting all we got to to Namespace
       rval.set = rval.set.map(m => new Namespace(m))
-      return rval
+      return rval as NamespaceResponse
     })
   }
 
@@ -703,7 +814,7 @@ export class Compose {
    * @param {string|Namespace|Record} ns - accepts Namespace, namespaceID (when string string) or Record
    * @returns {Promise<Namespace>}
    */
-  async findNamespaceByID (ns = this.$namespace) {
+  async findNamespaceByID (ns: string|Namespace|Record|undefined = this.$namespace): Promise<Namespace> {
     const namespaceID = extractID(ns, 'namespaceID')
 
     return this.ComposeAPI.namespaceRead({ namespaceID }).then(m => new Namespace(m))
@@ -725,13 +836,13 @@ export class Compose {
    * @param {string} slug - name of the namespace
    * @returns {Promise<Namespace>}
    */
-  async findNamespaceBySlug (slug) {
-    return this.ComposeAPI.namespaceList({ slug }).then(({ set, filter }) => {
-      if (filter.count === 0) {
+  async findNamespaceBySlug (slug: string): Promise<Namespace> {
+    return this.ComposeAPI.namespaceList({ slug }).then(rval => {
+      if (!Array.isArray(rval.set) || rval.set.length === 0) {
         return Promise.reject(new Error('namespace not found'))
       }
 
-      return new Namespace(set[0])
+      return new Namespace(rval.set[0])
     })
   }
 
@@ -748,7 +859,7 @@ export class Compose {
    * @param {string|string[]} Any additional addresses we want this to be sent to (carbon-copy)
    * @returns {Promise<void>}
    */
-  async sendMail (to, subject, { html } = {}, { cc = [] } = {}) {
+  async sendMail (to: string|string[], subject: string, { html = '' }: { html?: string } = {}, { cc = [] }: { cc?: string|string[] } = {} ): Promise<unknown> {
     if (!to) {
       throw Error('expecting to email address')
     }
@@ -802,11 +913,17 @@ export class Compose {
    * @return {Promise<void>}
    */
   async sendRecordToMail (
-    to,
-    subject = '',
-    { header = '', footer = '', style = emailStyle, fields = null, ...mailHeader } = {},
-    record = this.$record,
-  ) {
+    to: string|string[],
+    subject: string = '',
+    {
+      header = '',
+      footer = '',
+      style = emailStyle,
+      fields = null,
+      ...mailHeader
+    }: { header?: string, footer?: string, style?:string, fields?: string[]|null } = {},
+    record: Promise<Record>|Record|undefined = this.$record,
+  ): Promise<unknown> {
     // Wait for the record if we got a promise
 
     record = await record
@@ -821,8 +938,8 @@ export class Compose {
     const html = style + header + this.recordToHTML(fields, record) + footer
 
     if (!subject) {
-      subject = record.module.name + ' '
-      subject += record.updatedAt ? 'record updated' : 'record created'
+      subject = record!.module.name + ' '
+      subject += record!.updatedAt ? 'record updated' : 'record created'
     }
 
     return this.sendMail(
@@ -843,7 +960,7 @@ export class Compose {
    *
    * @private
    */
-  walkFields (fwl, record, formatter) {
+  walkFields (fwl: null|string[]|Record|undefined , record: Record, formatter: (...args: any[]) => string) {
     if (!formatter) {
       throw new Error('formatter.undefined')
     }
@@ -858,7 +975,7 @@ export class Compose {
     }
 
     return record.module.fields
-      .filter(f => !fwl || fwl.indexOf(f.name) > -1)
+      .filter(f => !fwl || (fwl as Array<string>).indexOf(f.name) > -1)
       .map(formatter)
   }
 
@@ -872,16 +989,14 @@ export class Compose {
    * // generates report for current $record from a list of fields
    * let report = recordToHTML(['fieldA', 'fieldB', 'fieldC'])
    *
-   * // generates report for current  from a list of fields
-   * let report = recordToHTML(['fieldA', 'fieldB', 'fieldC'])
    *
    * @param {null|Array|Record} fwl - field white list (or leave empty/null/false for all fields)
    * @param {Record} record - record to be converted (or leave for the current $record)
    * @returns {string}
    */
-  recordToHTML (fwl = null, record = this.$record) {
-    const rows = this.walkFields(fwl, record, f => {
-      const v = record.values[f.name]
+  recordToHTML (fwl: null|string[]|Record = null, record: Record|undefined = this.$record): string {
+    const rows = this.walkFields(fwl, record!, (f: { name: string, label: string }): string => {
+      const v = record!.values[f.name]
       return `<tr><td>${f.label || f.name}</td><td>${(Array.isArray(v) ? v : [v]).join(', ') || '&nbsp;'}</td></tr>`
     }).join('')
 
@@ -902,11 +1017,11 @@ export class Compose {
    * @param {Record} record - record to be converted (or leave for the current $record)
    * @returns {string}
    */
-  recordToPlainText (fwl = null, record = this.$record) {
-    return this.walkFields(fwl, record, f => {
-      const v = record.values[f.name]
+  recordToPlainText (fwl: null|string[]|Record = null, record: Record|undefined = this.$record): string {
+    return this.walkFields(fwl, record!, f => {
+      const v = record!.values[f.name]
       return `${f.label || f.name}:\n${(Array.isArray(v) ? v : [v]).join(', ') || '/'}\n\n`
-    }).join('').trim('\n')
+    }).join('').trim()
   }
 
   /**
@@ -915,8 +1030,8 @@ export class Compose {
    * @private
    * @returns {Promise}
    */
-  async resolveModule (...args) {
-    const strResolve = async (module) => {
+  async resolveModule (...args: unknown[]): Promise<Module> {
+    const strResolve = async (module: string) => {
       return this.findModuleByHandle(module)
         .then(m => {
           if (!m) {
@@ -937,7 +1052,7 @@ export class Compose {
           return this.findModuleByID(module).catch((err = {}) => {
             if (err.message && err.message.indexOf('ModuleNotFound') >= 0) {
               // Not found, let's try if we can find it by slug
-              return strResolve(module)
+              return strResolve(module as string)
             }
 
             return Promise.reject(err)
@@ -960,9 +1075,9 @@ export class Compose {
         return this.resolveModule(module.module, module.moduleID)
       }
 
-      if (module.set && module.filter) {
+      if ((module as ModuleResponse).set && (module as ModuleResponse).filter) {
         // We got a result set with modules
-        module = module.set
+        module = (module as ModuleResponse).set
       }
 
       if (Array.isArray(module)) {
@@ -978,11 +1093,11 @@ export class Compose {
 
       if (!(module instanceof Module)) {
         // not module? is it an object with moduleID & namespaceID?
-        if (module.moduleID === undefined || module.namespaceID === undefined) {
+        if ((module as Module).moduleID === undefined || (module as Module).namespaceID === undefined) {
           break
         }
 
-        return Promise.resolve(new Module(module))
+        return Promise.resolve(new Module(module as Module))
       }
 
       return Promise.resolve(module)
@@ -997,7 +1112,7 @@ export class Compose {
    * @private
    * @returns {Promise}
    */
-  async resolveNamespace (...args) {
+  async resolveNamespace (...args: unknown[]): Promise<Namespace> {
     for (let ns of args) {
       if (!ns) {
         continue
@@ -1009,7 +1124,7 @@ export class Compose {
           return this.findNamespaceByID(ns).catch((err = {}) => {
             if (err.message && err.message.indexOf('NamespaceNotFound') >= 0) {
               // Not found, let's try if we can find it by slug
-              return this.findNamespaceBySlug(ns)
+              return this.findNamespaceBySlug(ns as string)
             }
 
             return Promise.reject(err)
@@ -1032,9 +1147,9 @@ export class Compose {
         return this.resolveNamespace(ns.namespaceID)
       }
 
-      if (ns.set && ns.filter) {
+      if ((ns as PageResponse).set && (ns as PageResponse).filter) {
         // We got a result set with modules
-        ns = ns.set
+        ns = (ns as PageResponse).set
       }
 
       if (Array.isArray(ns)) {
@@ -1050,11 +1165,11 @@ export class Compose {
 
       if (!(ns instanceof Namespace)) {
         // not Namespace? is it an object with namespaceID?
-        if (ns.namespaceID === undefined) {
+        if ((ns as Namespace).namespaceID === undefined) {
           break
         }
 
-        return Promise.resolve(new Namespace(ns))
+        return Promise.resolve(new Namespace(ns as Namespace))
       }
 
       return Promise.resolve(ns)
@@ -1078,7 +1193,7 @@ export class Compose {
    * @param {PermissionRule[]} rules
    * @returns {Promise<void>}
    */
-  async setPermissions (rules) {
+  async setPermissions (rules: Rule[]): Promise<void> {
     return genericPermissionUpdater(this.ComposeAPI, rules)
   }
 }
