@@ -1,13 +1,9 @@
 /* eslint-disable */
 
-import { extractID, genericPermissionUpdater, isFresh, Rule } from './shared'
+import { extractID, genericPermissionUpdater, isFresh, PermissionRule, kv, ListResponse } from './shared'
 import { Messaging as MessagingAPI } from '../../api-clients'
 import { Channel, Message } from '../../messaging/'
 import { User } from '../../system'
-
-interface KV {
-  [_: string]: unknown;
-}
 
 interface MessagingContext {
   MessagingAPI: MessagingAPI;
@@ -16,16 +12,10 @@ interface MessagingContext {
   $message?: Message;
 }
 
-interface ChannelFilter {
+interface ChannelListFilter {
   [key: string]: string|undefined;
   query?: string;
 }
-
-interface ChannelResponse {
-  filter: ChannelFilter;
-  set: Array<Channel>;
-}
-
 
 /**
  * MessagingHelper provides layer over Messaging API and utilities that simplify automation script writing
@@ -68,7 +58,7 @@ export class Messaging {
    * @param {string|Channel|User} ch User, Channel object or ID
    * @returns {Promise<Message>}
    */
-  async sendMessage (message: string|Message, ch: string|Channel|User): Promise<any> {
+  async sendMessage (message: string|Message, ch: string|Channel|User): Promise<any/*Message*/> {
     if (ch instanceof User) {
       ch = await this.directChannel(ch)
     }
@@ -80,6 +70,8 @@ export class Messaging {
 
       message.channelID = ch.channelID
       return this.MessagingAPI.messageCreate(message)
+      // Uncomment line below when message type is done
+      // return this.MessagingAPI.messageCreate(message).then(m => new Message(m))
     })
   }
 
@@ -87,20 +79,20 @@ export class Messaging {
    * Searches for channels
    *
    * @param filter
-   * @returns {Promise<{filter: Object, set: Channel[]}>}
+   * @returns {Promise<ListResponse<ChannelListFilter, Channel[]>>}
    */
-  async findChannels (filter: string|ChannelFilter): Promise<ChannelResponse> {
+  async findChannels (filter: string|ChannelListFilter): Promise<ListResponse<ChannelListFilter, Channel[]>> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
 
     return this.MessagingAPI.channelList(filter).then(res => {
       if (!Array.isArray(res.set) || res.set.length === 0) {
-        return Promise.reject(new Error('channel not found'))
+        throw new Error('channel not found')
       }
       
       res.set = res.set.map(m => new Channel(m))
-      return res as unknown as ChannelResponse
+      return res as unknown as ListResponse<ChannelListFilter, Channel[]>
     })
   }
 
@@ -155,9 +147,9 @@ export class Messaging {
   async saveChannel (channel: Channel): Promise<Channel> {
     return Promise.resolve(channel).then(channel => {
       if (isFresh(channel.channelID)) {
-        return this.MessagingAPI.channelCreate(channel as unknown as KV).then(channel => new Channel(channel))
+        return this.MessagingAPI.channelCreate(kv(channel)).then(channel => new Channel(channel))
       } else {
-        return this.MessagingAPI.channelUpdate(channel as unknown as KV).then(channel => new Channel(channel))
+        return this.MessagingAPI.channelUpdate(kv(channel)).then(channel => new Channel(channel))
       }
     })
   }
@@ -224,7 +216,7 @@ export class Messaging {
       // Other kind of object with properties that might hold channel ID
       const {
         channelID,
-      } = c as Channel
+      } = c as { channelID?: string }
       return this.resolveChannel(channelID)
     }
 
@@ -246,7 +238,7 @@ export class Messaging {
    * @param {PermissionRule[]} rules
    * @returns {Promise<void>}
    */
-  async setPermissions (rules: Rule[]): Promise<void> {
+  async setPermissions (rules: PermissionRule[]): Promise<void> {
     return genericPermissionUpdater(this.MessagingAPI, rules)
   }
 }

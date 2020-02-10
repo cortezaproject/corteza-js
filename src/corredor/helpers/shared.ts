@@ -1,20 +1,31 @@
 /* eslint-disable */
 import { NoID } from '../../cast'
-import { Compose, Messaging, System } from '../../api-clients'
 
-export interface Rule {
+interface KV {
+  [_: string]: unknown;
+}
+
+interface  PermissionUpdater {
+  permissionsUpdate({ roleID, rules }: { roleID: string, rules: Array<object>}): void;
+}
+
+export interface PermissionRule {
   role: {
     roleID: string;
   };
 }
 
 export interface Permissions {
-  [key: string]: Rule[];
+  [key: string]: PermissionRule[];
 }
 
-interface  PermissionUpdater {
-  permissionsUpdate({ roleID, rules }: { roleID: string, rules: Array<object>}): void;
+export function kv(a: unknown): KV { return a as KV}
+
+export interface ListResponse<S, F> {
+  set: S,
+  filter: F,
 }
+
 
 /**
  * Extracts ID-like (numeric) value from string or object
@@ -52,8 +63,8 @@ export function isFresh (ID: string): boolean {
   return !ID || ID === NoID
 }
 
-export function genericPermissionUpdater (API: PermissionUpdater, rules: Rule[]) {
-  const g:Permissions = rules.reduce((acc: Permissions, p: Rule) => {
+export function genericPermissionUpdater (API: PermissionUpdater, rules: PermissionRule[]) {
+  const g:Permissions = rules.reduce((acc: Permissions, p: PermissionRule) => {
     if (!acc[p.role.roleID]) {
       acc[p.role.roleID] = []
     }

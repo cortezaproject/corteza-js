@@ -1,12 +1,8 @@
 /* eslint-disable */
 
-import { extractID, genericPermissionUpdater, isFresh, Rule } from './shared'
+import { extractID, genericPermissionUpdater, isFresh, PermissionRule, kv, ListResponse } from './shared'
 import { System as SystemAPI } from '../../api-clients'
 import { User, Role, Application } from '../../system/'
-
-interface KV {
-  [_: string]: unknown;
-}
 
 interface SystemContext {
   SystemAPI: SystemAPI;
@@ -15,7 +11,7 @@ interface SystemContext {
   $application?: Application;
 }
 
-interface UserFilter {
+interface UserListFilter {
   [key: string]: string|boolean|number|undefined;
   query?: string;
   username?: string;
@@ -29,12 +25,7 @@ interface UserFilter {
   page?: number;
 }
 
-interface UserResponse {
-  filter: UserFilter;
-  set: Array<User>;
-}
-
-interface RoleFilter {
+interface RoleListFilter {
   [key: string]: string|boolean|number|undefined;
   query?: string;
   deleted?: boolean;
@@ -42,11 +33,6 @@ interface RoleFilter {
   page?: number;
   perPage?: number;
   sort?: number;
-}
-
-interface RoleResponse {
-  filter: RoleFilter;
-  set: Array<Role>;
 }
 
 /**
@@ -85,9 +71,9 @@ export class System {
    * @property {string} filter.sort - Sort results
    * @property {number} filter.perPage - max returned records per page
    * @property {number} filter.page - page to return (1-based)
-   * @returns {Promise<{filter: Object, set: User[]}>}
+   * @returns {Promise<ListResponse<UserListFilter, User[]>>}
    */
-  async findUsers (filter: string|UserFilter): Promise<UserResponse> {
+  async findUsers (filter: string|UserListFilter): Promise<ListResponse<UserListFilter, User[]>> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
@@ -98,7 +84,7 @@ export class System {
       }
 
       res.set = res.set.map(m => new User(m))
-      return res as unknown as UserResponse
+      return res as unknown as ListResponse<UserListFilter, User[]>
     })
   }
 
@@ -131,10 +117,10 @@ export class System {
     return this.findUsers({ email }).then(res => {
       
       if (!Array.isArray(res.set) || res.set.length === 0) {
-        return Promise.reject(new Error('user not found'))
+        throw new Error('user not found')
       }
 
-      return res.set[0]
+      return new User(res.set[0])
     })
   }
 
@@ -152,10 +138,10 @@ export class System {
   async findUserByHandle (handle: string): Promise<User> {
     return this.findUsers({ handle }).then(res => {
       if (!Array.isArray(res.set) || res.set.length === 0 || !res.set) {
-        return Promise.reject(new Error('user not found'))
+        throw new Error('user not found')
       }
 
-      return res.set[0]
+      return new User(res.set[0])
     })
   }
 
@@ -174,9 +160,9 @@ export class System {
   async saveUser (user: User): Promise<User> {
     return Promise.resolve(user).then(user => {
       if (isFresh(user.userID)) {
-        return this.SystemAPI.userCreate(user as unknown as KV).then(user => new User(user))
+        return this.SystemAPI.userCreate(kv(user)).then(user => new User(user))
       } else {
-        return this.SystemAPI.userUpdate(user as unknown as KV).then(user => new User(user))
+        return this.SystemAPI.userUpdate(kv(user)).then(user => new User(user))
       }
     })
   }
@@ -194,14 +180,14 @@ export class System {
    * @param {User} user
    * @returns {Promise<User>}
    */
-  async setPassword (password: string, user: User = this.$user!): Promise<unknown> {
+  async setPassword (password: string, user: User|undefined = this.$user): Promise<User> {
     return this.resolveUser(user).then(user => {
       const { userID } = user
       if (isFresh(userID)) {
-        return Promise.reject(new Error('Cannot set password for non existing user'))
+        throw new Error('Cannot set password for non existing user')
       }
 
-      return this.SystemAPI.userSetPassword({ password, userID })
+      return this.SystemAPI.userSetPassword({ password, userID }).then(u => new User(u))
     })
   }
 
@@ -230,20 +216,20 @@ export class System {
    * Searches for roles
    *
    * @param filter
-   * @returns {Promise<{filter: Object, set: Role[]}>}
+   * @returns {Promise<ListResponse<RoleListFilter, Role[]>>}
    */
-  async findRoles (filter: string|RoleFilter): Promise<RoleResponse> {
+  async findRoles (filter: string|RoleListFilter): Promise<ListResponse<RoleListFilter, Role[]>> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
 
     return this.SystemAPI.roleList(filter).then(res => {
       if (!Array.isArray(res.set) || res.set.length === 0) {
-        return Promise.reject(new Error('roles not found'))
+        throw new Error('roles not found')
       }
 
       res.set = res.set.map(m => new Role(m))
-      return res as unknown as RoleResponse
+      return res as unknown as ListResponse<RoleListFilter, Role[]>
     })
   }
 
@@ -270,12 +256,12 @@ export class System {
    * @return {Promise<Role>}
    */
   async findRoleByHandle (handle: string): Promise<Role> {
-    return this.findRoles(handle).then(({ set, filter }) => {
-      if (!Array.isArray(set) || set.length === 0 || !set) {
-        return Promise.reject(new Error('role not found'))
+    return this.findRoles(handle).then(res => {
+      if (!Array.isArray(res.set) || res.set.length === 0 || !res.set) {
+        throw new Error('role not found')
       }
 
-      return set[0]
+      return new Role(res.set[0])
     })
   }
 
@@ -287,9 +273,9 @@ export class System {
   async saveRole (role: Role): Promise<Role> {
     return Promise.resolve(role).then(role => {
       if (isFresh(role.roleID)) {
-        return this.SystemAPI.roleCreate(role as unknown as KV).then(role => new Role(role))
+        return this.SystemAPI.roleCreate(kv(role)).then(role => new Role(role))
       } else {
-        return this.SystemAPI.roleUpdate(role as unknown as KV).then(role => new Role(role))
+        return this.SystemAPI.roleUpdate(kv(role)).then(role => new Role(role))
       }
     })
   }
@@ -480,10 +466,10 @@ export class System {
    *   new AllowAccess(anotherRole, new WildcardResource(new User), 'update')
    * ])
    *
-   * @param {Rule[]} rules
+   * @param {PermissionRule[]} rules
    * @returns {Promise<void>}
    */
-  async setPermissions (rules: Rule[]): Promise<void> {
+  async setPermissions (rules: PermissionRule[]): Promise<void> {
     return genericPermissionUpdater(this.SystemAPI, rules)
   }
 }
