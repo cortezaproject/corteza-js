@@ -77,12 +77,12 @@ export function CortezaID (value: unknown): string {
     return NoID
   }
 
-  if (IsCortezaID(value)) {
-    return value as string
+  if (typeof value === 'number') {
+    return value.toString()
   }
 
-  if (typeof value === 'number') {
-    return String(value)
+  if (IsCortezaID(value)) {
+    return value as string
   }
 
   throw new Error('Invalid CortezaID value')

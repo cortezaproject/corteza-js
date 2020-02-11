@@ -1,4 +1,4 @@
-import { CortezaID, NoID } from '../../cast'
+import { CortezaID, IsCortezaID, NoID } from '../../cast'
 
 interface KV {
   [_: string]: unknown;
@@ -26,18 +26,18 @@ export interface ListResponse<S, F> {
 }
 
 /**
- * Extracts ID-like (numeric) value from string, numeric or object
+ * Extracts ID-like (numeric) value from string or object
  *
  * @param value - that stores ID in some way
- * @param key - possible key lookup
+ * @param prop - possible key lookup
  */
-export function extractID (value: unknown, key: string): string {
-  if (typeof value === 'object' && value !== null) {
-    if (!Object.prototype.hasOwnProperty.call(value, key)) {
+export function extractID (value?: unknown, prop?: string): string {
+  if (value && typeof value === 'object') {
+    if (!prop || !Object.prototype.hasOwnProperty.call(value, prop)) {
       return NoID
     }
 
-    return CortezaID((value as {[_: string]: unknown})[key])
+    value = (value as {[_: string]: unknown})[prop]
   }
 
   return CortezaID(value)
