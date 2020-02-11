@@ -301,7 +301,7 @@ export default class SystemHelper {
    * @param user resolvable user input
    * @param role resolvable role input
    */
-  async addUserToRole (user: User|string, role: User|string): Promise<unknown> {
+  async addUserToRole (user: User|string, role: Role|string): Promise<unknown> {
     let userID: string
     let roleID: string
 
