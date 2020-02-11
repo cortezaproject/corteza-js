@@ -149,7 +149,7 @@ export default class ComposeHelper {
    * @param filter
    * @param ns
    */
-  async findPages (filter: string|PageListFilter = {}, ns: Namespace|undefined = this.$namespace): Promise<ListResponse<PageListFilter, Page[]>> {
+  async findPages (filter: undefined|string|PageListFilter = {}, ns: Namespace|undefined = this.$namespace): Promise<ListResponse<PageListFilter, Page[]>> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
@@ -470,7 +470,7 @@ export default class ComposeHelper {
    * @param module
    * @param ns, defaults to current $namespace
    */
-  async makeModule (module: Promise<Module>|Module = {} as Module, ns: Namespace|undefined = this.$namespace): Promise<Module> {
+  async makeModule (module: Promise<Module>|Module|Partial<Module> = {} as Module, ns: Namespace|undefined = this.$namespace): Promise<Module> {
     return this.resolveNamespace(ns).then((ns) => {
       return new Module({ ...module, namespaceID: ns.namespaceID })
     })
@@ -627,7 +627,7 @@ export default class ComposeHelper {
    * @param namespace
    * @param namespace, defaults to current $namespace
    */
-  async makeNamespace (namespace: Promise<Namespace>|Namespace = {} as Namespace): Promise<Namespace> {
+  async makeNamespace (namespace: Promise<Namespace>|Namespace|Partial<Namespace> = {} as Namespace): Promise<Namespace> {
     return new Namespace({
       name: (namespace as Namespace).name || (namespace as Namespace).slug,
       meta: {},
@@ -915,6 +915,7 @@ export default class ComposeHelper {
         })
         .catch(() => this.findModuleByName(module))
     }
+
     for (let module of args) {
       if (!module) {
         continue
