@@ -70,7 +70,7 @@ export default class SystemHelper {
    * @property filter.perPage - max returned records per page
    * @property filter.page - page to return (1-based)
    */
-  async findUsers (filter: string|UserListFilter): Promise<ListResponse<UserListFilter, User[]>> {
+  async findUsers (filter?: string|UserListFilter): Promise<ListResponse<UserListFilter, User[]>> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
@@ -210,7 +210,7 @@ export default class SystemHelper {
    *
    * @param filter
    */
-  async findRoles (filter: string|RoleListFilter): Promise<ListResponse<RoleListFilter, Role[]>> {
+  async findRoles (filter?: string|RoleListFilter): Promise<ListResponse<RoleListFilter, Role[]>> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
