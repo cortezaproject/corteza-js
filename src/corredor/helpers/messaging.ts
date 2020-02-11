@@ -20,10 +20,10 @@ interface ChannelListFilter {
  *
  */
 export default class MessagingHelper {
-  private MessagingAPI: MessagingAPI;
-  private $authUser?: User;
-  private $channel?: Channel;
-  private $message?: Message;
+  readonly MessagingAPI: MessagingAPI;
+  readonly $authUser?: User;
+  readonly $channel?: Channel;
+  readonly $message?: Message;
 
   constructor (ctx: MessagingContext) {
     this.MessagingAPI = ctx.MessagingAPI

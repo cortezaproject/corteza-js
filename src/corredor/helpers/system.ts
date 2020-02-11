@@ -37,10 +37,10 @@ interface RoleListFilter {
  * SystemHelper provides layer over System API and utilities that simplify automation script writing
  */
 export default class SystemHelper {
-  private SystemAPI: SystemAPI;
-  private $user?: User;
-  private $role?: Role;
-  private $application?: Application;
+  readonly SystemAPI: SystemAPI;
+  readonly $user?: User;
+  readonly $role?: Role;
+  readonly $application?: Application;
 
   constructor (ctx: SystemContext) {
     this.SystemAPI = ctx.SystemAPI

@@ -66,10 +66,10 @@ interface NamespaceListFilter {
  * to rapidly develop your automation scripts.
  */
 export default class ComposeHelper {
-  private ComposeAPI: ComposeAPI;
-  private $namespace?: Namespace;
-  private $module?: Module;
-  private $record?: Record;
+  readonly ComposeAPI: ComposeAPI;
+  readonly $namespace?: Namespace;
+  readonly $module?: Module;
+  readonly $record?: Record;
 
   /**
    * @param ctx.$namespace - Current namespace
