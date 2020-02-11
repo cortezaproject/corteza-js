@@ -53,9 +53,9 @@ export class Messaging {
    *   })
    * })
    *
-   * @param {string|Object} message
+   * @param message
    * @property {string} message.message
-   * @param {string|Channel|User} ch User, Channel object or ID
+   * @param ch User, Channel object or ID
    * @returns {Promise<Message>}
    */
   async sendMessage (message: string|Message, ch: string|Channel|User): Promise<any/*Message*/> {
@@ -90,7 +90,7 @@ export class Messaging {
       if (!Array.isArray(res.set) || res.set.length === 0) {
         throw new Error('channel not found')
       }
-      
+
       res.set = res.set.map(m => new Channel(m))
       return res as unknown as ListResponse<ChannelListFilter, Channel[]>
     })
@@ -99,7 +99,7 @@ export class Messaging {
   /**
    * Finds user by ID
    *
-   * @param {string|Channel} channel
+   * @param channel
    * @return {Promise<Channel>}
    */
   async findChannelByID (channel: string|Channel): Promise<Channel> {
@@ -110,8 +110,8 @@ export class Messaging {
   /**
    * Creates direct channel between current and
    *
-   * @param {User|Object|string} first user - object or string with ID
-   * @param {User|Object|string} [second] user - object or string with ID, defaults to current user
+   * @param first user - object or string with ID
+   * @param [second] user - object or string with ID, defaults to current user
    * @returns {Promise<Channel>}
    */
   async directChannel (first: User|object|string, second: User|object|string = this.$authUser!): Promise<Channel> {
@@ -141,7 +141,7 @@ export class Messaging {
    * }))
    *
    *
-   * @param {Channel} channel
+   * @param channel
    * @returns {Promise<Channel>}
    */
   async saveChannel (channel: Channel): Promise<Channel> {
@@ -162,12 +162,12 @@ export class Messaging {
    *   return System.deleteUser(user)
    * })
    *
-   * @param {Channel} channel
+   * @param channel
    * @returns {Promise<void>}
    async deleteChannel (channel: Channel): Promise<unknown> {
      return Promise.resolve(channel).then(channel => {
        const channelID = extractID(channel, 'channelID')
-       
+
        if (!isFresh(channelID)) {
          return this.MessagingAPI.channelDelete({ channelID })
         }
@@ -184,7 +184,7 @@ export class Messaging {
    *  - Channel object
    *  - object with channelID properties
    *
-   * @param {...Channel|Object|string}
+   * @param
    * @property {string} [r.channelID]
    * @returns {Promise<Channel>}
    */
@@ -235,7 +235,7 @@ export class Messaging {
    *   new AllowAccess(newRole, new WildcardResource(new Channel), 'update')
    * ])
    *
-   * @param {PermissionRule[]} rules
+   * @param rules
    * @returns {Promise<void>}
    */
   async setPermissions (rules: PermissionRule[]): Promise<void> {

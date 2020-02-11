@@ -74,9 +74,9 @@ export class Compose {
   private $record?: Record;
 
   /**
-   * @param {Namespace} ctx.$namespace - Current namespace
-   * @param {Module} ctx.$module - Current module
-   * @param {Record} ctx.$record - Current record
+   * @param ctx.$namespace - Current namespace
+   * @param ctx.$module - Current module
+   * @param ctx.$record - Current record
    */
   constructor (ctx: ComposeContext) {
     this.ComposeAPI = ctx.ComposeAPI
@@ -96,8 +96,8 @@ export class Compose {
    * // Simple page creation new page on current namespace
    * let myPage = await Compose.makePage({ title: 'My Amazing Page!' })
    *
-   * @param {Object} values
-   * @param {Namespace} ns - defaults to current $namespace
+   * @param values
+   * @param ns - defaults to current $namespace
    * @return {Promise<Page>}
    */
   async makePage (values: Partial<Page> = {}, ns: Namespace|undefined = this.$namespace): Promise<Page> {
@@ -109,7 +109,7 @@ export class Compose {
   /**
    * Creates/updates Page
    *
-   * @param {Promise<*>|Page} page
+   * @param page
    * @returns {Promise<Page>}
    */
   async savePage (page: Promise<Page>|Page|Partial<Page>): Promise<Page> {
@@ -132,7 +132,7 @@ export class Compose {
    * @example
    * Compose.deletePage(myPage)
    *
-   * @param {Page} page
+   * @param page
    * @returns {Promise<void>}
    */
   async deletePage (page: Page): Promise<unknown> {
@@ -151,8 +151,8 @@ export class Compose {
    * Searches for pages
    *
    * @private
-   * @param {string|Object} filter
-   * @param {Promise<*>|string|Namespace|Object} ns
+   * @param filter
+   * @param ns
    * @returns {Promise<ListResponse<PageListFilter, Page[]>>}
    */
   async findPages (filter: string|PageListFilter = {}, ns: Namespace|undefined = this.$namespace): Promise<ListResponse<PageListFilter, Page[]>> {
@@ -185,8 +185,8 @@ export class Compose {
    *   return myPage
    * }).then(Compose.savePage)
    *
-   * @param {string|Page} page - accepts Page, pageID (when string string)
-   * @param {string|Namespace|Object} ns - namespace, defaults to current $namespace
+   * @param page - accepts Page, pageID (when string string)
+   * @param ns - namespace, defaults to current $namespace
    * @returns {Promise<Page>}
    */
   async findPageByID (page: string|Page, ns: Namespace|undefined = this.$namespace): Promise<Page> {
@@ -227,8 +227,8 @@ export class Compose {
    *   console.error(err)
    * })
    *
-   * @param {Object} values
-   * @param {Module} module - defaults to current $module
+   * @param values
+   * @param module - defaults to current $module
    * @return {Promise<Record>}
    */
   async makeRecord (values: Values = {}, module: Module|null = null): Promise<Record> {
@@ -268,7 +268,7 @@ export class Compose {
    *   console.error(err)
    * })
    *
-   * @param {Record|Promise<Record>} record
+   * @param record
    * @return {Promise<Record>}
    */
   async saveRecord (record: Record|Promise<Record>): Promise<Record> {
@@ -293,7 +293,7 @@ export class Compose {
    * @example
    * Compose.deleteRecord(myLead)
    *
-   * @param {Record} record
+   * @param record
    * @returns {Promise<void>}
    */
   async deleteRecord (record: Record): Promise<unknown> {
@@ -347,12 +347,12 @@ export class Compose {
    *    }
    * })
    *
-   * @param {string|Object} filter - filter object (or filtering conditions when string)
+   * @param filter - filter object (or filtering conditions when string)
    * @property {string} filter.filter - filtering conditions
    * @property {string} filter.sort - sorting rules
    * @property {number} filter.perPage - max returned records per page
    * @property {number} filter.page - page to return (1-based)
-   * @param {Module} [module] - if not set, defaults to $module
+   * @param [module] - if not set, defaults to $module
    * @returns {Promise<ListResponse<RecordListFilter, Record[]>>}
    */
   async findRecords (filter: string|RecordListFilter = '', module: Module|undefined = this.$module): Promise<ListResponse<RecordListFilter, Record[]>> {
@@ -390,7 +390,7 @@ export class Compose {
    *   // handle lastSettingRecord
    * })
    *
-   * @param {Module} module
+   * @param module
    * @returns {Promise<Record>}
    */
   async findLastRecord (module: Module|undefined = this.$module): Promise<Record> {
@@ -411,7 +411,7 @@ export class Compose {
    *   // handle this firstSettingRecord
    * })
    *
-   * @param {Module} module
+   * @param module
    * @returns {Promise<Record>}
    */
   async findFirstRecord (module: Module|undefined = this.$module): Promise<Record> {
@@ -432,8 +432,8 @@ export class Compose {
    *   // handle this specificRecord
    * })
    *
-   * @param {string|Object|Record} record
-   * @param {Module} module
+   * @param record
+   * @param module
    * @returns {Promise<Record>}
    */
   async findRecordByID (record: string|object|Record, module: Module|null = null): Promise<Record>{
@@ -453,8 +453,8 @@ export class Compose {
   /**
    * Finds a single attachment
    *
-   * @param {string|Object|Attachment} attachment Attachment to find
-   * @param {Promise<Attachment>} ns
+   * @param attachment Attachment to find
+   * @param ns
    */
   async findAttachmentByID (attachment: string|object|Attachment, ns: Namespace|undefined = this.$namespace): Promise<Attachment> {
     return this.resolveNamespace(ns).then(namespace => {
@@ -469,7 +469,7 @@ export class Compose {
 
   /**
    * Helper to determine field's name from it's label
-   * @param {String} label Field's label
+   * @param label Field's label
    * @returns {String}
    */
   moduleFieldNameFromLabel (label: string): string {
@@ -482,8 +482,8 @@ export class Compose {
   /**
    * Creates new Module object
    *
-   * @param {Promise<*>|Module} module
-   * @param {string|Object|Namespace} ns, defaults to current $namespace
+   * @param module
+   * @param ns, defaults to current $namespace
    * @returns {Promise<Module>}
    */
   async makeModule (module: Promise<Module>|Module = {} as Module, ns: Namespace|undefined = this.$namespace): Promise<Module> {
@@ -495,7 +495,7 @@ export class Compose {
   /**
    * Creates/updates Module
    *
-   * @param {Promise<*>|Module} module
+   * @param module
    * @returns {Promise<Module>}
    */
   async saveModule (module: Promise<Module>|Module): Promise<Module> {
@@ -516,8 +516,8 @@ export class Compose {
    * Searches for modules
    *
    * @private
-   * @param {string|Object} filter
-   * @param {Promise<*>|string|Namespace|Object} ns
+   * @param filter
+   * @param ns
    * @returns {Promise<ListResponse<ModuleListFilter, Module[]>>}
    */
   async findModules (filter: string|ModuleListFilter = '', ns: Namespace|undefined = this.$namespace): Promise<ListResponse<ModuleListFilter, Module[]>> {
@@ -556,8 +556,8 @@ export class Compose {
    * // even shorter
    * Compose.findLastRecord('2039248239042').then(....)
    *
-   * @param {string|Module|Record} module - accepts Module, moduleID (when string string) or Record
-   * @param {string|Namespace|Object} ns - namespace, defaults to current $namespace
+   * @param module - accepts Module, moduleID (when string string) or Record
+   * @param ns - namespace, defaults to current $namespace
    * @returns {Promise<Module>}
    */
   async findModuleByID (module: string|Module|Record, ns: Namespace|undefined = this.$namespace): Promise<Module> {
@@ -585,8 +585,8 @@ export class Compose {
    * // even shorter
    * Compose.findLastRecord('SomeModule').then(....)
    *
-   * @param {string} name - name of the module
-   * @param {null|string|Namespace|Object} ns - defaults to current $namespace
+   * @param name - name of the module
+   * @param ns - defaults to current $namespace
    * @returns {Promise<Module>}
    */
   async findModuleByName (name: string, ns: string|Namespace|object|undefined = this.$namespace): Promise<Module>{
@@ -618,8 +618,8 @@ export class Compose {
    * // even shorter
    * Compose.findLastRecord('SomeModule').then(....)
    *
-   * @param {string} name - handle of the module
-   * @param {null|string|Namespace|Object} ns - defaults to current $namespace
+   * @param handle - handle of the module
+   * @param ns - defaults to current $namespace
    * @returns {Promise<Module>}
    */
   async findModuleByHandle (handle: string, ns: string|Namespace|object|undefined = this.$namespace): Promise<Module> {
@@ -645,8 +645,8 @@ export class Compose {
    *   name: 'My Namespace',
    * }))
    *
-   * @param {Promise<*>|Namespace} namespace
-   * @param {string|Object|Namespace} namespace, defaults to current $namespace
+   * @param namespace
+   * @param namespace, defaults to current $namespace
    * @returns {Promise<Namespace>}
    */
   async makeNamespace (namespace: Promise<Namespace>|Namespace = {} as Namespace): Promise<Namespace> {
@@ -664,7 +664,7 @@ export class Compose {
    * @example
    * Compose.saveNamespace(myNamespace)
    *
-   * @param {Promise<*>|Namespace} namespace
+   * @param namespace
    * @returns {Promise<Namespace>}
    */
   async saveNamespace (namespace: Promise<Namespace>|Namespace): Promise<Namespace> {
@@ -685,7 +685,7 @@ export class Compose {
    * Searches for namespaces
    *
    * @private
-   * @param {string|Object} filter
+   * @param filter
    * @returns {Promise<ListResponse<NamespaceListFilter, Namespace[]>>}
    */
   async findNamespaces (filter: string|NamespaceListFilter = ''): Promise<ListResponse<NamespaceListFilter, Namespace[]>> {
@@ -717,7 +717,7 @@ export class Compose {
    * // even shorter
    * Compose.findModules('2039248239042').then(....)
    *
-   * @param {string|Namespace|Record} ns - accepts Namespace, namespaceID (when string string) or Record
+   * @param ns - accepts Namespace, namespaceID (when string string) or Record
    * @returns {Promise<Namespace>}
    */
   async findNamespaceByID (ns: string|Namespace|Record|undefined = this.$namespace): Promise<Namespace> {
@@ -739,7 +739,7 @@ export class Compose {
    * // even shorter
    * Compose.findModules('SomeNamespace').then(....)
    *
-   * @param {string} slug - name of the namespace
+   * @param slug - name of the namespace
    * @returns {Promise<Namespace>}
    */
   async findNamespaceBySlug (slug: string): Promise<Namespace> {
@@ -758,11 +758,11 @@ export class Compose {
    * @example
    * Compose.sendMail('some-address@domain.tld', 'subject...', { html: 'Hello!' })
    *
-   * @param {string|string[]} to - Recipient(s)
-   * @param {string} subject - Mail subject
-   * @param {Object} body
+   * @param to - Recipient(s)
+   * @param subject - Mail subject
+   * @param body
    * @property {string} body.html - HTML body to be sent
-   * @param {string|string[]} Any additional addresses we want this to be sent to (carbon-copy)
+   * @param Any additional addresses we want this to be sent to (carbon-copy)
    * @returns {Promise<void>}
    */
   async sendMail (to: string|string[], subject: string, { html = '' }: { html?: string } = {}, { cc = [] }: { cc?: string|string[] } = {} ): Promise<unknown> {
@@ -807,15 +807,15 @@ export class Compose {
    *   newLead
    * )
    *
-   * @param {string|string[]} to - Recipient(s)
-   * @param {string} subject - Mail subject
-   * @param {Object} options - Various options for body & email
+   * @param to - Recipient(s)
+   * @param subject - Mail subject
+   * @param options - Various options for body & email
    * @property {string} options.header - Text (HTML) before the record table
    * @property {string} options.footer - Text (HTML) after the record table
    * @property {string} options.style - Custom CSS styles for the email
-   * @param {string[]|null} options.fields - List of record fields we want to output
-   * @param {object} options.header - Additional mail headers (cc)
-   * @param {Promise|Record} record - record to be converted (or leave for the current $record)
+   * @param options.fields - List of record fields we want to output
+   * @param options.header - Additional mail headers (cc)
+   * @param record - record to be converted (or leave for the current $record)
    * @return {Promise<void>}
    */
   async sendRecordToMail (
@@ -859,9 +859,9 @@ export class Compose {
   /**
    * Walks over white listed fields.
    *
-   * @param {null|Array|Record} fwl - field white list; if not defined, all fields are used
-   * @param {Record} record - record to be walked over
-   * @param {Function} formatter
+   * @param fwl - field white list; if not defined, all fields are used
+   * @param record - record to be walked over
+   * @param formatter
    * @returns {*}
    *
    * @private
@@ -896,8 +896,8 @@ export class Compose {
    * let report = recordToHTML(['fieldA', 'fieldB', 'fieldC'])
    *
    *
-   * @param {null|Array|Record} fwl - field white list (or leave empty/null/false for all fields)
-   * @param {Record} record - record to be converted (or leave for the current $record)
+   * @param fwl - field white list (or leave empty/null/false for all fields)
+   * @param record - record to be converted (or leave for the current $record)
    * @returns {string}
    */
   recordToHTML (fwl: null|string[]|Record = null, record: Record|undefined = this.$record): string {
@@ -919,8 +919,8 @@ export class Compose {
    * // generates report for current $record from a list of fields
    * let report = recordToPlainText(['fieldA', 'fieldB', 'fieldC'])
    *
-   * @param {null|Array|Record} fwl - field white list (or leave empty/null/false for all fields)
-   * @param {Record} record - record to be converted (or leave for the current $record)
+   * @param fwl - field white list (or leave empty/null/false for all fields)
+   * @param record - record to be converted (or leave for the current $record)
    * @returns {string}
    */
   recordToPlainText (fwl: null|string[]|Record = null, record: Record|undefined = this.$record): string {
@@ -1096,7 +1096,7 @@ export class Compose {
    *   new AllowAccess(newRole, new WildcardResource(new Module), 'update')
    * ])
    *
-   * @param {PermissionRule[]} rules
+   * @param rules
    * @returns {Promise<void>}
    */
   async setPermissions (rules: PermissionRule[]): Promise<void> {

@@ -31,7 +31,7 @@ export interface ListResponse<S, F> {
  * Extracts ID-like (numeric) value from string or object
  *
  * @ignore
- * @param {string|Object} value
+ * @param value
  * @param key
  * @returns {*}
  */

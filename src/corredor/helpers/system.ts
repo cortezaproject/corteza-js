@@ -60,7 +60,7 @@ export class System {
    *   // do something with users (User[]) in set
    * })
    *
-   * @param {string|Object} filter - filter object (or filtering conditions when string)
+   * @param filter - filter object (or filtering conditions when string)
    * @property {string} filter.query - Find %query% in email, handle, username, name...
    * @property {string} filter.username - Filter by username
    * @property {string} filter.handle - Filter by handle
@@ -94,7 +94,7 @@ export class System {
    * @example
    * System.findUserByID()
    *
-   * @param {string|User} user
+   * @param user
    * @return {Promise<User>}
    */
   async findUserByID (user: string|User): Promise<User> {
@@ -110,12 +110,12 @@ export class System {
    *   // do something with user
    * })
    *
-   * @param {string} email
+   * @param email
    * @return {Promise<User>}
    */
   async findUserByEmail (email: string): Promise<User> {
     return this.findUsers({ email }).then(res => {
-      
+
       if (!Array.isArray(res.set) || res.set.length === 0) {
         throw new Error('user not found')
       }
@@ -132,7 +132,7 @@ export class System {
    *   // do something with user
    * })
    *
-   * @param {string} handle
+   * @param handle
    * @return {Promise<User>}
    */
   async findUserByHandle (handle: string): Promise<User> {
@@ -154,7 +154,7 @@ export class System {
    *   return System.saveUser(user)
    * })
    *
-   * @param {User} user
+   * @param user
    * @returns {Promise<User>}
    */
   async saveUser (user: User): Promise<User> {
@@ -176,8 +176,8 @@ export class System {
    *   return System.saveUser(user)
    * })
    *
-   * @param {string} password
-   * @param {User} user
+   * @param password
+   * @param user
    * @returns {Promise<User>}
    */
   async setPassword (password: string, user: User|undefined = this.$user): Promise<User> {
@@ -199,7 +199,7 @@ export class System {
    *   return System.deleteUser(user)
    * })
    *
-   * @param {User} user
+   * @param user
    * @returns {Promise<void>}
    */
   async deleteUser (user: string|User): Promise<unknown> {
@@ -236,7 +236,7 @@ export class System {
   /**
    * Finds user by ID
    *
-   * @param {string|Role} role
+   * @param role
    * @return {Promise<Role>}
    */
   async findRoleByID (role: string|Role): Promise<Role> {
@@ -252,7 +252,7 @@ export class System {
    *   // do something with role
    * })
    *
-   * @param {string} handle
+   * @param handle
    * @return {Promise<Role>}
    */
   async findRoleByHandle (handle: string): Promise<Role> {
@@ -267,7 +267,7 @@ export class System {
 
   /**
    *
-   * @param {Role} role
+   * @param role
    * @returns {Promise<Role>}
    */
   async saveRole (role: Role): Promise<Role> {
@@ -288,7 +288,7 @@ export class System {
    *   return System.deleteUser(user)
    * })
    *
-   * @param {Role} role
+   * @param role
    * @returns {Promise<void>}
    */
   async deleteRole (role: Role): Promise<unknown> {
@@ -307,8 +307,8 @@ export class System {
    * @example
    * addUserToRole('user-we-can-trust', 'admins')
    *
-   * @param {User|string} user resolvable user input
-   * @param {User|string} role resolvable role input
+   * @param user resolvable user input
+   * @param role resolvable role input
    * @returns {Promise<*>}
    */
   async addUserToRole (user: User|string, role: User|string): Promise<unknown> {
@@ -329,8 +329,8 @@ export class System {
    * @example
    * addUserToRole('user-we-can-trust', 'admins')
    *
-   * @param {User|string} user resolvable user input
-   * @param {User|string} role resolvable role input
+   * @param user resolvable user input
+   * @param role resolvable role input
    * @returns {Promise<*>}
    */
   async removeUserFromRole (user: User|string, role: Role|string): Promise<unknown> {
@@ -356,7 +356,7 @@ export class System {
    *  - User object
    *  - object with userID or ownerID properties
    *
-   * @param {...User|Object|string}
+   * @param
    * @property {string} [u.userID]
    * @property {string} [u.ownerID]
    * @returns {Promise<User>}
@@ -383,16 +383,16 @@ export class System {
         // Always fall back to handle
         return this.findUserByHandle(u)
       }
-      
+
       if (typeof u !== 'object') {
         continue
       }
-      
+
       if (u instanceof User) {
         // Already got what we need
         return Promise.resolve(u)
       }
-      
+
       // Other kind of object with properties that might hold user ID
       const {
         userID,
@@ -413,7 +413,7 @@ export class System {
    *  - Role object
    *  - object with roleID property
    *
-   * @param {...Role|Object|string}
+   * @param
    * @property {string} [r.roleID]
    * @returns {Promise<Role|Role>}
    */
@@ -466,7 +466,7 @@ export class System {
    *   new AllowAccess(anotherRole, new WildcardResource(new User), 'update')
    * ])
    *
-   * @param {PermissionRule[]} rules
+   * @param rules
    * @returns {Promise<void>}
    */
   async setPermissions (rules: PermissionRule[]): Promise<void> {
