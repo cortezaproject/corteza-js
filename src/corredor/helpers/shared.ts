@@ -1,12 +1,11 @@
-/* eslint-disable */
-import { NoID } from '../../cast'
+import { CortezaID, NoID } from '../../cast'
 
 interface KV {
   [_: string]: unknown;
 }
 
-interface  PermissionUpdater {
-  permissionsUpdate({ roleID, rules }: { roleID: string, rules: Array<object>}): void;
+interface PermissionUpdater {
+  permissionsUpdate({ roleID, rules }: { roleID: string; rules: Array<object>}): void;
 }
 
 export interface PermissionRule {
@@ -19,52 +18,37 @@ export interface Permissions {
   [key: string]: PermissionRule[];
 }
 
-export function kv(a: unknown): KV { return a as KV}
+export function kv (a: unknown): KV { return a as KV }
 
 export interface ListResponse<S, F> {
-  set: S,
-  filter: F,
+  set: S;
+  filter: F;
 }
 
-
 /**
- * Extracts ID-like (numeric) value from string or object
+ * Extracts ID-like (numeric) value from string, numeric or object
  *
- * @ignore
- * @param value
- * @param key
- * @returns {*}
+ * @param value - that stores ID in some way
+ * @param key - possible key lookup
  */
-export function extractID (value: any, key: string): string {
-  if (typeof value === 'object') {
-    value = value[key]
+export function extractID (value: unknown, key: string): string {
+  if (typeof value === 'object' && value !== null) {
+    if (!Object.prototype.hasOwnProperty.call(value, key)) {
+      return NoID
+    }
+
+    return CortezaID((value as {[_: string]: unknown})[key])
   }
 
-  if (!value || Array.isArray(value)) {
-    return NoID
-  }
-
-  if (typeof value === 'number') {
-    return String(value)
-  }
-
-  if (typeof value !== 'string') {
-    throw Error(`unexpected value type for ${key} type (got '${value}', expecting string)`)
-  }
-
-  if (!/^[0-9]+$/.test(value)) {
-    throw Error(`unexpected value format for ${key} type (got '${value}', expecting digits)`)
-  }
-
-  return value
+  return CortezaID(value)
 }
 
 export function isFresh (ID: string): boolean {
   return !ID || ID === NoID
 }
 
-export function genericPermissionUpdater (API: PermissionUpdater, rules: PermissionRule[]) {
-  const g:Permissions = rules.reduce((acc: Permissions, p: PermissionRule) => {
+export function genericPermissionUpdater (API: PermissionUpdater, rules: PermissionRule[]): void {
+  const g: Permissions = rules.reduce((acc: Permissions, p: PermissionRule) => {
     if (!acc[p.role.roleID]) {
       acc[p.role.roleID] = []
     }
@@ -73,6 +57,7 @@ export function genericPermissionUpdater (API: PermissionUpdater, rules: Permiss
     return acc
   }, {})
 
+  // @todo should return promise and stack all these into Promise.all()
   Object.keys(g).forEach(async roleID => {
     // permissions grouped per role
     await API.permissionsUpdate({ roleID, rules: g[roleID] })
