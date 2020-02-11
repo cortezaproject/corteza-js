@@ -51,24 +51,26 @@ export default class MessagingHelper {
    *   })
    * })
    *
-   * @param message
-   * @property {string} message.message
-   * @param ch User, Channel object or ID
+   * @param message - string or Message object
+   * @param ch - User, Channel object or ID
    */
-  async sendMessage (message: string|Message, ch: string|Channel|User): Promise<any/* Message */> {
+  async sendMessage (message: string|Message, ch: string|Channel|User): Promise<Message> {
     if (ch instanceof User) {
       ch = await this.directChannel(ch)
     }
 
-    this.resolveChannel(ch, this.$channel).then(ch => {
+    return this.resolveChannel(ch, this.$channel).then(ch => {
+      let m: Message
       if (typeof message === 'string') {
-        message = { message }
+        m = new Message({ message })
+      } else {
+        m = new Message(message)
       }
 
-      message.channelID = ch.channelID
-      return this.MessagingAPI.messageCreate(message)
-      // Uncomment line below when message type is done
-      // return this.MessagingAPI.messageCreate(message).then(m => new Message(m))
+      m.channelID = ch.channelID
+      return this.MessagingAPI
+        .messageCreate(kv(message))
+        .then(m => new Message(m))
     })
   }
 
@@ -175,9 +177,6 @@ export default class MessagingHelper {
    *  - string - find by handle
    *  - Channel object
    *  - object with channelID properties
-   *
-   * @param
-   * @property {string} [r.channelID]
    */
   async resolveChannel (...args: unknown[]): Promise<Channel> {
     for (let c of args) {
