@@ -1,10 +1,5 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
-
-// @ts-ignore
 import * as apiClients from '../../src/api-clients'
-// @ts-ignore
-import * as helpers from './helpers'
-
+import { SystemHelper, ComposeHelper, MessagingHelper } from './helpers'
 import { BaseLogger } from 'pino'
 import { BaseArgs } from './shared'
 import { User } from '../system'
@@ -96,21 +91,21 @@ export class Ctx {
   /**
    * Configures and returns system helper
    */
-  get System (): helpers.System {
-    return new helpers.System({ SystemAPI: this.SystemAPI, ...this.args })
+  get System (): SystemHelper {
+    return new SystemHelper({ SystemAPI: this.SystemAPI, ...this.args })
   }
 
   /**
    * Configures and returns compose helper
    */
-  get Compose (): helpers.Compose {
-    return new helpers.Compose({ ComposeAPI: this.ComposeAPI, ...this.args })
+  get Compose (): ComposeHelper {
+    return new ComposeHelper({ ComposeAPI: this.ComposeAPI, ...this.args })
   }
 
   /**
    * Configures and returns messaging helper
    */
-  get Messaging (): helpers.Messaging {
-    return new helpers.Messaging({ MessagingAPI: this.MessagingAPI, ...this.args })
+  get Messaging (): MessagingHelper {
+    return new MessagingHelper({ MessagingAPI: this.MessagingAPI, ...this.args })
   }
 }

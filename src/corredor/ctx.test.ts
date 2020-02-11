@@ -3,7 +3,7 @@
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 import { Ctx } from './ctx'
-import { User } from '../system/types/user'
+import { User } from '../system'
 // @ts-ignore
 import pino from 'pino'
 

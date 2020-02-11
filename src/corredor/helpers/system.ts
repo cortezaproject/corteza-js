@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import { extractID, genericPermissionUpdater, isFresh, PermissionRule, kv, ListResponse } from './shared'
 import { System as SystemAPI } from '../../api-clients'
 import { User, Role, Application } from '../../system/'
@@ -38,7 +36,7 @@ interface RoleListFilter {
 /**
  * SystemHelper provides layer over System API and utilities that simplify automation script writing
  */
-export class System {
+export default class SystemHelper {
   private SystemAPI: SystemAPI;
   private $user?: User;
   private $role?: Role;
@@ -61,17 +59,16 @@ export class System {
    * })
    *
    * @param filter - filter object (or filtering conditions when string)
-   * @property {string} filter.query - Find %query% in email, handle, username, name...
-   * @property {string} filter.username - Filter by username
-   * @property {string} filter.handle - Filter by handle
-   * @property {string} filter.email - Filter by email
-   * @property {string} filter.kind - Filter by kind ('normal' - default, 'bot')
-   * @property {boolean} filter.incDeleted - Include deleted users
-   * @property {boolean} filter.incSuspended - Include suspended users
-   * @property {string} filter.sort - Sort results
-   * @property {number} filter.perPage - max returned records per page
-   * @property {number} filter.page - page to return (1-based)
-   * @returns {Promise<ListResponse<UserListFilter, User[]>>}
+   * @property filter.query - Find %query% in email, handle, username, name...
+   * @property filter.username - Filter by username
+   * @property filter.handle - Filter by handle
+   * @property filter.email - Filter by email
+   * @property filter.kind - Filter by kind ('normal' - default, 'bot')
+   * @property filter.incDeleted - Include deleted users
+   * @property filter.incSuspended - Include suspended users
+   * @property filter.sort - Sort results
+   * @property filter.perPage - max returned records per page
+   * @property filter.page - page to return (1-based)
    */
   async findUsers (filter: string|UserListFilter): Promise<ListResponse<UserListFilter, User[]>> {
     if (typeof filter === 'string') {
@@ -95,7 +92,6 @@ export class System {
    * System.findUserByID()
    *
    * @param user
-   * @return {Promise<User>}
    */
   async findUserByID (user: string|User): Promise<User> {
     const userID = extractID(user, 'userID')
@@ -111,11 +107,9 @@ export class System {
    * })
    *
    * @param email
-   * @return {Promise<User>}
    */
   async findUserByEmail (email: string): Promise<User> {
     return this.findUsers({ email }).then(res => {
-
       if (!Array.isArray(res.set) || res.set.length === 0) {
         throw new Error('user not found')
       }
@@ -133,7 +127,6 @@ export class System {
    * })
    *
    * @param handle
-   * @return {Promise<User>}
    */
   async findUserByHandle (handle: string): Promise<User> {
     return this.findUsers({ handle }).then(res => {
@@ -155,7 +148,6 @@ export class System {
    * })
    *
    * @param user
-   * @returns {Promise<User>}
    */
   async saveUser (user: User): Promise<User> {
     return Promise.resolve(user).then(user => {
@@ -178,7 +170,6 @@ export class System {
    *
    * @param password
    * @param user
-   * @returns {Promise<User>}
    */
   async setPassword (password: string, user: User|undefined = this.$user): Promise<User> {
     return this.resolveUser(user).then(user => {
@@ -200,7 +191,6 @@ export class System {
    * })
    *
    * @param user
-   * @returns {Promise<void>}
    */
   async deleteUser (user: string|User): Promise<unknown> {
     return Promise.resolve(user).then(user => {
@@ -216,7 +206,6 @@ export class System {
    * Searches for roles
    *
    * @param filter
-   * @returns {Promise<ListResponse<RoleListFilter, Role[]>>}
    */
   async findRoles (filter: string|RoleListFilter): Promise<ListResponse<RoleListFilter, Role[]>> {
     if (typeof filter === 'string') {
@@ -237,7 +226,6 @@ export class System {
    * Finds user by ID
    *
    * @param role
-   * @return {Promise<Role>}
    */
   async findRoleByID (role: string|Role): Promise<Role> {
     const roleID = extractID(role, 'roleID')
@@ -253,7 +241,6 @@ export class System {
    * })
    *
    * @param handle
-   * @return {Promise<Role>}
    */
   async findRoleByHandle (handle: string): Promise<Role> {
     return this.findRoles(handle).then(res => {
@@ -268,7 +255,6 @@ export class System {
   /**
    *
    * @param role
-   * @returns {Promise<Role>}
    */
   async saveRole (role: Role): Promise<Role> {
     return Promise.resolve(role).then(role => {
@@ -289,7 +275,6 @@ export class System {
    * })
    *
    * @param role
-   * @returns {Promise<void>}
    */
   async deleteRole (role: Role): Promise<unknown> {
     return Promise.resolve(role).then(role => {
@@ -309,11 +294,10 @@ export class System {
    *
    * @param user resolvable user input
    * @param role resolvable role input
-   * @returns {Promise<*>}
    */
   async addUserToRole (user: User|string, role: User|string): Promise<unknown> {
-    let userID: string;
-    let roleID: string;
+    let userID: string
+    let roleID: string
 
     return this.resolveUser(user, this.$user).then(user => {
       userID = extractID(user, 'userID')
@@ -329,13 +313,12 @@ export class System {
    * @example
    * addUserToRole('user-we-can-trust', 'admins')
    *
-   * @param user resolvable user input
-   * @param role resolvable role input
-   * @returns {Promise<*>}
+   * @param user - resolvable user input
+   * @param role - resolvable role input
    */
   async removeUserFromRole (user: User|string, role: Role|string): Promise<unknown> {
-    let userID: string;
-    let roleID: string;
+    let userID: string
+    let roleID: string
 
     return this.resolveUser(user, this.$user).then(user => {
       userID = extractID(user, 'userID')
@@ -355,11 +338,6 @@ export class System {
    *  - string - find by handle
    *  - User object
    *  - object with userID or ownerID properties
-   *
-   * @param
-   * @property {string} [u.userID]
-   * @property {string} [u.ownerID]
-   * @returns {Promise<User>}
    */
   async resolveUser (...args: unknown[]): Promise<User> {
     for (let u of args) {
@@ -397,7 +375,7 @@ export class System {
       const {
         userID,
         ownerID,
-      } = u as { userID?: string, ownerID?: string}
+      } = u as { userID?: string; ownerID?: string}
       return this.resolveUser(userID, ownerID)
     }
 
@@ -412,10 +390,6 @@ export class System {
    *  - string - find by handle
    *  - Role object
    *  - object with roleID property
-   *
-   * @param
-   * @property {string} [r.roleID]
-   * @returns {Promise<Role|Role>}
    */
   async resolveRole (...args: unknown[]): Promise<Role> {
     for (let r of args) {
@@ -467,7 +441,6 @@ export class System {
    * ])
    *
    * @param rules
-   * @returns {Promise<void>}
    */
   async setPermissions (rules: PermissionRule[]): Promise<void> {
     return genericPermissionUpdater(this.SystemAPI, rules)

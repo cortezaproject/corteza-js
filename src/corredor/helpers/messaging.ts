@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import { extractID, genericPermissionUpdater, isFresh, PermissionRule, kv, ListResponse } from './shared'
 import { Messaging as MessagingAPI } from '../../api-clients'
 import { Channel, Message } from '../../messaging/'
@@ -21,7 +19,7 @@ interface ChannelListFilter {
  * MessagingHelper provides layer over Messaging API and utilities that simplify automation script writing
  *
  */
-export class Messaging {
+export default class MessagingHelper {
   private MessagingAPI: MessagingAPI;
   private $authUser?: User;
   private $channel?: Channel;
@@ -56,9 +54,8 @@ export class Messaging {
    * @param message
    * @property {string} message.message
    * @param ch User, Channel object or ID
-   * @returns {Promise<Message>}
    */
-  async sendMessage (message: string|Message, ch: string|Channel|User): Promise<any/*Message*/> {
+  async sendMessage (message: string|Message, ch: string|Channel|User): Promise<any/* Message */> {
     if (ch instanceof User) {
       ch = await this.directChannel(ch)
     }
@@ -79,7 +76,6 @@ export class Messaging {
    * Searches for channels
    *
    * @param filter
-   * @returns {Promise<ListResponse<ChannelListFilter, Channel[]>>}
    */
   async findChannels (filter: string|ChannelListFilter): Promise<ListResponse<ChannelListFilter, Channel[]>> {
     if (typeof filter === 'string') {
@@ -100,7 +96,6 @@ export class Messaging {
    * Finds user by ID
    *
    * @param channel
-   * @return {Promise<Channel>}
    */
   async findChannelByID (channel: string|Channel): Promise<Channel> {
     const channelID = extractID(channel, 'channelID')
@@ -112,7 +107,6 @@ export class Messaging {
    *
    * @param first user - object or string with ID
    * @param [second] user - object or string with ID, defaults to current user
-   * @returns {Promise<Channel>}
    */
   async directChannel (first: User|object|string, second: User|object|string = this.$authUser!): Promise<Channel> {
     const firstUserID = extractID(first, 'userID')
@@ -142,7 +136,6 @@ export class Messaging {
    *
    *
    * @param channel
-   * @returns {Promise<Channel>}
    */
   async saveChannel (channel: Channel): Promise<Channel> {
     return Promise.resolve(channel).then(channel => {
@@ -163,7 +156,6 @@ export class Messaging {
    * })
    *
    * @param channel
-   * @returns {Promise<void>}
    async deleteChannel (channel: Channel): Promise<unknown> {
      return Promise.resolve(channel).then(channel => {
        const channelID = extractID(channel, 'channelID')
@@ -186,7 +178,6 @@ export class Messaging {
    *
    * @param
    * @property {string} [r.channelID]
-   * @returns {Promise<Channel>}
    */
   async resolveChannel (...args: unknown[]): Promise<Channel> {
     for (let c of args) {
@@ -236,7 +227,6 @@ export class Messaging {
    * ])
    *
    * @param rules
-   * @returns {Promise<void>}
    */
   async setPermissions (rules: PermissionRule[]): Promise<void> {
     return genericPermissionUpdater(this.MessagingAPI, rules)
