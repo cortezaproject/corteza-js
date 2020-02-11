@@ -75,14 +75,17 @@ export default class SystemHelper {
       filter = { query: filter }
     }
 
-    return this.SystemAPI.userList(filter).then(res => {
-      if (!Array.isArray(res.set) || res.set.length === 0 || !res.set) {
-        throw new Error('user not found')
-      }
+    return this.SystemAPI
+      .userList(filter || {})
+      .then(res => {
+        if (res && Array.isArray(res.set)) {
+          res.set = res.set.map(r => new User(r))
+        } else {
+          res.set = []
+        }
 
-      res.set = res.set.map(m => new User(m))
-      return res as unknown as ListResponse<UserListFilter, User[]>
-    })
+        return res as unknown as ListResponse<UserListFilter, User[]>
+      })
   }
 
   /**
@@ -212,14 +215,17 @@ export default class SystemHelper {
       filter = { query: filter }
     }
 
-    return this.SystemAPI.roleList(filter).then(res => {
-      if (!Array.isArray(res.set) || res.set.length === 0) {
-        throw new Error('roles not found')
-      }
+    return this.SystemAPI
+      .roleList(filter || {})
+      .then(res => {
+        if (res && Array.isArray(res.set)) {
+          res.set = res.set.map(r => new Role(r))
+        } else {
+          res.set = []
+        }
 
-      res.set = res.set.map(m => new Role(m))
-      return res as unknown as ListResponse<RoleListFilter, Role[]>
-    })
+        return res as unknown as ListResponse<RoleListFilter, Role[]>
+      })
   }
 
   /**
