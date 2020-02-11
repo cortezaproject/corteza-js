@@ -4,11 +4,11 @@ import { stubObject, StubbedInstance } from 'ts-sinon'
 import SystemHelper from './system'
 import { User, Role } from '../../system/'
 import { System as SystemAPI } from '../../api-clients'
-import { kv, ListResponse } from './shared'
+import { kv } from './shared'
 
 describe(__filename, () => {
   describe('supporting functions', () => {
-    describe('resolveUser', () => {
+    describe('resolving user', () => {
       let h: StubbedInstance<SystemHelper>
 
       beforeEach(() => {
@@ -25,10 +25,10 @@ describe(__filename, () => {
 
       it('should return first valid user without invoking the API', async () => {
         const u = new User({ userID: '444' })
-        expect(h.findUserByID.notCalled).true
-        expect(h.findUserByEmail.notCalled).true
-        expect(h.findUserByHandle.notCalled).true
         expect(await h.resolveUser(undefined, null, false, 0, '', u)).to.deep.equal(u)
+        expect(h.findUserByID.notCalled, 'findUserByID call not expected').true
+        expect(h.findUserByEmail.notCalled, 'findUserByEmail call not expected').true
+        expect(h.findUserByHandle.notCalled, 'findUserByHandle call not expected').true
       })
 
       it('should resolve user ID and invoke the API', async () => {
@@ -71,6 +71,8 @@ describe(__filename, () => {
         expect(h.findUserByHandle.notCalled, 'findUserByHandle call not expected').true
       })
     })
+
+    it.skip('resolving role')
   })
 
   describe('helpers', () => {
@@ -85,7 +87,7 @@ describe(__filename, () => {
       })
     })
 
-    describe('findUsers', () => {
+    describe('user finding', () => {
       it('handles string filter', async () => {
         systemApiStub.userList.resolves({ set: [new User()] })
         await h.findUsers('filter')
@@ -98,14 +100,14 @@ describe(__filename, () => {
       })
     })
 
-    describe('findUserByID', () => {
+    describe('user finding by ID', () => {
       it('returns valid object', async () => {
         systemApiStub.userRead.resolves(kv(new User()))
         expect(await h.findUserByID('1234')).is.instanceOf(User)
       })
     })
 
-    describe('saveUser', () => {
+    describe('user saving', () => {
       it('should create new', async () => {
         const u = new User()
 
@@ -127,7 +129,7 @@ describe(__filename, () => {
       })
     })
 
-    describe('deleteUser', () => {
+    describe('user deleting', () => {
       it('should delete existing user', async () => {
         const u = new User({ userID: '222' })
 
@@ -149,7 +151,7 @@ describe(__filename, () => {
       })
     })
 
-    describe('findRoles', () => {
+    describe('roles finding', () => {
       it('handles string filter', async () => {
         systemApiStub.roleList.resolves({ set: [new Role()] })
         await h.findRoles('filter')
@@ -162,7 +164,7 @@ describe(__filename, () => {
       })
     })
 
-    describe('findRoleByID', () => {
+    describe('roles finding by id', () => {
       it('returns valid object', async () => {
         systemApiStub.roleRead.resolves(kv(new Role()))
 
