@@ -15,7 +15,7 @@ interface Meta {
   description: string;
 }
 
-interface PartialNamespace extends Partial<Omit<Module, 'meta' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
+interface PartialNamespace extends Partial<Omit<Namespace, 'meta' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
   meta?: Partial<Meta>;
   createdAt?: string|number|Date;
   updatedAt?: string|number|Date;
@@ -42,7 +42,7 @@ export class Namespace {
   public canManageNamespace = false
   public canGrant = false
 
-  constructor (i?: PartialNamespace | Namespace) {
+  constructor (i?: PartialNamespace) {
     this.apply(i)
   }
 
