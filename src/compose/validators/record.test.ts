@@ -13,7 +13,7 @@ const m = Object.freeze(new Module({
   ],
 }))
 
-describe('record validation', () => {
+describe(__filename, () => {
   let r: Record, v: RecordValidator
 
   beforeEach(() => {
@@ -23,8 +23,8 @@ describe('record validation', () => {
 
   it('should return errors when required values are not set', () => {
     expect(v.run(r).get()).deep.members([
-      { message: 'missing required value', meta: { field: 'required' } },
-      { message: 'missing required value', meta: { field: 'multiRequired' } },
+      new ValidatorError({ message: 'missing required value', meta: { field: 'required' } }),
+      new ValidatorError({ message: 'missing required value', meta: { field: 'multiRequired' } }),
     ])
   })
 })
@@ -33,8 +33,8 @@ describe('validator', () => {
   it('should properly filter by meta key', () => {
     const v = new Validated(
       new ValidatorError('foo'),
-      new ValidatorError('bar', { bar: true }),
-      new ValidatorError('baz', { bar: false }),
+      new ValidatorError({ message: 'bar', meta: { bar: true } }),
+      new ValidatorError({ message: 'baz', meta: { bar: false } }),
     )
 
     expect(v.filterByMeta('bar')).to.have.lengthOf(2)

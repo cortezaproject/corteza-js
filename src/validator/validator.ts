@@ -5,7 +5,7 @@ interface Meta { [key: string]: unknown }
 
 export class ValidatorError {
   /**
-   * Plain message
+   * Plain error message
    */
   readonly message: string
 
@@ -20,17 +20,16 @@ export class ValidatorError {
    */
   readonly meta: Meta = {}
 
-  constructor (message: string | { message: string; i18n?: string; meta?: Meta }, meta?: Meta) {
+  constructor (message: string | { message: string; i18n?: string; meta?: Meta }) {
     if (typeof message === 'string') {
       this.message = message
+      this.i18n = undefined
     } else {
-      // this explicit assignment only to satisfy lint/ts checks (TS2564)
       this.message = message.message
       this.i18n = message.i18n
-    }
-
-    if (meta) {
-      this.meta = merge({}, this.meta, meta)
+      if (message.meta) {
+        this.meta = merge({}, this.meta, message.meta)
+      }
     }
   }
 }
@@ -95,8 +94,7 @@ export function NormalizeValidatorResults (...r: ValidatorResult[]): ValidatorEr
     }
 
     if (IsOf<ValidatorRawResult>(r, 'message')) {
-      const { message, i18n, meta } = (r as ValidatorRawResult)
-      out.push(new ValidatorError({ message, i18n }, meta || {}))
+      out.push(new ValidatorError(r))
       return
     }
 

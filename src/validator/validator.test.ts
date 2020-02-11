@@ -6,21 +6,14 @@ describe(__filename, () => {
     it('should properly construct from a simple string', () => {
       const err = new ValidatorError('foo')
       expect(err).to.have.property('message').equal('foo')
-      expect(err).to.not.have.property('i18n')
+      expect(err).to.have.property('i18n').undefined
       expect(err).to.have.property('meta').empty
-    })
-
-    it('should properly construct from a simple string and meta', () => {
-      const err = new ValidatorError('foo', { bar: 'baz' })
-      expect(err).to.have.property('message').equal('foo')
-      expect(err).to.not.have.property('i18n')
-      expect(err).to.have.property('meta').deep.equal({ bar: 'baz' })
     })
 
     it('should properly construct from a object', () => {
       const err = new ValidatorError({ message: 'foo', meta: { bar: 'baz' } })
       expect(err).to.have.property('message').equal('foo')
-      expect(err).to.not.have.property('i18n')
+      expect(err).to.have.property('i18n').undefined
       expect(err).to.have.property('meta').deep.equal({ bar: 'baz' })
     })
   })
@@ -84,6 +77,18 @@ describe(__filename, () => {
       expect(v.get().length).to.equal(0)
       v.push(new Validated())
       expect(v.length).to.equal(0)
+    })
+  })
+
+  describe('meta data', () => {
+    it('should properly apply meta data to validation results', () => {
+      const message = 'some error'
+      const field = 'foo'
+
+      const v = new Validated({ message })
+      expect(v.get()).deep.equal([new ValidatorError({ message })])
+      v.applyMeta({ field })
+      expect(v.get()).deep.equal([new ValidatorError({ message, meta: { field } })])
     })
   })
 })
