@@ -553,17 +553,19 @@ export default class System {
     }
     const cfg: AxiosRequestConfig = {
       method: 'get',
-      url: this.organisationReadEndpoint(),
-    }
-    cfg.params = {
-      id,
+      url: this.organisationReadEndpoint({
+        id,
+      }),
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  organisationReadEndpoint (): string {
-    return '/organisations/${id}'
+  organisationReadEndpoint (a: KV): string {
+    const {
+      id,
+    } = a || {}
+    return `/organisations/${id}`
   }
 
   // Archive organisation
