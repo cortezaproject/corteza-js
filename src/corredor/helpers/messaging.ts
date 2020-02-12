@@ -1,15 +1,31 @@
-/* eslint-disable */
+import { extractID, genericPermissionUpdater, isFresh, PermissionRule, kv, ListResponse } from './shared'
+import { Messaging as MessagingAPI } from '../../api-clients'
+import { Channel, Message } from '../../messaging/'
+import { User } from '../../system'
 
-import { Channel } from '../../messaging/types/channel'
-import { User } from '../../system/types/user'
-import { extractID, genericPermissionUpdater, isFresh } from './shared'
+interface MessagingContext {
+  MessagingAPI: MessagingAPI;
+  $authUser?: User;
+  $channel?: Channel;
+  $message?: Message;
+}
+
+interface ChannelListFilter {
+  [key: string]: string|undefined;
+  query?: string;
+}
 
 /**
  * MessagingHelper provides layer over Messaging API and utilities that simplify automation script writing
  *
  */
-export class Messaging {
-  constructor (ctx = {}) {
+export default class MessagingHelper {
+  readonly MessagingAPI: MessagingAPI;
+  readonly $authUser?: User;
+  readonly $channel?: Channel;
+  readonly $message?: Message;
+
+  constructor (ctx: MessagingContext) {
     this.MessagingAPI = ctx.MessagingAPI
 
     this.$authUser = ctx.$authUser
@@ -35,23 +51,26 @@ export class Messaging {
    *   })
    * })
    *
-   * @param {string|Object} message
-   * @property {string} message.message
-   * @param {string|Channel|User} ch User, Channel object or ID
-   * @returns {Promise<Message>}
+   * @param message - string or Message object
+   * @param ch - User, Channel object or ID
    */
-  async sendMessage (message, ch) {
+  async sendMessage (message: string|Message, ch: string|Channel|User): Promise<Message> {
     if (ch instanceof User) {
-      ch = this.directChannel(ch)
+      ch = await this.directChannel(ch)
     }
 
-    this.resolveChannel(ch, this.$channel).then(ch => {
+    return this.resolveChannel(ch, this.$channel).then(ch => {
+      let m: Message
       if (typeof message === 'string') {
-        message = { message }
+        m = new Message({ message })
+      } else {
+        m = new Message(message)
       }
 
-      message.channelID = ch.channelID
-      return this.MessagingAPI.messageCreate(message)
+      m.channelID = ch.channelID
+      return this.MessagingAPI
+        .messageCreate(kv(message))
+        .then(m => new Message(m))
     })
   }
 
@@ -59,25 +78,28 @@ export class Messaging {
    * Searches for channels
    *
    * @param filter
-   * @returns {Promise<{filter: Object, set: Channel[]}>}
    */
-  async findChannels (filter) {
+  async findChannels (filter: string|ChannelListFilter): Promise<ListResponse<ChannelListFilter, Channel[]>> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
 
-    return this.MessagingAPI.channelList(filter).then(set => {
-      return set.map(m => new Channel(m))
+    return this.MessagingAPI.channelList(filter).then(res => {
+      if (!Array.isArray(res.set) || res.set.length === 0) {
+        throw new Error('channel not found')
+      }
+
+      res.set = res.set.map(m => new Channel(m))
+      return res as unknown as ListResponse<ChannelListFilter, Channel[]>
     })
   }
 
   /**
    * Finds user by ID
    *
-   * @param {string|Channel} channel
-   * @return {Promise<Channel>}
+   * @param channel
    */
-  async findChannelByID (channel) {
+  async findChannelByID (channel: string|Channel): Promise<Channel> {
     const channelID = extractID(channel, 'channelID')
     return this.MessagingAPI.channelRead({ channelID }).then(r => new Channel(r))
   }
@@ -85,11 +107,10 @@ export class Messaging {
   /**
    * Creates direct channel between current and
    *
-   * @param {User|Object|string} first user - object or string with ID
-   * @param {User|Object|string} [second] user - object or string with ID, defaults to current user
-   * @returns {Promise<Channel>}
+   * @param first user - object or string with ID
+   * @param [second] user - object or string with ID, defaults to current user
    */
-  async directChannel (first, second = this.$authUser) {
+  async directChannel (first: User|object|string, second: User|object|string = this.$authUser!): Promise<Channel> {
     const firstUserID = extractID(first, 'userID')
     const secondUserID = extractID(second, 'userID')
 
@@ -102,7 +123,7 @@ export class Messaging {
     return this.saveChannel({
       type: 'group',
       members: [firstUserID, secondUserID],
-    })
+    } as Channel)
   }
 
   /**
@@ -116,15 +137,14 @@ export class Messaging {
    * }))
    *
    *
-   * @param {Channel} channel
-   * @returns {Promise<Channel>}
+   * @param channel
    */
-  async saveChannel (channel) {
+  async saveChannel (channel: Channel): Promise<Channel> {
     return Promise.resolve(channel).then(channel => {
       if (isFresh(channel.channelID)) {
-        return this.MessagingAPI.channelCreate(channel)
+        return this.MessagingAPI.channelCreate(kv(channel)).then(channel => new Channel(channel))
       } else {
-        return this.MessagingAPI.channelUpdate(channel)
+        return this.MessagingAPI.channelUpdate(kv(channel)).then(channel => new Channel(channel))
       }
     })
   }
@@ -137,18 +157,17 @@ export class Messaging {
    *   return System.deleteUser(user)
    * })
    *
-   * @param {Channel} channel
-   * @returns {Promise<void>}
-   */
-  async deleteChannel (channel) {
-    return Promise.resolve(channel).then(channel => {
-      const channelID = extractID(channel, 'channelID')
+   * @param channel
+   async deleteChannel (channel: Channel): Promise<unknown> {
+     return Promise.resolve(channel).then(channel => {
+       const channelID = extractID(channel, 'channelID')
 
-      if (!isFresh(channelID)) {
-        return this.MessagingAPI.channelDelete({ channelID })
-      }
-    })
-  }
+       if (!isFresh(channelID)) {
+         return this.MessagingAPI.channelDelete({ channelID })
+        }
+      })
+    }
+  */
 
   /**
    * Resolves channels from the arguments and returns first valid
@@ -158,12 +177,8 @@ export class Messaging {
    *  - string - find by handle
    *  - Channel object
    *  - object with channelID properties
-   *
-   * @param {...Channel|Object|string}
-   * @property {string} [r.channelID]
-   * @returns {Promise<User|User>}
    */
-  async resolveChannel (...args) {
+  async resolveChannel (...args: unknown[]): Promise<Channel> {
     for (let c of args) {
       // Resolve pending promises if any...
       c = await c
@@ -191,7 +206,7 @@ export class Messaging {
       // Other kind of object with properties that might hold channel ID
       const {
         channelID,
-      } = c
+      } = c as { channelID?: string }
       return this.resolveChannel(channelID)
     }
 
@@ -210,10 +225,9 @@ export class Messaging {
    *   new AllowAccess(newRole, new WildcardResource(new Channel), 'update')
    * ])
    *
-   * @param {PermissionRule[]} rules
-   * @returns {Promise<void>}
+   * @param rules
    */
-  async setPermissions (rules) {
+  async setPermissions (rules: PermissionRule[]): Promise<void> {
     return genericPermissionUpdater(this.MessagingAPI, rules)
   }
 }

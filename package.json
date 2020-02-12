@@ -24,7 +24,8 @@
     "minimatch": "^3.0.4",
     "moment": "^2.24.0",
     "numeral": "^2.0.6",
-    "pino": "^5.16.0"
+    "pino": "^5.16.0",
+    "ts-sinon": "^1.0.25"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "1.0.1",
@@ -58,7 +59,6 @@
     "nyc": "^15.0.0",
     "rollup": "^1.29.0",
     "rollup-plugin-typescript2": "^0.25.3",
-    "sinon": "^8.1.0",
     "source-map-support": "^0.5.16",
     "ts-node": "^8.6.2",
     "ts-node-dev": "^1.0.0-pre.44",

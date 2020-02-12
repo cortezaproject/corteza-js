@@ -1,14 +1,48 @@
-/* eslint-disable */
+import { extractID, genericPermissionUpdater, isFresh, PermissionRule, kv, ListResponse } from './shared'
+import { System as SystemAPI } from '../../api-clients'
+import { User, Role, Application } from '../../system/'
 
-import { extractID, genericPermissionUpdater, isFresh } from './shared'
-import { User } from '../../system/types/user'
-import { Role } from '../../system/types/role'
+interface SystemContext {
+  SystemAPI: SystemAPI;
+  $user?: User;
+  $role?: Role;
+  $application?: Application;
+}
+
+interface UserListFilter {
+  [key: string]: string|boolean|number|undefined;
+  query?: string;
+  username?: string;
+  handle?: string;
+  email?: string;
+  kind?: string;
+  incDeleted?: boolean;
+  incSuspended?: boolean;
+  sort?: number;
+  perPage?: number;
+  page?: number;
+}
+
+interface RoleListFilter {
+  [key: string]: string|boolean|number|undefined;
+  query?: string;
+  deleted?: boolean;
+  archived?: boolean;
+  page?: number;
+  perPage?: number;
+  sort?: number;
+}
 
 /**
  * SystemHelper provides layer over System API and utilities that simplify automation script writing
  */
-export class System {
-  constructor (ctx = {}) {
+export default class SystemHelper {
+  readonly SystemAPI: SystemAPI;
+  readonly $user?: User;
+  readonly $role?: Role;
+  readonly $application?: Application;
+
+  constructor (ctx: SystemContext) {
     this.SystemAPI = ctx.SystemAPI
 
     this.$user = ctx.$user
@@ -24,31 +58,34 @@ export class System {
    *   // do something with users (User[]) in set
    * })
    *
-   * @param {string|Object} filter - filter object (or filtering conditions when string)
-   * @property {string} filter.query - Find %query% in email, handle, username, name...
-   * @property {string} filter.username - Filter by username
-   * @property {string} filter.handle - Filter by handle
-   * @property {string} filter.email - Filter by email
-   * @property {string} filter.kind - Filter by kind ('normal' - default, 'bot')
-   * @property {boolean} filter.incDeleted - Include deleted users
-   * @property {boolean} filter.incSuspended - Include suspended users
-   * @property {string} filter.sort - Sort results
-   * @property {number} filter.perPage - max returned records per page
-   * @property {number} filter.page - page to return (1-based)
-   * @returns {Promise<{filter: Object, set: User[]}>}
+   * @param filter - filter object (or filtering conditions when string)
+   * @property filter.query - Find %query% in email, handle, username, name...
+   * @property filter.username - Filter by username
+   * @property filter.handle - Filter by handle
+   * @property filter.email - Filter by email
+   * @property filter.kind - Filter by kind ('normal' - default, 'bot')
+   * @property filter.incDeleted - Include deleted users
+   * @property filter.incSuspended - Include suspended users
+   * @property filter.sort - Sort results
+   * @property filter.perPage - max returned records per page
+   * @property filter.page - page to return (1-based)
    */
-  async findUsers (filter) {
+  async findUsers (filter?: string|UserListFilter): Promise<ListResponse<UserListFilter, User[]>> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
 
-    return this.SystemAPI.userList(filter).then(rval => {
-      if (rval && rval.set) {
-        rval.set = rval.set.map(m => new User(m))
-      }
+    return this.SystemAPI
+      .userList(filter || {})
+      .then(res => {
+        if (res && Array.isArray(res.set)) {
+          res.set = res.set.map(r => new User(r))
+        } else {
+          res.set = []
+        }
 
-      return rval
-    })
+        return res as unknown as ListResponse<UserListFilter, User[]>
+      })
   }
 
   /**
@@ -57,10 +94,9 @@ export class System {
    * @example
    * System.findUserByID()
    *
-   * @param {string|User} user
-   * @return {Promise<User>}
+   * @param user
    */
-  async findUserByID (user) {
+  async findUserByID (user: string|User): Promise<User> {
     const userID = extractID(user, 'userID')
     return this.SystemAPI.userRead({ userID }).then(u => new User(u))
   }
@@ -73,16 +109,15 @@ export class System {
    *   // do something with user
    * })
    *
-   * @param {string} email
-   * @return {Promise<User>}
+   * @param email
    */
-  async findUserByEmail (email) {
-    return this.findUsers({ email }).then(({ set, filter }) => {
-      if (set.length === 0) {
-        return Promise.reject(new Error('user not found'))
+  async findUserByEmail (email: string): Promise<User> {
+    return this.findUsers({ email }).then(res => {
+      if (!Array.isArray(res.set) || res.set.length === 0) {
+        throw new Error('user not found')
       }
 
-      return set[0]
+      return new User(res.set[0])
     })
   }
 
@@ -94,16 +129,15 @@ export class System {
    *   // do something with user
    * })
    *
-   * @param {string} handle
-   * @return {Promise<User>}
+   * @param handle
    */
-  async findUserByHandle (handle) {
-    return this.findUsers({ handle }).then(({ set, filter }) => {
-      if (set.length === 0) {
-        return Promise.reject(new Error('user not found'))
+  async findUserByHandle (handle: string): Promise<User> {
+    return this.findUsers({ handle }).then(res => {
+      if (!Array.isArray(res.set) || res.set.length === 0 || !res.set) {
+        throw new Error('user not found')
       }
 
-      return set[0]
+      return new User(res.set[0])
     })
   }
 
@@ -116,15 +150,14 @@ export class System {
    *   return System.saveUser(user)
    * })
    *
-   * @param {User} user
-   * @returns {Promise<User>}
+   * @param user
    */
-  async saveUser (user) {
+  async saveUser (user: User): Promise<User> {
     return Promise.resolve(user).then(user => {
       if (isFresh(user.userID)) {
-        return this.SystemAPI.userCreate(user)
+        return this.SystemAPI.userCreate(kv(user)).then(user => new User(user))
       } else {
-        return this.SystemAPI.userUpdate(user)
+        return this.SystemAPI.userUpdate(kv(user)).then(user => new User(user))
       }
     })
   }
@@ -138,18 +171,17 @@ export class System {
    *   return System.saveUser(user)
    * })
    *
-   * @param {User} user
-   * @returns {Promise<User>}
+   * @param password
+   * @param user
    */
-  async setPassword (password, user = this.user) {
+  async setPassword (password: string, user: User|undefined = this.$user): Promise<User> {
     return this.resolveUser(user).then(user => {
       const { userID } = user
-
       if (isFresh(userID)) {
-        return
+        throw new Error('Cannot set password for non existing user')
       }
 
-      return this.SystemAPI.userSetPassword({ password, userID })
+      return this.SystemAPI.userSetPassword({ password, userID }).then(u => new User(u))
     })
   }
 
@@ -161,10 +193,9 @@ export class System {
    *   return System.deleteUser(user)
    * })
    *
-   * @param {User} user
-   * @returns {Promise<void>}
+   * @param user
    */
-  async deleteUser (user) {
+  async deleteUser (user: string|User): Promise<unknown> {
     return Promise.resolve(user).then(user => {
       const userID = extractID(user, 'userID')
 
@@ -178,26 +209,31 @@ export class System {
    * Searches for roles
    *
    * @param filter
-   * @returns {Promise<{filter: Object, set: Role[]}>}
    */
-  async findRoles (filter) {
+  async findRoles (filter?: string|RoleListFilter): Promise<ListResponse<RoleListFilter, Role[]>> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
 
-    return this.SystemAPI.roleList(filter).then(rval => {
-      rval.set = rval.set.map(m => new Role(m))
-      return rval
-    })
+    return this.SystemAPI
+      .roleList(filter || {})
+      .then(res => {
+        if (res && Array.isArray(res.set)) {
+          res.set = res.set.map(r => new Role(r))
+        } else {
+          res.set = []
+        }
+
+        return res as unknown as ListResponse<RoleListFilter, Role[]>
+      })
   }
 
   /**
    * Finds user by ID
    *
-   * @param {string|Role} role
-   * @return {Promise<Role>}
+   * @param role
    */
-  async findRoleByID (role) {
+  async findRoleByID (role: string|Role): Promise<Role> {
     const roleID = extractID(role, 'roleID')
     return this.SystemAPI.roleRead({ roleID }).then(r => new Role(r))
   }
@@ -210,30 +246,28 @@ export class System {
    *   // do something with role
    * })
    *
-   * @param {string} handle
-   * @return {Promise<Role>}
+   * @param handle
    */
-  async findRoleByHandle (handle) {
-    return this.findRoles(handle).then(({ set, filter }) => {
-      if (filter.count === 0) {
-        return Promise.reject(new Error('role not found'))
+  async findRoleByHandle (handle: string): Promise<Role> {
+    return this.findRoles(handle).then(res => {
+      if (!Array.isArray(res.set) || res.set.length === 0 || !res.set) {
+        throw new Error('role not found')
       }
 
-      return set[0]
+      return new Role(res.set[0])
     })
   }
 
   /**
    *
-   * @param {Role} role
-   * @returns {Promise<Role>}
+   * @param role
    */
-  async saveRole (role) {
+  async saveRole (role: Role): Promise<Role> {
     return Promise.resolve(role).then(role => {
       if (isFresh(role.roleID)) {
-        return this.SystemAPI.roleCreate(role)
+        return this.SystemAPI.roleCreate(kv(role)).then(role => new Role(role))
       } else {
-        return this.SystemAPI.roleUpdate(role)
+        return this.SystemAPI.roleUpdate(kv(role)).then(role => new Role(role))
       }
     })
   }
@@ -246,10 +280,9 @@ export class System {
    *   return System.deleteUser(user)
    * })
    *
-   * @param {Role} role
-   * @returns {Promise<void>}
+   * @param role
    */
-  async deleteRole (role) {
+  async deleteRole (role: Role): Promise<unknown> {
     return Promise.resolve(role).then(role => {
       const roleID = extractID(role, 'roleID')
 
@@ -265,13 +298,12 @@ export class System {
    * @example
    * addUserToRole('user-we-can-trust', 'admins')
    *
-   * @param {User|string} user resolvable user input
-   * @param {User|string} role resolvable role input
-   * @returns {Promise<*>}
+   * @param user resolvable user input
+   * @param role resolvable role input
    */
-  async addUserToRole (user, role) {
-    let userID
-    let roleID
+  async addUserToRole (user: User|string, role: Role|string): Promise<unknown> {
+    let userID: string
+    let roleID: string
 
     return this.resolveUser(user, this.$user).then(user => {
       userID = extractID(user, 'userID')
@@ -287,13 +319,12 @@ export class System {
    * @example
    * addUserToRole('user-we-can-trust', 'admins')
    *
-   * @param {User|string} user resolvable user input
-   * @param {User|string} role resolvable role input
-   * @returns {Promise<*>}
+   * @param user - resolvable user input
+   * @param role - resolvable role input
    */
-  async removeUserFromRole (user, role) {
-    let userID
-    let roleID
+  async removeUserFromRole (user: User|string, role: Role|string): Promise<unknown> {
+    let userID: string
+    let roleID: string
 
     return this.resolveUser(user, this.$user).then(user => {
       userID = extractID(user, 'userID')
@@ -313,13 +344,8 @@ export class System {
    *  - string - find by handle
    *  - User object
    *  - object with userID or ownerID properties
-   *
-   * @param {...User|Object|string}
-   * @property {string} [u.userID]
-   * @property {string} [u.ownerID]
-   * @returns {Promise<User|User>}
    */
-  async resolveUser (...args) {
+  async resolveUser (...args: unknown[]): Promise<User> {
     for (let u of args) {
       // Resolve pending promises if any...
       u = await u
@@ -348,14 +374,14 @@ export class System {
 
       if (u instanceof User) {
         // Already got what we need
-        return u
+        return Promise.resolve(u)
       }
 
       // Other kind of object with properties that might hold user ID
       const {
         userID,
         ownerID,
-      } = u
+      } = u as { userID?: string; ownerID?: string}
       return this.resolveUser(userID, ownerID)
     }
 
@@ -370,12 +396,8 @@ export class System {
    *  - string - find by handle
    *  - Role object
    *  - object with roleID property
-   *
-   * @param {...Role|Object|string}
-   * @property {string} [r.roleID]
-   * @returns {Promise<User|User>}
    */
-  async resolveRole (...args) {
+  async resolveRole (...args: unknown[]): Promise<Role> {
     for (let r of args) {
       // Resolve pending promises if any...
       r = await r
@@ -387,7 +409,7 @@ export class System {
       if (typeof r === 'string') {
         if (/^[0-9]+$/.test(r)) {
           // Looks like an ID, try to find it and fall back to handle
-          return this.findRoleByID(r).catch(() => this.findRoleByHandle(r))
+          return this.findRoleByID(r).catch(() => this.findRoleByHandle(r as string))
         }
 
         return this.findRoleByHandle(r)
@@ -405,7 +427,7 @@ export class System {
       // Other kind of object with properties that might hold role ID
       const {
         roleID,
-      } = r
+      } = r as { roleID?: string}
       return this.resolveRole(roleID)
     }
 
@@ -424,10 +446,9 @@ export class System {
    *   new AllowAccess(anotherRole, new WildcardResource(new User), 'update')
    * ])
    *
-   * @param {PermissionRule[]} rules
-   * @returns {Promise<void>}
+   * @param rules
    */
-  async setPermissions (rules) {
+  async setPermissions (rules: PermissionRule[]): Promise<void> {
     return genericPermissionUpdater(this.SystemAPI, rules)
   }
 }
