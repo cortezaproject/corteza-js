@@ -35,8 +35,8 @@ export class ModuleFieldUser extends ModuleField {
     Apply(this.options, o, String, 'selectType', 'multiDelimiter')
   }
 
-  formatter ({ userID, name, username, email }: Partial<User> = {}) {
-    return name || username || email || userID
+  formatter ({ userID, name, username, email }: Partial<User> = {}): string {
+    return name || username || email || userID || ''
   }
 }
 

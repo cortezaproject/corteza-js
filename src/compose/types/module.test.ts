@@ -41,6 +41,8 @@ describe(__filename, () => {
           { name: 'f011', kind: 'User' },
         ],
       })
+
+      expect(mod.fields).lengthOf(11)
     })
   })
 

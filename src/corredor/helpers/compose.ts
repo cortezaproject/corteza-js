@@ -3,6 +3,7 @@ import { Attachment } from '../../shared'
 import { Compose as ComposeAPI } from '../../api-clients'
 import { Namespace, Record, Module, Page } from '../../compose'
 import { Values } from '../../compose/types/record'
+import { IsCortezaID } from '../../cast'
 
 const emailStyle = `
 body { -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #3A393C; font-family: Verdana,Arial,sans-serif; font-size: 14px; height: 100%; margin: 0; padding: 0; width: 100% !important; }
@@ -806,6 +807,10 @@ export default class ComposeHelper {
 
     record = await record
 
+    if (!record) {
+      throw Error('record undefined')
+    }
+
     const wb = '<div style="width: 800px; margin: 20px auto;">'
     const wa = '</div>'
 
@@ -816,8 +821,8 @@ export default class ComposeHelper {
     const html = style + header + this.recordToHTML(fields, record) + footer
 
     if (!subject) {
-      subject = record!.module.name + ' '
-      subject += record!.updatedAt ? 'record updated' : 'record created'
+      subject = record.module.name + ' '
+      subject += record.updatedAt ? 'record updated' : 'record created'
     }
 
     return this.sendMail(
@@ -837,7 +842,7 @@ export default class ComposeHelper {
    *
    * @private
    */
-  walkFields (fwl: null|string[]|Record|undefined, record: Record, formatter: (...args: any[]) => string) {
+  walkFields (fwl: null|string[]|Record|undefined, record: Record, formatter: (...args: unknown[]) => string): Array<string> {
     if (!formatter) {
       throw new Error('formatter.undefined')
     }
@@ -871,10 +876,18 @@ export default class ComposeHelper {
    * @param record - record to be converted (or leave for the current $record)
    */
   recordToHTML (fwl: null|string[]|Record = null, record: Record|undefined = this.$record): string {
-    const rows = this.walkFields(fwl, record!, (f: { name: string; label: string }): string => {
-      const v = record!.values[f.name]
-      return `<tr><td>${f.label || f.name}</td><td>${(Array.isArray(v) ? v : [v]).join(', ') || '&nbsp;'}</td></tr>`
-    }).join('')
+    if (!record) {
+      throw Error('record undefined')
+    }
+
+    const rows = this
+      .walkFields(fwl, record, (f): string => {
+        const { name, label } = f as { name: string; label: string }
+        const v = record.values[name]
+
+        return `<tr><td>${label || name}</td><td>${(Array.isArray(v) ? v : [v]).join(', ') || '&nbsp;'}</td></tr>`
+      })
+      .join('')
 
     return `<table width="800" cellspacing="0" cellpadding="0" border="0">${rows}</table>`
   }
@@ -893,10 +906,18 @@ export default class ComposeHelper {
    * @param record - record to be converted (or leave for the current $record)
    */
   recordToPlainText (fwl: null|string[]|Record = null, record: Record|undefined = this.$record): string {
-    return this.walkFields(fwl, record!, f => {
-      const v = record!.values[f.name]
-      return `${f.label || f.name}:\n${(Array.isArray(v) ? v : [v]).join(', ') || '/'}\n\n`
-    }).join('').trim()
+    if (!record) {
+      throw Error('record undefined')
+    }
+
+    return this
+      .walkFields(fwl, record, f => {
+        const { name, label } = f as { name: string; label: string }
+        const v = record.values[name]
+        return `${label || name}:\n${(Array.isArray(v) ? v : [v]).join(', ') || '/'}\n\n`
+      })
+      .join('')
+      .trim()
   }
 
   /**
@@ -905,7 +926,7 @@ export default class ComposeHelper {
    * @private
    */
   async resolveModule (...args: unknown[]): Promise<Module> {
-    const strResolve = async (module: string) => {
+    const strResolve = async (module: string): Promise<Module> => {
       return this.findModuleByHandle(module)
         .then(m => {
           if (!m) {
@@ -922,7 +943,7 @@ export default class ComposeHelper {
       }
 
       if (typeof module === 'string') {
-        if (/^[0-9]+$/.test(module)) {
+        if (IsCortezaID(module)) {
           // Looks like an ID
           return this.findModuleByID(module).catch((err = {}) => {
             if (err.message && err.message.indexOf('ModuleNotFound') >= 0) {
@@ -993,7 +1014,7 @@ export default class ComposeHelper {
       }
 
       if (typeof ns === 'string') {
-        if (/^[0-9]+$/.test(ns)) {
+        if (IsCortezaID(ns)) {
           // Looks like an ID
           return this.findNamespaceByID(ns).catch((err = {}) => {
             if (err.message && err.message.indexOf('NamespaceNotFound') >= 0) {

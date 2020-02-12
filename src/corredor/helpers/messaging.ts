@@ -2,6 +2,7 @@ import { extractID, genericPermissionUpdater, isFresh, PermissionRule, kv, ListR
 import { Messaging as MessagingAPI } from '../../api-clients'
 import { Channel, Message } from '../../messaging/'
 import { User } from '../../system'
+import { IsCortezaID } from '../../cast'
 
 interface MessagingContext {
   MessagingAPI: MessagingAPI;
@@ -110,7 +111,7 @@ export default class MessagingHelper {
    * @param first user - object or string with ID
    * @param [second] user - object or string with ID, defaults to current user
    */
-  async directChannel (first: User|object|string, second: User|object|string = this.$authUser!): Promise<Channel> {
+  async directChannel (first: User|object|string, second: User|string|undefined = this.$authUser): Promise<Channel> {
     const firstUserID = extractID(first, 'userID')
     const secondUserID = extractID(second, 'userID')
 
@@ -188,7 +189,7 @@ export default class MessagingHelper {
       }
 
       if (typeof c === 'string') {
-        if (/^[0-9]+$/.test(c)) {
+        if (IsCortezaID(c)) {
           // Looks like an ID, try to find it and fall back to handle
           return this.findChannelByID(c)
         }

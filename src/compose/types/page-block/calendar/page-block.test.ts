@@ -1,6 +1,5 @@
 import { expect } from 'chai'
 import { PageBlockCalendar } from './page-block'
-import { Page } from '../../page'
 
 describe(__filename, () => {
   describe('check namespace casting', () => {

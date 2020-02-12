@@ -1,6 +1,6 @@
 import { describe, it, beforeEach } from 'mocha'
 import { expect } from 'chai'
-import sinon, { StubbedInstance, stubObject } from 'ts-sinon'
+import sinon, { stubObject } from 'ts-sinon'
 import { extractID, genericPermissionUpdater } from './shared'
 import { NoID } from '../../cast'
 import { System as SystemAPI } from '../../api-clients'

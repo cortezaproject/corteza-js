@@ -40,7 +40,10 @@ function getRecordValue (record: Readonly<Record>, field: string): (string|undef
       case 'createdAt':
       case 'updatedAt':
       case 'deletedAt':
-        return [record[field] !== undefined ? record[field]!.toISOString() : undefined]
+        if (record[field] !== undefined) {
+          return [(record[field] as Date).toISOString()]
+        }
+        break
     }
   }
 

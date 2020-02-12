@@ -45,7 +45,7 @@ export function ComposeEvent (event?: Partial<Event>): Event {
   return {
     eventType: onManual,
     resourceType: 'compose',
-    match: (c) => true,
+    match: (): boolean => true,
     ...event,
   }
 }
@@ -57,7 +57,7 @@ export function NamespaceEvent (res: Namespace, event?: Partial<Event>): Event {
   return {
     eventType: onManual,
     resourceType: res.resourceType,
-    match: (c) => namespaceMatcher(res, c, false),
+    match: (c): boolean => namespaceMatcher(res, c, false),
     args: { namespace: res, ...event?.args },
     ...event,
   }
@@ -70,7 +70,7 @@ export function ModuleEvent (res: Module, event?: Partial<Event>): Event {
   return {
     eventType: onManual,
     resourceType: res.resourceType,
-    match: (c) => namespaceMatcher(res.namespace, c, moduleMatcher(res, c, false)),
+    match: (c): boolean => namespaceMatcher(res.namespace, c, moduleMatcher(res, c, false)),
     args: { module: res, ...event?.args },
     ...event,
   }
@@ -83,7 +83,7 @@ export function RecordEvent (res: Record, event?: Partial<Event>): Event {
   return {
     eventType: onManual,
     resourceType: res.resourceType,
-    match: (c) => namespaceMatcher(res.namespace, c, moduleMatcher(res.module, c, false)),
+    match: (c): boolean => namespaceMatcher(res.namespace, c, moduleMatcher(res.module, c, false)),
     args: { record: res, ...event?.args },
     ...event,
   }

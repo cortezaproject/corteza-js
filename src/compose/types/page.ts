@@ -1,5 +1,5 @@
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
-import { AreObjectsOf, IsOf } from '../../guards'
+import { AreObjectsOf } from '../../guards'
 import { PageBlock, PageBlockMaker } from './page-block'
 
 interface PartialPage extends Partial<Omit<Page, 'children' | 'blocks' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {

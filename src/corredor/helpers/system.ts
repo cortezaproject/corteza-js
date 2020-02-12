@@ -1,6 +1,7 @@
 import { extractID, genericPermissionUpdater, isFresh, PermissionRule, kv, ListResponse } from './shared'
 import { System as SystemAPI } from '../../api-clients'
 import { User, Role, Application } from '../../system/'
+import { IsCortezaID } from '../../cast'
 
 interface SystemContext {
   SystemAPI: SystemAPI;
@@ -356,7 +357,7 @@ export default class SystemHelper {
 
       if (typeof u === 'string') {
         try {
-          if (/^[0-9]+$/.test(u)) {
+          if (IsCortezaID(u)) {
             // Looks like an ID, try to find it and fall back to handle
             return await this.findUserByID(u)
           } else if (u.indexOf('@') > 0) {
@@ -407,7 +408,7 @@ export default class SystemHelper {
       }
 
       if (typeof r === 'string') {
-        if (/^[0-9]+$/.test(r)) {
+        if (IsCortezaID(r)) {
           // Looks like an ID, try to find it and fall back to handle
           return this.findRoleByID(r).catch(() => this.findRoleByHandle(r as string))
         }

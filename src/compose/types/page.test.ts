@@ -27,6 +27,8 @@ describe(__filename, () => {
           { kind: 'SocialFeed', xywh: [0, 0, 3, 3] },
         ],
       })
+
+      expect(p.blocks).lengthOf(8)
     })
   })
 })

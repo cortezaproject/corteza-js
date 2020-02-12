@@ -29,7 +29,7 @@ export class Attachment {
     this.setBaseURL(baseURL || '')
   }
 
-  apply (i?: PartialAttachment) {
+  apply (i?: PartialAttachment): void {
     Apply(this, i, CortezaID, 'attachmentID', 'ownerID')
     Apply(this, i, String, 'name', 'url', 'previewUrl')
 
@@ -40,7 +40,7 @@ export class Attachment {
     Apply(this, i, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt')
   }
 
-  setBaseURL (baseURL: string) {
+  setBaseURL (baseURL: string): void {
     this.url = baseURL + this.url
     this.previewUrl = baseURL + this.previewUrl
     this.download = this.url + '&download=1'

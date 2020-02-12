@@ -1,6 +1,5 @@
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
 import { IsOf } from '../../guards'
-import { Module } from './module'
 
 interface MetaAdminRecordList {
   columns: string[];

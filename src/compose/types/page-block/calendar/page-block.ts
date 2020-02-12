@@ -65,7 +65,6 @@ export class PageBlockCalendar extends PageBlock {
       { views: PageBlockCalendar.handleLegacyViews(o.header?.views || []) },
     )
 
-
     this.options.locale = o.locale || 'en-gb'
   }
 

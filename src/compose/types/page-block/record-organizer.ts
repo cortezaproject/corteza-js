@@ -1,8 +1,5 @@
 import { PageBlock, PageBlockInput, Registry } from './base'
 import { Apply, CortezaID, NoID } from '../../../cast'
-import { Record } from '../record'
-import { Compose as ComposeAPI } from '../../../api-clients'
-import { Module } from '../module'
 
 const kind = 'RecordOrganizer'
 interface Options {

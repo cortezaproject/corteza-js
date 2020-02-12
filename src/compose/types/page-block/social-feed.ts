@@ -1,6 +1,5 @@
 import { PageBlock, PageBlockInput, Registry } from './base'
 import { Apply, CortezaID, NoID } from '../../../cast'
-import { Record } from '../record'
 
 const kind = 'SocialFeed'
 interface Options {
@@ -38,6 +37,5 @@ export class PageBlockSocialFeed extends PageBlock {
     }
   }
 }
-
 
 Registry.set(kind, PageBlockSocialFeed)

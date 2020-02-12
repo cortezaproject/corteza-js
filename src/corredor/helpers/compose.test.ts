@@ -3,7 +3,7 @@ import { expect } from 'chai'
 import { StubbedInstance, stubObject } from 'ts-sinon'
 import ComposeHelper from './compose'
 import { Module, ModuleFieldNumber, ModuleFieldString, Namespace, Page, Record } from '../../compose'
-import { Compose as ComposeAPI, System as SystemAPI } from '../../api-clients'
+import { Compose as ComposeAPI } from '../../api-clients'
 import { kv } from './shared'
 import { NoID } from '../../cast'
 

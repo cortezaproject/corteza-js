@@ -2,7 +2,6 @@ import { describe, it, beforeEach } from 'mocha'
 import { expect } from 'chai'
 import { stubObject, StubbedInstance } from 'ts-sinon'
 import { Messaging as MessagingAPI } from '../../api-clients'
-import { kv } from './shared'
 import MessagingHelper from './messaging'
 import { Channel } from '../../messaging'
 
@@ -38,7 +37,7 @@ describe(__filename, () => {
   describe.skip('helpers', () => {
     it('should have tests for sendMessage')
     it('should have tests for findChannels')
-    it('should have tests for findChanneldById')
+    it('should have tests for findChannelById')
     it('should have tests for directMessages')
     it('should have tests for saveChannel')
   })

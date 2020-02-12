@@ -1,6 +1,5 @@
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
 import { AreStrings } from '../../guards'
-import { User } from './user'
 
 interface PartialRole extends Partial<Omit<Role, 'createdAt' | 'updatedAt' | 'deletedAt' | 'archivedAt'>> {
   createdAt?: string|number|Date;

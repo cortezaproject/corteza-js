@@ -1,4 +1,4 @@
-import { CortezaID, IsCortezaID, NoID } from '../../cast'
+import { CortezaID, NoID } from '../../cast'
 
 interface KV {
   [_: string]: unknown;

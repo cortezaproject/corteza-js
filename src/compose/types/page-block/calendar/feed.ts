@@ -40,7 +40,7 @@ export default class Feed {
     this.apply(i)
   }
 
-  apply (i?: FeedInput) {
+  apply (i?: FeedInput): void {
     if (!i) return
 
     if (!IsOf<Feed>(i, 'resource') && IsOf<LegacyFeed>(i, 'moduleID')) {
