@@ -4,6 +4,7 @@ import { Compose as ComposeAPI } from '../../api-clients'
 import { Namespace, Record, Module, Page } from '../../compose'
 import { Values } from '../../compose/types/record'
 import { IsCortezaID } from '../../cast'
+import { IsOf } from '../../guards'
 
 const emailStyle = `
 body { -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #3A393C; font-family: Verdana,Arial,sans-serif; font-size: 14px; height: 100%; margin: 0; padding: 0; width: 100% !important; }
@@ -971,9 +972,9 @@ export default class ComposeHelper {
         return this.resolveModule(module.module, module.moduleID)
       }
 
-      if ((module as ListResponse<ModuleListFilter, Module[]>).set && (module as ListResponse<ModuleListFilter, Module[]>).filter) {
+      if (IsOf<ListResponse<ModuleListFilter, Module[]>>(module, 'set', 'filter')) {
         // We got a result set with modules
-        module = (module as ListResponse<ModuleListFilter, Module[]>).set
+        module = module.set
       }
 
       if (Array.isArray(module)) {
