@@ -2,12 +2,25 @@ import { Validator, ValidatorFn, ValidatorResult, ValidatorError, Validated, IsE
 import { Record } from '../types/record'
 import { Module } from '../types/module'
 import { ModuleField } from '../types/module-field'
+import { IsOf } from '../../guards'
 
-function genericFieldValidator (field: ModuleField) {
+// Validator value types
+interface FieldValidatorPayload {
+  field: ModuleField;
+  value: unknown | string | string[];
+  oldValue: unknown | string | string[];
+}
+
+function genericFieldValidator (field: ModuleField): ValidatorFn<Record> {
   // newValue is of type unknown to satisfy ValidatorFn interface
-  return function (this: Record, newValue: unknown): ValidatorResult {
+  return function (this: Record, arg0: unknown): ValidatorResult {
+    if (!IsOf<FieldValidatorPayload>(arg0, 'field', 'value', 'oldValue')) {
+      throw Error('invalid field validator argument type')
+    }
+    const { value } = arg0
+
     if (field.isRequired) {
-      if (IsEmpty(newValue as string|string[])) {
+      if (value === undefined || IsEmpty(value)) {
         // @todo return something typified...
         return new ValidatorError('missing required value')
       }
@@ -64,8 +77,6 @@ export class RecordValidator extends Validator<Record> {
 
   /**
    * Runs validators on record and all (or whitelisted) fields
-   *
-   * @param r
    */
   public run (r: Record, ...fields: string[]): Validated {
     const out = new Validated()
@@ -80,9 +91,20 @@ export class RecordValidator extends Validator<Record> {
       fields = Object.getOwnPropertyNames(this.rfv)
     }
 
-    for (const field of fields) {
-      const results = this.rfv[field].run(r, r.values[field], field)
-      results.applyMeta({ field })
+    for (const f of fields) {
+      const field = r.module.findField(f)
+      if (!field) {
+        continue
+      }
+
+      const payload: FieldValidatorPayload = {
+        value: r.values[f],
+        oldValue: r.cleanValues[f],
+        field,
+      }
+
+      const results = this.rfv[f].run(r, payload)
+      results.applyMeta({ field: f })
       out.push(results.get())
     }
 

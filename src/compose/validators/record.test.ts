@@ -22,6 +22,7 @@ describe(__filename, () => {
   })
 
   it('should return errors when required values are not set', () => {
+    console.log(v.run(r).get())
     expect(v.run(r).get()).deep.members([
       new ValidatorError({ message: 'missing required value', meta: { field: 'required' } }),
       new ValidatorError({ message: 'missing required value', meta: { field: 'multiRequired' } }),

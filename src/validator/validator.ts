@@ -170,8 +170,8 @@ export interface ValidatorFn<T> {
   (this: T, ...args: unknown[]): ValidatorResult;
 }
 
-export function IsEmpty (v: undefined|string|string[]): boolean {
-  if (!v || v.length === 0) {
+export function IsEmpty (v: unknown): boolean {
+  if (!v || (IsOf(v, 'length') && v.length && v.length === 0)) {
     return true
   }
 

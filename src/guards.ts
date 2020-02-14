@@ -1,4 +1,8 @@
 export const IsOf = <T>(v: unknown, ...props: (keyof T)[]): v is T => {
+  if (typeof v !== 'object') {
+    return false
+  }
+
   for (const prop of props) {
     if (!Object.prototype.hasOwnProperty.call(v, prop)) {
       return false
