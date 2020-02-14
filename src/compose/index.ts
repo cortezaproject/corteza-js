@@ -5,6 +5,7 @@ export { Namespace } from './types/namespace'
 export { Page } from './types/page'
 export * from './types/page-block'
 export { RecordValidator } from './validators/record'
+export { getModuleFromYaml } from './helpers'
 export {
   ComposeEvent,
   NamespaceEvent,
