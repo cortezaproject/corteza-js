@@ -1289,6 +1289,43 @@ export default class Compose {
   }
 
   // Delete record row from module section
+  async recordBulkDelete (a: KV): Promise<KV> {
+    const {
+      namespaceID,
+      moduleID,
+      recordIDs,
+      truncate,
+    } = (a as KV) || {}
+    if (!namespaceID) {
+      console.error('recordBulkDelete failed, field namespaceID is empty', a)
+      throw Error('field namespaceID is empty')
+    }
+    if (!moduleID) {
+      console.error('recordBulkDelete failed, field moduleID is empty', a)
+      throw Error('field moduleID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'delete',
+      url: this.recordBulkDeleteEndpoint({
+        namespaceID, moduleID,
+      }),
+    }
+    cfg.data = {
+      recordIDs,
+      truncate,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  recordBulkDeleteEndpoint (a: KV): string {
+    const {
+      namespaceID,
+      moduleID,
+    } = a || {}
+    return `/namespace/${namespaceID}/module/${moduleID}/record/`
+  }
+
+  // Delete record row from module section
   async recordDelete (a: KV): Promise<KV> {
     const {
       namespaceID,
