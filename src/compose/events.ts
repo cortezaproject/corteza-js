@@ -58,8 +58,10 @@ export function NamespaceEvent (res: Namespace, event?: Partial<Event>): Event {
     eventType: onManual,
     resourceType: res.resourceType,
     match: (c): boolean => namespaceMatcher(res, c, false),
-    args: { namespace: res, ...event?.args },
     ...event,
+
+    // Override the arguments at the end
+    args: { namespace: res, ...event?.args },
   }
 }
 
@@ -71,8 +73,10 @@ export function ModuleEvent (res: Module, event?: Partial<Event>): Event {
     eventType: onManual,
     resourceType: res.resourceType,
     match: (c): boolean => namespaceMatcher(res.namespace, c, moduleMatcher(res, c, false)),
-    args: { module: res, ...event?.args },
     ...event,
+
+    // Override the arguments at the end
+    args: { module: res, ...event?.args },
   }
 }
 
@@ -84,56 +88,60 @@ export function RecordEvent (res: Record, event?: Partial<Event>): Event {
     eventType: onManual,
     resourceType: res.resourceType,
     match: (c): boolean => namespaceMatcher(res.namespace, c, moduleMatcher(res.module, c, false)),
-    args: { record: res, ...event?.args },
     ...event,
+
+    // Override the arguments at the end
+    args: { record: res, ...event?.args },
   }
 }
 
-export async function TriggerComposeScriptOnManual (api: TriggerEndpoints, ev: Event, script: string): Promise<unknown> {
-  const params = { script, args: ev.args }
+export async function TriggerComposeScriptOnManual (api: TriggerEndpoints) {
+  return (ev: Event, script: string): Promise<unknown> => {
+    const params = { script, args: ev.args }
 
-  if (ev.resourceType === 'compose') {
-    return api
-      .automationTriggerScript({ ...params })
-  }
-
-  if (!ev.args) {
-    throw new Error('expecting args prop in event')
-  }
-
-  if (ev.resourceType === 'compose:namespace') {
-    if (!IsOf<Namespace>(ev.args.namespace, 'namespaceID')) {
-      throw new Error('expecting args.namespace in event arguments')
+    if (ev.resourceType === 'compose') {
+      return api
+        .automationTriggerScript({ ...params })
     }
 
-    const { namespaceID } = ev.args.namespace as Namespace
-    return api
-      .namespaceTriggerScript({ namespaceID, ...params })
-  }
-
-  if (ev.resourceType === 'compose:module') {
-    if (!IsOf<Module>(ev.args.module, 'namespaceID', 'moduleID')) {
-      throw new Error('expecting args.module in event arguments')
+    if (!ev.args) {
+      throw new Error('expecting args prop in event')
     }
 
-    const { namespaceID, moduleID } = ev.args.module as Module
+    if (ev.resourceType === 'compose:namespace') {
+      if (!IsOf<Namespace>(ev.args.namespace, 'namespaceID')) {
+        throw new Error('expecting args.namespace in event arguments')
+      }
 
-    return api
-      .moduleTriggerScript({ namespaceID, moduleID, ...params })
-  }
-
-  if (ev.resourceType === 'compose:record') {
-    if (!IsOf<Record>(ev.args.record, 'namespaceID', 'moduleID', 'recordID')) {
-      throw new Error('expecting args.record in event arguments')
+      const { namespaceID } = ev.args.namespace as Namespace
+      return api
+        .namespaceTriggerScript({ namespaceID, ...params })
     }
 
-    const record = ev.args.record as Record
-    const { namespaceID, moduleID, recordID, values } = record
+    if (ev.resourceType === 'compose:module') {
+      if (!IsOf<Module>(ev.args.module, 'namespaceID', 'moduleID')) {
+        throw new Error('expecting args.module in event arguments')
+      }
 
-    return api
-      .recordTriggerScript({ namespaceID, moduleID, recordID, values, ...params })
-      .then(rval => record.apply(rval))
+      const { namespaceID, moduleID } = ev.args.module as Module
+
+      return api
+        .moduleTriggerScript({ namespaceID, moduleID, ...params })
+    }
+
+    if (ev.resourceType === 'compose:record') {
+      if (!IsOf<Record>(ev.args.record, 'namespaceID', 'moduleID', 'recordID')) {
+        throw new Error('expecting args.record in event arguments')
+      }
+
+      const record = ev.args.record as Record
+      const { namespaceID, moduleID, recordID, values } = record
+
+      return api
+        .recordTriggerScript({ namespaceID, moduleID, recordID, values, ...params })
+        .then(rval => record.apply(rval))
+    }
+
+    throw Error(`cannot trigger server script: unknown resource type '${ev.resourceType}'`)
   }
-
-  throw Error(`cannot trigger server script: unknown resource type '${ev.resourceType}'`)
 }

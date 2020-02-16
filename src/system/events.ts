@@ -8,10 +8,12 @@ interface TriggerEndpoints {
   userTriggerScript (params: { userID: string; script: string }): Promise<object>;
 }
 
+// @todo refactor this into more compose-like event structure (see compose/events.ts
 export function SystemEvent (eventType = onManual): Event {
   return GenericEventMaker({ resourceType: 'system' }, eventType, () => true, {})
 }
 
+// @todo refactor this into more compose-like event structure (see compose/events.ts
 export function UserEvent (user: User, eventType: string = onManual): Event {
   return GenericEventMaker(user, eventType, function (c) {
     switch (c.Name()) {
@@ -26,6 +28,7 @@ export function UserEvent (user: User, eventType: string = onManual): Event {
   }, { user })
 }
 
+// @todo refactor this into more compose-like event structure (see compose/events.ts
 export function RoleEvent (role: Role, eventType = onManual): Event {
   return GenericEventMaker(role, eventType, function (c) {
     switch (c.Name()) {
@@ -40,22 +43,24 @@ export function RoleEvent (role: Role, eventType = onManual): Event {
   }, { role })
 }
 
-export async function TriggerServerScriptOnManual (api: TriggerEndpoints, ev: Event, script: string): Promise<object|User|Role> {
-  const params = { script, args: ev.args }
-  const { userID } = ev.args?.user as User
-  const { roleID } = ev.args?.role as Role
+export async function TriggerServerScriptOnManual (api: TriggerEndpoints) {
+  return (ev: Event, script: string): Promise<unknown> => {
+    const params = { script, args: ev.args }
+    const { userID } = ev.args?.user as User
+    const { roleID } = ev.args?.role as Role
 
-  switch (ev.resourceType) {
-    case 'system':
-      return api.automationTriggerScript({ ...params })
+    switch (ev.resourceType) {
+      case 'system':
+        return api.automationTriggerScript({ ...params })
 
-    case 'system:user':
-      return api.userTriggerScript({ userID, ...params }).then(rval => new User(rval))
+      case 'system:user':
+        return api.userTriggerScript({ userID, ...params }).then(rval => new User(rval))
 
-    case 'system:role':
-      return api.roleTriggerScript({ roleID, ...params }).then(rval => new Role(rval))
+      case 'system:role':
+        return api.roleTriggerScript({ roleID, ...params }).then(rval => new Role(rval))
 
-    default:
-      throw Error(`cannot trigger server script: unknown resource type '${ev.resourceType}'`)
+      default:
+        throw Error(`cannot trigger server script: unknown resource type '${ev.resourceType}'`)
+    }
   }
 }

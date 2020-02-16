@@ -5,7 +5,7 @@ import { Exec, ScriptExecFn } from './exec'
 
 // @ts-ignore
 import pino from 'pino'
-import { Config } from './ctx'
+import { Config, Ctx } from './ctx'
 import { User } from '../system'
 import { BaseArgs } from './shared'
 
@@ -31,7 +31,7 @@ describe('execution', () => {
         $invoker: new User(),
       }
 
-      Exec(exec, args, scriptLogger, config)
+      Exec({ exec }, args, new Ctx(args, scriptLogger, { config }))
         .then((result: object) => check({ result }))
         .catch((error: Error|undefined) => check({ error }))
     })

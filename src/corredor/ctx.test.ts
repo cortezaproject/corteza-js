@@ -12,12 +12,12 @@ describe(__filename, () => {
     it('should have a valid getter', () => {
       const cscfg = { apiBaseURL: '' }
       const ctx = new Ctx(
-        { cServers: { system: cscfg, compose: cscfg, messaging: cscfg } },
-        pino(),
         {
           $invoker: new User(),
           authToken: '',
         },
+        pino(),
+        { config: { cServers: { system: cscfg, compose: cscfg, messaging: cscfg } } },
       )
 
       expect(ctx.console).to.not.be.undefined

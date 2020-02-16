@@ -6,7 +6,7 @@ import { Args } from './args'
 import { CortezaTypes } from './args-corteza'
 import { Module } from '../compose/types/module'
 
-describe('arguments constructor', () => {
+describe(__filename, () => {
   it('should provide getter for a given arg', () => {
     const args = new Args({ foo: 'bar' })
     expect(args).to.haveOwnProperty('foo')
@@ -20,6 +20,15 @@ describe('arguments constructor', () => {
 
   it('should use caster', () => {
     const module = { moduleID: '42' }
+    const args = new Args({ module }, CortezaTypes)
+    expect(args).to.haveOwnProperty('$module')
+    expect(args).to.haveOwnProperty('rawModule')
+    expect(args).property('$module').instanceOf(Module)
+    expect(args).property('rawModule').to.deep.eq(module)
+  })
+
+  it('should properly handle pre-casted variables', () => {
+    const module = new Module({ moduleID: '42' })
     const args = new Args({ module }, CortezaTypes)
     expect(args).to.haveOwnProperty('$module')
     expect(args).to.haveOwnProperty('rawModule')

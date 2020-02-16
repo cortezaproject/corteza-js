@@ -5,9 +5,9 @@ import { BaseArgs } from './shared'
 import { User } from '../system'
 
 export interface ConfigCServers {
-  system: ConfigServer;
-  compose: ConfigServer;
-  messaging: ConfigServer;
+  system?: ConfigServer;
+  compose?: ConfigServer;
+  messaging?: ConfigServer;
 }
 
 export interface ConfigServer {
@@ -15,30 +15,64 @@ export interface ConfigServer {
 }
 
 export interface Config {
-  cServers: ConfigCServers;
+  cServers?: ConfigCServers;
+}
+
+interface CtxInitArgs {
+  config?:
+    Config;
+
+  systemAPI?:
+    apiClients.System;
+
+  composeAPI?:
+    apiClients.Compose;
+
+  messagingAPI?:
+    apiClients.Messaging;
 }
 
 /**
  * Handles script execution context
  *
- *
+ * Context accepts pre-assembled *API props or it construct them fly from passed config
  */
 export class Ctx {
-  readonly args: BaseArgs;
-  readonly config: Config;
-  readonly log: BaseLogger;
+  protected readonly args: BaseArgs;
+  protected readonly config?: Config;
 
-  constructor (config: Config, log: BaseLogger, args: BaseArgs) {
+  protected readonly logger: BaseLogger;
+
+  protected systemAPI?:
+    apiClients.System;
+
+  protected composeAPI?:
+    apiClients.Compose;
+
+  protected messagingAPI?:
+    apiClients.Messaging;
+
+  constructor (args: BaseArgs, logger: BaseLogger, a?: CtxInitArgs) {
     this.args = args
-    this.log = log
-    this.config = config
+    this.logger = logger
+
+    if (a) {
+      Object.assign(this, a)
+    }
   }
 
   /**
    * Alias for log, to make developer's life easier <3
    */
   get console (): BaseLogger {
-    return this.log
+    return this.logger
+  }
+
+  /**
+   * Alias for log, to make developer's life easier <3
+   */
+  get log (): BaseLogger {
+    return this.logger
   }
 
   /**
@@ -54,38 +88,56 @@ export class Ctx {
 
   /**
    * Configures and returns system API client
-   *
-   * @returns {Promise<apiClients.System>}
    */
   get SystemAPI (): apiClients.System {
-    return new apiClients.System({
-      baseURL: this.config.cServers.system.apiBaseURL,
-      jwt: this.args.authToken,
-    })
+    if (!this.systemAPI) {
+      if (!this.config?.cServers?.system) {
+        throw new Error('configuration for corteza system server missing')
+      }
+
+      this.systemAPI = new apiClients.System({
+        baseURL: this.config.cServers.system.apiBaseURL,
+        jwt: this.args.authToken,
+      })
+    }
+
+    return this.systemAPI
   }
 
   /**
    * Configures and returns compose API client
-   *
-   * @returns {Promise<apiClients.Compose>}
    */
   get ComposeAPI (): apiClients.Compose {
-    return new apiClients.Compose({
-      baseURL: this.config.cServers.compose.apiBaseURL,
-      jwt: this.args.authToken,
-    })
+    if (!this.composeAPI) {
+      if (!this.config?.cServers?.compose) {
+        throw new Error('configuration for corteza compose server missing')
+      }
+
+      this.composeAPI = new apiClients.Compose({
+        baseURL: this.config.cServers.compose.apiBaseURL,
+        jwt: this.args.authToken,
+      })
+    }
+
+    return this.composeAPI
   }
 
   /**
    * Configures and returns messaging API client
-   *
-   * @returns {Promise<apiClients.Messaging>}
    */
   get MessagingAPI (): apiClients.Messaging {
-    return new apiClients.Messaging({
-      baseURL: this.config.cServers.messaging.apiBaseURL,
-      jwt: this.args.authToken,
-    })
+    if (!this.messagingAPI) {
+      if (!this.config?.cServers?.messaging) {
+        throw new Error('configuration for corteza messaging server missing')
+      }
+
+      this.messagingAPI = new apiClients.Messaging({
+        baseURL: this.config.cServers.messaging.apiBaseURL,
+        jwt: this.args.authToken,
+      })
+    }
+
+    return this.messagingAPI
   }
 
   /**

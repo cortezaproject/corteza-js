@@ -1,9 +1,12 @@
-import { BaseLogger } from 'pino'
 import { BaseArgs } from './shared'
-import { Config, Ctx } from './ctx'
+import { Ctx } from './ctx'
 
 export interface ScriptExecFn {
     (args: BaseArgs, ctx?: Ctx): unknown;
+}
+
+export interface ExecutableScript {
+  exec: ScriptExecFn;
 }
 
 interface Results {
@@ -11,20 +14,16 @@ interface Results {
 }
 
 /**
- * Script executor, prepares arguments, context and pass both to the script's exec function
- * @param {function} exec Function to be executed
- * @param {BaseArgs} args Raw arguments for the script
- * @param {BaseLogger} log Exec logger to capture and proxy all log.* and console.* calls
- * @param config Configuration for context that we feed to the script
- * @returns Promise<object>
+ * Script executor
+ *
+ * @param script - Script to be executed
+ * @param args - Arguments for the script
+ * @param ctx - Exec context (exec function's 2nd param)
  */
-export async function Exec (exec: ScriptExecFn, args: BaseArgs, log: BaseLogger, config: Config): Promise<Results> {
-  // Context for exec function (script)
-  const execCtx = new Ctx(config, log, args)
-
+export async function Exec (script: ExecutableScript, args: BaseArgs, ctx: Ctx): Promise<Results> {
   try {
     // Wrap exec() with Promise.resolve - we do not know if function is async or not.
-    return Promise.resolve(exec(args, execCtx)).then((rval: unknown): object => {
+    return Promise.resolve(script.exec(args, ctx)).then((rval: unknown): object => {
       let result = {}
 
       if (rval === false) {
