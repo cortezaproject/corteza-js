@@ -2,6 +2,7 @@ import { PageBlock, PageBlockInput, Registry } from './base'
 import { Apply, CortezaID, NoID } from '../../../cast'
 import { Compose as ComposeAPI } from '../../../api-clients'
 import { Module } from '../module'
+import { Button } from './types'
 
 const kind = 'RecordList'
 interface Options {
@@ -21,6 +22,9 @@ interface Options {
   // Are table rows selectable
   selectable: boolean;
   selectMode: 'multi' | 'single' | 'range';
+
+  // Ordered list of buttons to display in the block
+  selectionButtons: Button[];
 }
 
 const defaults: Readonly<Options> = Object.freeze({
@@ -39,6 +43,8 @@ const defaults: Readonly<Options> = Object.freeze({
 
   selectable: false,
   selectMode: 'multi',
+
+  selectionButtons: [],
 })
 
 export class PageBlockRecordList extends PageBlock {
@@ -70,6 +76,10 @@ export class PageBlockRecordList extends PageBlock {
       'allowExport',
       'selectable',
     )
+
+    if (o.selectionButtons) {
+      this.options.selectionButtons = o.selectionButtons
+    }
   }
 
   async fetch (api: ComposeAPI, recordListModule: Module, filter: {[_: string]: unknown}): Promise<object> {
