@@ -1,21 +1,7 @@
 import { PageBlock, PageBlockInput, Registry } from './base'
+import { Button } from './types'
 
 const kind = 'Automation'
-
-interface Button {
-  script: string;
-
-  // resource type (copied from ui hook)
-  resourceType: string;
-
-  // Can override hook's label
-  label?: string;
-
-  // can override hooks's variant
-  variant?: string;
-
-  enabled?: boolean;
-}
 
 interface Options {
   // Ordered list of buttons to display in the block
