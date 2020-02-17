@@ -1,4 +1,4 @@
-import * as apiClients from '../../src/api-clients'
+import * as apiClients from '../api-clients'
 import { SystemHelper, ComposeHelper, MessagingHelper } from './helpers'
 import { BaseLogger } from 'pino'
 import { BaseArgs } from './shared'
