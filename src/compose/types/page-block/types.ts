@@ -12,3 +12,5 @@ export interface Button {
 
   enabled?: boolean;
 }
+
+export type PageBlockWrap = 'Plain' | 'Card'
