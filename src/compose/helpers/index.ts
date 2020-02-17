@@ -1,8 +1,9 @@
 import yaml from 'js-yaml'
+import fs from 'fs'
 import { Module } from '../types/module'
 
-export function getModuleFromYaml (moduleName: string, yamlFile: string): Module|undefined {
-  const data = yaml.safeLoadAll(yamlFile)
+export function getModuleFromYaml (moduleName: string, yamlPath: string): Module|undefined {
+  const data = yaml.safeLoadAll(fs.readFileSync(yamlPath, 'utf8'))
   const mod = data[0].modules[moduleName]
   if (mod) {
     // Convert fields from object to array
