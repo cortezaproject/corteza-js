@@ -95,7 +95,7 @@ export function RecordEvent (res: Record, event?: Partial<Event>): Event {
   }
 }
 
-export async function TriggerComposeScriptOnManual (api: TriggerEndpoints) {
+export function TriggerComposeScriptOnManual (api: TriggerEndpoints) {
   return (ev: Event, script: string): Promise<unknown> => {
     const params = { script, args: ev.args }
 

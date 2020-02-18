@@ -43,7 +43,7 @@ export function RoleEvent (role: Role, eventType = onManual): Event {
   }, { role })
 }
 
-export async function TriggerServerScriptOnManual (api: TriggerEndpoints) {
+export function TriggerServerScriptOnManual (api: TriggerEndpoints) {
   return (ev: Event, script: string): Promise<unknown> => {
     const params = { script, args: ev.args }
     const { userID } = ev.args?.user as User
