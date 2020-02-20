@@ -10,8 +10,12 @@ interface GenericCtor<T> {
  *
  * Takes argument (ref to class) and returns a function that will initialize class of that type
  */
-export function GenericCaster<T> (C: GenericCtor<T>): GenericGetterFn<T> {
-  return function (val: unknown): T {
+export function GenericCaster<T> (C: GenericCtor<T>): GenericGetterFn<T|undefined> {
+  return function (val: unknown): T|undefined {
+    if (!val || typeof val !== 'object') {
+      return undefined
+    }
+
     return new C(val)
   }
 }
@@ -21,8 +25,12 @@ export function GenericCaster<T> (C: GenericCtor<T>): GenericGetterFn<T> {
  *
  * Takes argument (ref to class) and returns a function that will initialize class of that type
  */
-export function GenericCasterFreezer<T, K extends T> (C: GenericCtor<T>): GenericGetterFn<T> {
-  return function (val: unknown): Readonly<T> {
+export function GenericCasterFreezer<T> (C: GenericCtor<T>): GenericGetterFn<Readonly<T>|undefined> {
+  return function (val: unknown): Readonly<T>|undefined {
+    if (!val || typeof val !== 'object') {
+      return undefined
+    }
+
     return Object.freeze(new C(val))
   }
 }

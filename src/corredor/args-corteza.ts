@@ -14,12 +14,24 @@ interface RecordCasterCaller {
  *
  * Record arg is a bit special, it takes 2 params (record itself + record's module)
  */
-function recordCaster (this: RecordCasterCaller, val: unknown): Record {
-  return new Record(this.$module, val as object)
+function recordCaster (this: RecordCasterCaller, val: unknown): Record|undefined {
+  if (val) {
+    try {
+      return new Record(this.$module, val as object)
+    } catch (e) {}
+  }
+
+  return undefined
 }
 
-function recordCasterFreezer (this: RecordCasterCaller, val: unknown): Readonly<Record> {
-  return Object.freeze(new Record(this.$module, val as object))
+function recordCasterFreezer (this: RecordCasterCaller, val: unknown): Readonly<Record>|undefined {
+  if (val) {
+    try {
+      return Object.freeze(new Record(this.$module, val as object))
+    } catch (e) {}
+  }
+
+  return undefined
 }
 
 /**

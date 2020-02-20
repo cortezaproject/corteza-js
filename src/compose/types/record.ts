@@ -45,9 +45,8 @@ function isModule (m?: unknown): m is Module {
   return m && IsOf<Module>(m, 'fields') && Array.isArray(m.fields) && m.fields.length > 0
 }
 
-function isRawValue (v: object): v is RawValue {
-  const props = Object.getOwnPropertyNames(v)
-  return props.length === 2 && props.includes('name') && props.includes('value')
+function isRawValue (v: unknown): v is RawValue {
+  return IsOf<RawValue>(v, 'name', 'value')
 }
 
 /**
@@ -283,7 +282,7 @@ export class Record {
         return
       }
 
-      if (typeof v !== 'object') {
+      if (!v || typeof v !== 'object') {
         throw Error('expecting array of values or values object')
       }
 
@@ -322,7 +321,7 @@ export class Record {
       if (Array.isArray(value)) {
         if (index < -1) {
           // assigning [] to [i]
-          throw Error('can not set array of values to a single value 2')
+          throw Error('can not set array of values to a single value')
         }
 
         this.values[name] = Array.isArray(value) ? value : [value]

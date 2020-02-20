@@ -1,5 +1,5 @@
 export const IsOf = <T>(v: unknown, ...props: (keyof T)[]): v is T => {
-  if (typeof v !== 'object') {
+  if (!v || typeof v !== 'object') {
     return false
   }
 
@@ -21,7 +21,7 @@ export const AreNumbers = (a: unknown|unknown[]): a is number[] => every(a, 'num
 export const AreObjects = (a: unknown|unknown[]): a is object[] => every(a, 'object')
 
 export function AreObjectsOf<T> (a: unknown|unknown[], ...props: (keyof T)[]): a is T[] {
-  if (!Array.isArray(a)) {
+  if (!a || !Array.isArray(a)) {
     return false
   }
 

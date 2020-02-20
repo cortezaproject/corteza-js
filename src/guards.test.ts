@@ -3,6 +3,10 @@ import { AreBooleans, AreNumbers, AreObjects, AreObjectsOf, AreStrings, IsOf } f
 
 class Foo { baz = '' }
 
+/**
+ * All ts-ignores are individually handled
+ * just to be sure we do not slip and misuse the ignore altogether.
+ */
 describe('check if variable is of certain type', () => {
   it('should properly validate native and user types', () => {
     const foo = new Foo()
@@ -17,6 +21,24 @@ describe('check if variable is of certain type', () => {
     // @ts-ignore
     expect(IsOf<Foo>(foo, 'bar')).to.equal(false)
   })
+
+  it('should properly handle non-object input types', () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    expect(IsOf(null, 'bar')).to.equal(false)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    expect(IsOf(undefined, 'bar')).to.equal(false)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    expect(IsOf(42, 'bar')).to.equal(false)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    expect(IsOf([], 'bar')).to.equal(false)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    expect(IsOf(NaN, 'bar')).to.equal(false)
+  })
 })
 
 describe('check if array items are of certain type', () => {
@@ -26,6 +48,24 @@ describe('check if array items are of certain type', () => {
     expect(AreObjectsOf<Foo>([false], 'baz')).to.equal(false)
     expect(AreObjectsOf<Foo>(['some string'], 'baz')).to.equal(false)
     expect(AreObjectsOf<Foo>([new Foo(), 'string'], 'baz')).to.equal(false)
+  })
+
+  it('should properly handle non-array input types', () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    expect(AreObjectsOf(null, 'bar')).to.equal(false)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    expect(AreObjectsOf(undefined, 'bar')).to.equal(false)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    expect(AreObjectsOf(42, 'bar')).to.equal(false)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    expect(AreObjectsOf({}, 'bar')).to.equal(false)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    expect(AreObjectsOf(NaN, 'bar')).to.equal(false)
   })
 })
 
