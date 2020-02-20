@@ -1,5 +1,5 @@
 import { PageBlock, PageBlockInput, Registry } from './base'
-import { Apply, CortezaID, NoID } from '../../../cast'
+import { Apply } from '../../../cast'
 import { PageBlockWrap } from './types'
 
 const kind = 'IFrame'
