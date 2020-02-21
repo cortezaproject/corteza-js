@@ -95,7 +95,7 @@ export class EventBus {
 
     try {
       for (const t of matched) {
-        if (this.verbose) console.debug('EventBus: handling event', { ev, trigger: t })
+        if (this.verbose) console.debug('EventBus: handling event', { ev, trigger: t, script })
         const result = await t.Handle(ev)
         if (result === false) {
           return Promise.reject(new Error('aborted'))
@@ -124,7 +124,7 @@ export class EventBus {
    * @param trigger Trigger definition
    */
   Register (handler: HandlerFn, trigger: Trigger): EventBus {
-    if (this.verbose) console.debug('EventBus: event handler registration', { handler, trigger })
+    if (this.verbose) console.debug('EventBus: event handler registration for', trigger.scriptName, { handler, trigger })
     this.checkPairs(trigger.resourceTypes, trigger.eventTypes)
 
     this.handlers.push(new Handler(handler, trigger))
