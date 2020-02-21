@@ -4,15 +4,16 @@ import { merge } from 'lodash'
 interface Meta { [key: string]: unknown }
 
 export class ValidatorError {
+
+  /**
+   * kind - key used for translation
+   */
+  readonly kind: string
+
   /**
    * Plain error message
    */
   readonly message: string
-
-  /**
-   * i18n key used for translation
-   */
-  readonly i18n?: string
 
   /**
    * Any additional meta data that can be used to expand (translated) message,
@@ -20,28 +21,28 @@ export class ValidatorError {
    */
   readonly meta: Meta = {}
 
-  constructor (message: string | { message: string; i18n?: string; meta?: Meta }) {
-    if (typeof message === 'string') {
-      this.message = message
-      this.i18n = undefined
+  constructor (i: string | { kind: string; message?: string; meta?: Meta }) {
+    if (typeof i === 'string') {
+      this.kind = i
+      this.message = i
     } else {
-      this.message = message.message
-      this.i18n = message.i18n
-      if (message.meta) {
-        this.meta = merge({}, this.meta, message.meta)
+      this.kind = i.kind
+      this.message = i.message || i.kind
+      if (i.meta) {
+        this.meta = merge({}, this.meta, i.meta)
       }
     }
   }
 }
 
 const ValidatorFalseDefaultError = Object.freeze(new ValidatorError({
-  message: 'invalid value',
-  i18n: 'invalidValue',
+  message: 'Internal error',
+  kind: 'internal',
 }))
 
 interface ValidatorRawResult {
-  message: string;
-  i18n?: string;
+  kind: string;
+  message?: string;
   meta?: Meta;
 }
 
@@ -93,7 +94,7 @@ export function NormalizeValidatorResults (...r: ValidatorResult[]): ValidatorEr
       return
     }
 
-    if (IsOf<ValidatorRawResult>(r, 'message')) {
+    if (IsOf<ValidatorRawResult>(r, 'kind') && r.kind) {
       out.push(new ValidatorError(r))
       return
     }

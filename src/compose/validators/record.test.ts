@@ -22,10 +22,9 @@ describe(__filename, () => {
   })
 
   it('should return errors when required values are not set', () => {
-    console.log(v.run(r).get())
     expect(v.run(r).get()).deep.members([
-      new ValidatorError({ message: 'missing required value', meta: { field: 'required' } }),
-      new ValidatorError({ message: 'missing required value', meta: { field: 'multiRequired' } }),
+      new ValidatorError({ kind: 'empty', message: 'empty', meta: { field: 'required' } }),
+      new ValidatorError({ kind: 'empty', message: 'empty', meta: { field: 'multiRequired' } }),
     ])
   })
 })
@@ -34,8 +33,8 @@ describe('validator', () => {
   it('should properly filter by meta key', () => {
     const v = new Validated(
       new ValidatorError('foo'),
-      new ValidatorError({ message: 'bar', meta: { bar: true } }),
-      new ValidatorError({ message: 'baz', meta: { bar: false } }),
+      new ValidatorError({ kind: 'test', message: 'bar', meta: { bar: true } }),
+      new ValidatorError({ kind: 'test', message: 'baz', meta: { bar: false } }),
     )
 
     expect(v.filterByMeta('bar')).to.have.lengthOf(2)

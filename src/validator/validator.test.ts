@@ -5,15 +5,15 @@ describe(__filename, () => {
   describe('ValidatorError class', () => {
     it('should properly construct from a simple string', () => {
       const err = new ValidatorError('foo')
+      expect(err).to.have.property('kind').equal('foo')
       expect(err).to.have.property('message').equal('foo')
-      expect(err).to.have.property('i18n').undefined
       expect(err).to.have.property('meta').empty
     })
 
     it('should properly construct from a object', () => {
-      const err = new ValidatorError({ message: 'foo', meta: { bar: 'baz' } })
+      const err = new ValidatorError({ kind: 'foo', meta: { bar: 'baz' } })
+      expect(err).to.have.property('kind').equal('foo')
       expect(err).to.have.property('message').equal('foo')
-      expect(err).to.have.property('i18n').undefined
       expect(err).to.have.property('meta').deep.equal({ bar: 'baz' })
     })
   })
@@ -36,14 +36,14 @@ describe(__filename, () => {
     })
 
     it('should result in array with one error when given an object', () => {
-      expect(NormalizeValidatorResults({ message: 'foo' }))
+      expect(NormalizeValidatorResults({ kind: 'foo' }))
         .to.have.lengthOf(1)
     })
 
     it('should result in complex array', () => {
       expect(NormalizeValidatorResults(
-        { message: 'foo' },
-        { message: 'foo' },
+        { kind: 'foo' },
+        { kind: 'foo' },
       )).to.have.lengthOf(2)
     })
   })
@@ -82,13 +82,13 @@ describe(__filename, () => {
 
   describe('meta data', () => {
     it('should properly apply meta data to validation results', () => {
-      const message = 'some error'
+      const kind = 'some error'
       const field = 'foo'
 
-      const v = new Validated({ message })
-      expect(v.get()).deep.equal([new ValidatorError({ message })])
+      const v = new Validated({ kind })
+      expect(v.get()).deep.equal([new ValidatorError({ kind })])
       v.applyMeta({ field })
-      expect(v.get()).deep.equal([new ValidatorError({ message, meta: { field } })])
+      expect(v.get()).deep.equal([new ValidatorError({ kind, meta: { field } })])
     })
   })
 })

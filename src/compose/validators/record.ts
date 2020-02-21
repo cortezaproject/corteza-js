@@ -4,6 +4,9 @@ import { Module } from '../types/module'
 import { ModuleField } from '../types/module-field'
 import { IsOf } from '../../guards'
 
+const emptyErr = new ValidatorError('empty')
+const duplicateValueInSetErr = new ValidatorError('duplicateValueInSet')
+
 // Validator value types
 interface FieldValidatorPayload {
   field: ModuleField;
@@ -22,7 +25,7 @@ function genericFieldValidator (field: ModuleField): ValidatorFn<Record> {
     if (field.isRequired) {
       if (value === undefined || IsEmpty(value)) {
         // @todo return something typified...
-        return new ValidatorError('missing required value')
+        return emptyErr
       }
     }
   }
