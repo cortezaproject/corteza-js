@@ -10,12 +10,18 @@ export { PageBlockRecordOrganizer } from './record-organizer'
 export { PageBlockSocialFeed } from './social-feed'
 export { PageBlockCalendar } from './calendar'
 
-export function PageBlockMaker (i: { kind: string }): PageBlock {
-  if (!Registry.has(i.kind)) {
+export function PageBlockMaker<T extends PageBlock> (i: { kind: string }): T {
+  const PageBlockTemp = Registry.get(i.kind)
+  if (PageBlockTemp === undefined) {
     throw new Error(`unknown block kind '${i.kind}'`)
   }
 
-  return new (Registry.get(i.kind) as typeof PageBlock)(i)
+  if (i instanceof PageBlock) {
+    // Get rid of the references
+    i = JSON.parse(JSON.stringify(i))
+  }
+
+  return new PageBlockTemp(i) as T
 }
 
 export {
