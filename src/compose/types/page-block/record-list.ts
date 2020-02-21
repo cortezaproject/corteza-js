@@ -28,7 +28,7 @@ interface Options {
   selectMode: 'multi' | 'single' | 'range';
 
   // Ordered list of buttons to display in the block
-  selectionButtons: Button[];
+  selectionButtons: Array<Button>;
 }
 
 const defaults: Readonly<Options> = Object.freeze({
@@ -90,7 +90,7 @@ export class PageBlockRecordList extends PageBlock {
     )
 
     if (o.selectionButtons) {
-      this.options.selectionButtons = o.selectionButtons
+      this.options.selectionButtons = o.selectionButtons.map(b => new Button(b))
     }
   }
 

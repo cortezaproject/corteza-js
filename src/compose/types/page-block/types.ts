@@ -1,16 +1,23 @@
-export interface Button {
-  script: string;
+import { Apply } from '../../../cast'
+
+export class Button {
+  public script?: string = undefined
 
   // resource type (copied from ui hook)
-  resourceType: string;
+  public resourceType?: string = undefined;
 
   // Can override hook's label
-  label?: string;
+  public label?: string = undefined;
 
   // can override hooks's variant
-  variant?: string;
+  public variant?: string = undefined;
 
-  enabled?: boolean;
+  public enabled = true;
+
+  constructor (b: Partial<Button>) {
+    Apply(this, b, Boolean, 'enabled')
+    Apply(this, b, String, 'label', 'variant', 'script', 'resourceType')
+  }
 }
 
 export type PageBlockWrap = 'Plain' | 'Card'

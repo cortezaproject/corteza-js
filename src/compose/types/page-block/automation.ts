@@ -1,11 +1,12 @@
 import { PageBlock, PageBlockInput, Registry } from './base'
 import { Button } from './types'
+import { pick } from 'lodash'
 
 const kind = 'Automation'
 
 interface Options {
   // Ordered list of buttons to display in the block
-  buttons: Button[];
+  buttons: Array<Button>;
 
   // When true, new compatible buttons (ui-hooks) are NOT
   // added automatically to the block
@@ -33,7 +34,7 @@ export class PageBlockAutomation extends PageBlock {
     if (!o) return
 
     if (o.buttons) {
-      this.options.buttons = o.buttons
+      this.options.buttons = o.buttons.map(b => new Button(b))
     }
   }
 }
