@@ -91,7 +91,7 @@ export function RecordEvent (res: Record, event?: Partial<Event>): Event {
     ...event,
 
     // Override the arguments at the end
-    args: { record: res, ...event?.args },
+    args: { record: res, module: res.module, ...event?.args },
   }
 }
 
