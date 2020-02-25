@@ -18,7 +18,9 @@ function recordCaster (this: RecordCasterCaller, val: unknown): Record|undefined
   if (val) {
     try {
       return new Record(this.$module, val as object)
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   return undefined
@@ -28,7 +30,9 @@ function recordCasterFreezer (this: RecordCasterCaller, val: unknown): Readonly<
   if (val) {
     try {
       return Object.freeze(new Record(this.$module, val as object))
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   return undefined

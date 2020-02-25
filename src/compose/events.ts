@@ -13,6 +13,10 @@ interface TriggerEndpoints {
 }
 
 function namespaceMatcher (r: Namespace, c: ConstraintMatcher, def: boolean): boolean {
+  if (!r) {
+    throw new Error('can not run namespace matcher on undefined/null namespace')
+  }
+
   // keep in sync with server/compose/service/events/namespace.go
   switch (c.Name()) {
     case 'namespace':
@@ -26,6 +30,10 @@ function namespaceMatcher (r: Namespace, c: ConstraintMatcher, def: boolean): bo
 }
 
 function moduleMatcher (r: Module, c: ConstraintMatcher, def: boolean): boolean {
+  if (!r) {
+    throw new Error('can not run module matcher on undefined/null module')
+  }
+
   // keep in sync with server/compose/service/events/module.go
   switch (c.Name()) {
     case 'module':
