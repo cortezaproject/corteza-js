@@ -389,7 +389,7 @@ export default class ComposeHelper {
         throw new Error('records not found')
       }
 
-      return new Record(res.set[0])
+      return res.set[0]
     })
   }
 
@@ -409,7 +409,7 @@ export default class ComposeHelper {
         throw new Error('records not found')
       }
 
-      return new Record(res.set[0])
+      return res.set[0]
     })
   }
 
