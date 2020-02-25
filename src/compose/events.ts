@@ -84,7 +84,7 @@ export function ModuleEvent (res: Module, event?: Partial<Event>): Event {
     ...event,
 
     // Override the arguments at the end
-    args: { module: res, ...event?.args },
+    args: { module: res, namespace: res.namespace, ...event?.args },
   }
 }
 
@@ -99,7 +99,7 @@ export function RecordEvent (res: Record, event?: Partial<Event>): Event {
     ...event,
 
     // Override the arguments at the end
-    args: { record: res, ...event?.args },
+    args: { record: res, module: res.module, namespace: res.namespace, ...event?.args },
   }
 }
 
