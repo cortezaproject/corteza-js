@@ -367,7 +367,7 @@ export default class ComposeHelper {
         }
 
         // Casting all we got to to Record
-        res.set = res.set.map(m => new Record(module, m))
+        res.set = res.set.map(record => new Record(module, record))
         return res as unknown as ListResponse<RecordListFilter, Record[]>
       })
     })
