@@ -70,7 +70,7 @@ export class Module {
   }
 
   clone (): Module {
-    return new Module(JSON.parse(JSON.stringify(this)))
+    return new Module(JSON.parse(JSON.stringify(this)), this.namespace)
   }
 
   apply (m?: PartialModule): void {
@@ -122,7 +122,7 @@ export class Module {
     return 'compose:module'
   }
 
-  public get module (): Namespace {
+  public get namespace (): Namespace {
     return this[propNamespace] as Namespace
   }
 
