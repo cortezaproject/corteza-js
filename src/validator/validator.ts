@@ -4,7 +4,6 @@ import { merge } from 'lodash'
 interface Meta { [key: string]: unknown }
 
 export class ValidatorError {
-
   /**
    * kind - key used for translation
    */
