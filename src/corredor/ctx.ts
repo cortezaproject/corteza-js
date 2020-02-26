@@ -41,12 +41,18 @@ interface CtxInitArgs {
  * Handles script execution context
  *
  * Context accepts pre-assembled *API props or it construct them fly from passed config
+ *
+ * Naming convertion for properties:
+ *  - Corteza classes, high-level helpers, API clients are upper cased
+ *  - low-level helpers are lower cased
+ *  - simple scalar are lower cased
+ *  - $authUser is the only one prefixed with the dollar sign for historical reasons
  */
 export class Ctx {
-  protected readonly args: BaseArgs;
-  protected readonly config?: Config;
+  protected args: BaseArgs;
+  protected config?: Config;
 
-  protected readonly logger: BaseLogger;
+  protected logger: BaseLogger;
 
   protected systemAPI?:
     apiClients.System;
