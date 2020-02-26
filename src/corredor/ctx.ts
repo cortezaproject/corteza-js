@@ -14,8 +14,13 @@ export interface ConfigServer {
   apiBaseURL?: string;
 }
 
+export interface ConfigFrontend {
+  baseURL?: string;
+}
+
 export interface Config {
   cServers?: ConfigCServers;
+  frontend?: ConfigFrontend;
 }
 
 interface CtxInitArgs {
@@ -159,5 +164,12 @@ export class Ctx {
    */
   get Messaging (): MessagingHelper {
     return new MessagingHelper({ MessagingAPI: this.MessagingAPI, ...this.args })
+  }
+
+  /**
+   *
+   */
+  get frontendBaseURL (): string|undefined {
+    return this.config?.frontend?.baseURL
   }
 }
