@@ -4,12 +4,36 @@ import { parsers, fallbackParser } from './parsers'
 const PdfMake = require('pdfmake')
 
 export default async function (tree: Array<Node>, report: Document): Promise<Render> {
-  if (!report.fontFace) {
-    throw new Error('document.font.undefined')
+  const fonts = {
+    Courier: {
+      normal: 'Courier',
+      bold: 'Courier-Bold',
+      italics: 'Courier-Oblique',
+      bolditalics: 'Courier-BoldOblique'
+    },
+    Helvetica: {
+      normal: 'Helvetica',
+      bold: 'Helvetica-Bold',
+      italics: 'Helvetica-Oblique',
+      bolditalics: 'Helvetica-BoldOblique'
+    },
+    Times: {
+      normal: 'Times-Roman',
+      bold: 'Times-Bold',
+      italics: 'Times-Italic',
+      bolditalics: 'Times-BoldItalic'
+    },
+    Symbol: {
+      normal: 'Symbol'
+    },
+    ZapfDingbats: {
+      normal: 'ZapfDingbats'
+    },
+    ...(report.fontFace || {}),
   }
 
   const dd: any = {}
-  const printer = new PdfMake(report.fontFace)
+  const printer = new PdfMake(fonts)
   const np = new NodeParser(parsers, fallbackParser)
   const ctx: ReportContext = {
     ...report.data,
@@ -64,6 +88,10 @@ export default async function (tree: Array<Node>, report: Document): Promise<Ren
   const mn = tree.find(({ name }) => name === 'main')
   tree = mn ? [mn] : tree.filter(({ name }) => name !== 'header' && name !== 'footer')
   dd.content = tree.map(node => np.parseNode(node, ctx))
+  dd.defaultStyle = {
+    font: 'Helvetica'
+  }
+
   const doc = printer.createPdfKitDocument(dd, {})
 
   // create a data buffer for response
