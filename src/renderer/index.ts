@@ -4,7 +4,6 @@ import { Render } from './util'
 
 const hps = require('html-parse-stringify')
 const ics = require('inline-css')
-const hm = require('html-minifier')
 
 export enum RendererKind {
   PDF,
@@ -42,6 +41,7 @@ export async function render (document: Document): Promise<Render> {
   })
 
   // minify template to remove unneeded components such as whitespace, comments, ...
+  const hm = require('html-minifier')
   template = hm.minify(template, {
     collapseWhitespace: true,
     removeComments: true,
