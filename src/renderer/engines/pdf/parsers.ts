@@ -188,7 +188,7 @@ const parsers: Array<ContentParser> = [
     tag: ['table'],
     parser: (node: Node, ctx: ReportContext, parseNode: ParseNodeFunction): any => {
       const dd: any = {
-        layout: 'headerLineOnly',
+        layout: 'lightHorizontalLines',
         table: {
           body: [],
         },
