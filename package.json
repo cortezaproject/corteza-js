@@ -20,7 +20,7 @@
   "dependencies": {
     "@types/pdfmake": "^0.1.9",
     "axios": "^0.19.1",
-    "dns": "file:./mocks/dns",
+    "dns": "file:./src/renderer/mocks/dns",
     "hex-rgb": "^4.1.0",
     "html-minifier": "^4.0.0",
     "html-parse-stringify": "^1.0.3",

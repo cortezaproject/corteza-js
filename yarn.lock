@@ -1377,7 +1377,7 @@ disparity@^3.0.0:
     ansi-styles "^4.1.0"
     diff "^4.0.1"
 
-"dns@file:./mocks/dns":
+"dns@file:./src/renderer/mocks/dns":
   version "3.1.0"
 
 doctrine@1.5.0:

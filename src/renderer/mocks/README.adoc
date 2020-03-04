@@ -1,0 +1,3 @@
+= Package Mocks
+
+One of the underlying libraries is trying to use DNS package, that is not available on client-side.
