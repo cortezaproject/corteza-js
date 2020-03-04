@@ -66,7 +66,7 @@ const parsers: Array<ContentParser> = [
 
       for (const c of node.children || []) {
         const cc = parseNode(c, ctx)
-        if (!cc) {
+        if (!cc || typeof cc !== 'object') {
           continue
         }
         const k = Object.keys(cc)[0]
@@ -200,9 +200,11 @@ const parsers: Array<ContentParser> = [
         for (const c of th.children || []) {
           const cc = parseNode(c, ctx)
           if (c.attrs && c.attrs['data-for']) {
-            dd.table.body.push(...cc)
+            dd.table.body.push(...cc.filter((c : any) => Array.isArray(c)))
           } else {
-            dd.table.body.push(cc)
+            if (Array.isArray(cc)) {
+              dd.table.body.push(cc)
+            }
           }
         }
         dd.table.headerRows = dd.table.body.length
@@ -215,9 +217,11 @@ const parsers: Array<ContentParser> = [
       for (const c of rows) {
         const cc = parseNode(c, ctx)
         if (c.attrs && c.attrs['data-for']) {
-          dd.table.body.push(...cc)
+          dd.table.body.push(...cc.filter((c : any) => Array.isArray(c)))
         } else {
-          dd.table.body.push(cc)
+          if (Array.isArray(cc)) {
+            dd.table.body.push(cc)
+          }
         }
       }
 
