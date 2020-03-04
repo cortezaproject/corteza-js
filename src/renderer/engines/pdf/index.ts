@@ -28,7 +28,7 @@ export default async function (tree: Array<Node>, report: Document): Promise<Ren
   // determine meta
   const hh = tree.find(({ name }) => name === 'head')
   if (hh) {
-    const { info, document } = np.parseNode(tree[0], ctx)
+    const { info, document } = np.parseNode(hh, ctx)
     dd.pageSize = document.pageSize
     dd.pageMargins = document.pageMargins
     dd.info = info
