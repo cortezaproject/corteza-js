@@ -10,6 +10,7 @@ import * as messaging from './messaging'
 import * as system from './system'
 import * as shared from './shared'
 import * as apiClients from './api-clients'
+import * as renderer from './renderer'
 
 export {
   eventbus,
@@ -21,4 +22,5 @@ export {
   shared,
   apiClients,
   NoID,
+  renderer,
 }

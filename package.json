@@ -18,12 +18,19 @@
     "codegen:corteza-api-client": "node -r esm tools/codegen/corteza-api-client.js"
   },
   "dependencies": {
+    "@types/pdfmake": "^0.1.9",
     "axios": "^0.19.1",
+    "dns": "file:./mocks/dns",
     "hex-rgb": "^4.1.0",
+    "html-minifier": "^4.0.0",
+    "html-parse-stringify": "^1.0.3",
+    "inline-css": "^2.6.3",
     "lodash": "^4.17.15",
     "minimatch": "^3.0.4",
     "moment": "^2.24.0",
     "numeral": "^2.0.6",
+    "pac-resolver": "^4.1.0",
+    "pdfmake": "^0.1.64",
     "pino": "^5.16.0",
     "ts-sinon": "^1.0.25"
   },
