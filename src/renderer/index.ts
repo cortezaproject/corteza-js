@@ -1,9 +1,7 @@
 import { renderPDF, renderHTML } from './engines'
 import defaultStyle from './assets/defaultStyle'
 import { Render } from './util'
-
-const hps = require('html-parse-stringify')
-const ics = require('inline-css')
+import juice from 'juice'
 
 export enum RendererKind {
   PDF,
@@ -31,17 +29,14 @@ export interface Node {
  * @param document The report we want to render
  */
 export async function render (document: Document): Promise<Render> {
+  const hps = require('html-parse-stringify')
+  const hm = require('html-minifier')
+
   // inline styles for easier processing
   let template = `<style>${defaultStyle}</style>${document.template}`
-  template = await ics(template, {
-    url: ' ',
-    applyWidthAttributes: true,
-    applyTableAttributes: true,
-    removeHtmlSelectors: true,
-  })
+  template = juice(template)
 
   // minify template to remove unneeded components such as whitespace, comments, ...
-  const hm = require('html-minifier')
   template = hm.minify(template, {
     collapseWhitespace: true,
     removeComments: true,
