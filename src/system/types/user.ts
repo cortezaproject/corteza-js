@@ -1,4 +1,5 @@
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
+import { AreStrings } from '../../guards'
 
 interface PartialUser extends Partial<Omit<User, 'createdAt' | 'updatedAt' | 'deletedAt' | 'suspendedAt'>> {
   createdAt?: string|number|Date;
@@ -17,6 +18,7 @@ export class User {
   public updatedAt?: Date = undefined
   public deletedAt?: Date = undefined
   public suspendedAt?: Date = undefined
+  public roles?: Array<string>
 
   constructor (c?: PartialUser) {
     this.apply(c)
@@ -26,6 +28,13 @@ export class User {
     Apply(this, c, CortezaID, 'userID')
     Apply(this, c, String, 'handle', 'username', 'email', 'name')
     Apply(this, c, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt', 'suspendedAt')
+
+    if (c?.roles) {
+      this.roles = []
+      if (AreStrings(c.roles)) {
+        this.roles = c.roles
+      }
+    }
   }
 
   /**
