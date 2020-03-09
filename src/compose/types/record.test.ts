@@ -81,6 +81,11 @@ describe(__filename, () => {
       // @ts-ignore
       expect(() => new Record(42, m)).to.throw
     })
+
+    it('should handle Record instance', () => {
+      const rr = new Record({ recordID: '42' }, m)
+      expect(new Record(rr)).to.have.property('recordID').equal('42')
+    })
   })
 
   describe('multi value reading', () => {

@@ -76,6 +76,12 @@ export class Record {
   private [cleanValues]: Values = {}
 
   constructor (recModVal1: RecordCtorCombo, recModVal2?: RecordCtorCombo) {
+    if (recModVal1 instanceof Record) {
+      this.module = recModVal1.module
+      this.apply(recModVal1)
+      return
+    }
+
     if (isModule(recModVal1)) {
       this.module = recModVal1
       this.apply(recModVal2)
