@@ -21,6 +21,7 @@ export class Page {
   public title = '';
   public handle = '';
   public description = '';
+  public weight = 0;
 
   public visible = false;
 
@@ -49,6 +50,7 @@ export class Page {
 
     Apply(this, i, CortezaID, 'pageID', 'selfID', 'moduleID', 'namespaceID')
     Apply(this, i, String, 'title', 'handle', 'description')
+    Apply(this, i, Number, 'weight')
     Apply(this, i, Boolean, 'visible')
 
     if (i.blocks) {
