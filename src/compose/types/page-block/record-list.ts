@@ -6,7 +6,6 @@ import { Button } from './types'
 
 const kind = 'RecordList'
 interface Options {
-  pageID: string;
   moduleID: string;
   prefilter: string;
   presort: string;
@@ -32,7 +31,6 @@ interface Options {
 }
 
 const defaults: Readonly<Options> = Object.freeze({
-  pageID: NoID,
   moduleID: NoID,
   prefilter: '',
   presort: '',
@@ -68,7 +66,7 @@ export class PageBlockRecordList extends PageBlock {
   applyOptions (o?: Partial<Options>): void {
     if (!o) return
 
-    Apply(this.options, o, CortezaID, 'pageID', 'moduleID')
+    Apply(this.options, o, CortezaID, 'moduleID')
     Apply(this.options, o, String, 'prefilter', 'presort', 'selectMode')
 
     if (o.fields) {
