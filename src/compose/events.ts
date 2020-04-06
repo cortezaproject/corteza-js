@@ -17,7 +17,7 @@ function namespaceMatcher (r: Namespace, c: ConstraintMatcher, def: boolean): bo
     throw new Error('can not run namespace matcher on undefined/null namespace')
   }
 
-  // keep in sync with server/compose/service/events/namespace.go
+  // keep in sync with server/compose/service/event/namespace.go
   switch (c.Name()) {
     case 'namespace':
     case 'namespace.slug':
@@ -34,7 +34,7 @@ function moduleMatcher (r: Module, c: ConstraintMatcher, def: boolean): boolean 
     throw new Error('can not run module matcher on undefined/null module')
   }
 
-  // keep in sync with server/compose/service/events/module.go
+  // keep in sync with server/compose/service/event/module.go
   switch (c.Name()) {
     case 'module':
     case 'module.handle':

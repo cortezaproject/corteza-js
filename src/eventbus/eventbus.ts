@@ -83,7 +83,7 @@ export class EventBus {
     const matched = this.find(ev, script)
 
     if (matched.length === 0) {
-      if (this.verbose) console.debug('EventBus: no handlers found event', { ev, script })
+      if (this.verbose) console.debug('EventBus: no handlers found', { ev, script, registeredHandlers: this.handlers.length })
       return null
     }
 
