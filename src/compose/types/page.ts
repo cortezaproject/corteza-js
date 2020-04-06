@@ -103,10 +103,13 @@ export class Page {
   validate (): Array<string> {
     const ee: Array<string> = []
 
-    this.blocks.forEach(b => {
-      ee.push(...b.validate())
-    })
-
+    if (this.blocks.length === 0) {
+        ee.push('blocks missing')
+    } else {
+      this.blocks.forEach(b => {
+        ee.push(...b.validate())
+      })
+    }
 
     return ee
   }
