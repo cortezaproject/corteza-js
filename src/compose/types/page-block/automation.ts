@@ -1,6 +1,5 @@
 import { PageBlock, PageBlockInput, Registry } from './base'
 import { Button } from './types'
-import { pick } from 'lodash'
 
 const kind = 'Automation'
 
@@ -36,6 +35,20 @@ export class PageBlockAutomation extends PageBlock {
     if (o.buttons) {
       this.options.buttons = o.buttons.map(b => new Button(b))
     }
+  }
+
+  // Validates Page Block configuration
+  validate (): Array<string> {
+    const ee = super.validate()
+
+
+    if (this.options.buttons.filter(({ script }) => script === undefined).length > 0) {
+      // We'll use term "action" here, because it most likely the way
+      //this automation blocks + buttons will evolve to.
+      ee.push('One or more buttons without defined action')
+    }
+
+    return ee
   }
 }
 

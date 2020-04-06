@@ -63,6 +63,11 @@ export class PageBlock {
       this.style = merge({}, this.style, i.style)
     }
   }
+
+  // Returns Page Block configuration errors
+  validate (): Array<string> {
+    return []
+  }
 }
 
 export const Registry = new Map<string, typeof PageBlock>()

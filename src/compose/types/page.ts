@@ -25,7 +25,7 @@ export class Page {
 
   public visible = false;
 
-  public children?: Array<Partial<Page>>
+  public children?: Array<Page>
 
   public blocks: (InstanceType<typeof PageBlock>)[] = [];
 
@@ -95,6 +95,20 @@ export class Page {
 
   get firstLevel (): boolean {
     return this.selfID === NoID
+  }
+
+  /**
+   * Validates page & it's blocks
+   */
+  validate (): Array<string> {
+    const ee: Array<string> = []
+
+    this.blocks.forEach(b => {
+      ee.push(...b.validate())
+    })
+
+
+    return ee
   }
 
   export (): PartialPage {
