@@ -43,7 +43,15 @@ export function RoleEvent (role: Role, eventType = onManual): Event {
   }, { role })
 }
 
-export function TriggerServerScriptOnManual (api: TriggerEndpoints) {
+/**
+ * Returns handler that routes onManual events for server script to the system API
+ *
+ * See makeAutomationScriptsRegistrator
+ *
+ * @param api
+ * @return function
+ */
+export function TriggerSystemServerScriptOnManual (api: TriggerEndpoints) {
   return (ev: Event, script: string): Promise<unknown> => {
     const params = { script, args: ev.args }
     const { userID } = ev.args?.user as User

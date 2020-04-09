@@ -103,7 +103,15 @@ export function RecordEvent (res: Record, event?: Partial<Event>): Event {
   }
 }
 
-export function TriggerComposeScriptOnManual (api: TriggerEndpoints) {
+/**
+ * Returns handler that routes onManual events for server script to the compose API
+ *
+ * See makeAutomationScriptsRegistrator
+ *
+ * @param api
+ * @return function
+ */
+export function TriggerComposeServerScriptOnManual (api: TriggerEndpoints) {
   return (ev: Event, script: string): Promise<unknown> => {
     const params = { script, args: ev.args }
 

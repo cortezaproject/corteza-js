@@ -11,5 +11,5 @@ export {
   NamespaceEvent,
   ModuleEvent,
   RecordEvent,
-  TriggerComposeScriptOnManual,
+  TriggerComposeServerScriptOnManual,
 } from './events'

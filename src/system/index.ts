@@ -7,5 +7,5 @@ export {
   SystemEvent,
   RoleEvent,
   UserEvent,
-  TriggerServerScriptOnManual,
+  TriggerSystemServerScriptOnManual,
 } from './events'
