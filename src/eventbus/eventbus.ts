@@ -124,7 +124,7 @@ export class EventBus {
    * @param trigger Trigger definition
    */
   Register (handler: HandlerFn, trigger: Trigger): EventBus {
-    if (this.verbose) console.debug('EventBus: event handler registration for', trigger.scriptName, { handler, trigger })
+    if (this.verbose) console.debug('EventBus: event handler registration for', trigger.scriptName, { trigger } )
     this.checkPairs(trigger.resourceTypes, trigger.eventTypes)
 
     this.handlers.push(new Handler(handler, trigger))
