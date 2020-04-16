@@ -8,7 +8,7 @@ const kind = 'Record'
 interface Options {
   moduleID: string;
   labelField: string;
-  queryFields: string;
+  queryFields: Array<string>;
   selectType: string;
   multiDelimiter: string;
 }
@@ -16,7 +16,7 @@ interface Options {
 const defaults: Readonly<Options> = Object.freeze({
   moduleID: NoID,
   labelField: '',
-  queryFields: '',
+  queryFields: [],
   selectType: '',
   multiDelimiter: '\n',
 })
@@ -35,7 +35,16 @@ export class ModuleFieldRecord extends ModuleField {
     if (!o) return
 
     Apply(this.options, o, CortezaID, 'moduleID')
-    Apply(this.options, o, String, 'labelField', 'queryFields', 'selectType', 'multiDelimiter')
+    Apply(this.options, o, String, 'labelField', 'selectType', 'multiDelimiter')
+    Apply(this.options, o, (o) => {
+      if (!o) {
+        return []
+      }
+      if (!Array.isArray(o)) {
+        return [o]
+      }
+      return o
+    }, 'queryFields')
   }
 }
 
