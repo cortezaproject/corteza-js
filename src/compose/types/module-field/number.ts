@@ -52,12 +52,9 @@ export class ModuleFieldNumber extends ModuleField {
         n = 0
     }
 
-    const p = o.precision < 0 || o.precision > 6 ? 0 : o.precision
-
-    let out = n.toFixed(p)
-
+    let out = `${n}`
     if (o.format && o.format.length > 0) {
-      out = numeral(out).format(o.format)
+      out = numeral(n).format(o.format)
     }
 
     return '' + o.prefix + out + o.suffix
