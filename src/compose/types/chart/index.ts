@@ -8,7 +8,7 @@ import { defConfig, ChartRenderer } from './renderer/util'
  * based on the requested renderer, such as chart.js.
  */
 export class Chart {
-  constructor (i: PartialChart) {
+  constructor (i: PartialChart = { config: {} }) {
     if (i.config.renderer) {
       if (i.config.renderer.version !== ChartRenderer.chartJS) {
         throw new Error('notification.chart.unsupportedRenderer')
