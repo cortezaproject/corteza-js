@@ -916,6 +916,7 @@ export default class Compose {
       page,
       perPage,
       sort,
+      deleted,
     } = (a as KV) || {}
     if (!namespaceID) {
       console.error('recordList failed, field namespaceID is empty', a)
@@ -936,6 +937,7 @@ export default class Compose {
       page,
       perPage,
       sort,
+      deleted,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))
