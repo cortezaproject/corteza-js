@@ -33,6 +33,7 @@ export interface Metric {
   alias?: string;
   aggregate?: string;
   modifier?: string;
+  fx?: string;
   [_: string]: unknown;
 }
 

@@ -41,6 +41,8 @@ const defConfig = () => Object.assign({}, {
   },
 })
 
+const defaultFx = 'n'
+
 interface PartialChart extends Partial<Chart>{}
 const defaultBGColor = 'rgba(165, 165, 165, 1)'
 // Makes a standarised alias from modifier or dimension report option
@@ -135,13 +137,24 @@ export class Chart {
     return true
   }
 
-  prepData ({ labels, metrics }: { labels?: Array<string>; metrics?: Array<Array<number>> } = {}, base: any = {}) {
+  prepData ({ labels, metrics }: { labels?: Array<string>; metrics?: Array<Array<number>> } = {}, base: any = {}, postProcFx: (n: number, m: undefined|number, ds: any) => number) {
     if (labels) {
       base.labels = labels
     }
 
     metrics?.forEach((metric, index) => {
       const ds = base.datasets[index]
+
+      // Dataset post process function
+      for (let i = 0; i < metric.length; i++) {
+        const n = metric[i]
+        let m
+        if (i > 0) {
+          m = metric[i - 1]
+        }
+        metric[i] = postProcFx(n, m, ds)
+      }
+
       ds.data = metric
       if (isRadialChart(ds)) {
         ds.backgroundColor = makeColorSteps(ds.backgroundColor || defaultBGColor, ds.data.length)
@@ -228,7 +241,7 @@ export class Chart {
         }
       })
 
-      datasets.push(...r.metrics.map(({ field, fill, aggregate, label, type, backgroundColor, fixTooltips, relativeValue, relativePrecision, ...rr }: Metric) => {
+      datasets.push(...r.metrics.map(({ field, fill, aggregate, label, type, backgroundColor, fixTooltips, relativeValue, relativePrecision, fx, ...rr }: Metric) => {
         const alias = makeAlias({ field, aggregate })
         if (baseType === undefined) {
           baseType = type
@@ -258,6 +271,9 @@ export class Chart {
             enabled: true,
             relativeValue,
             relativePrecision,
+          },
+          modifiers: {
+            fx: fx || defaultFx,
           },
         }
 
