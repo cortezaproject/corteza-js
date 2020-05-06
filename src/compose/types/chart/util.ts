@@ -15,7 +15,12 @@ export enum ChartRenderer {
   chartJS = 'chart.js'
 }
 
+export interface KV {
+  [_: string]: any
+}
+
 export interface Dimension {
+  meta?: KV;
   conditions: object;
   field?: string;
   modifier?: string;
@@ -33,7 +38,9 @@ export interface Metric {
   alias?: string;
   aggregate?: string;
   modifier?: string;
-  [_: string]: unknown;
+  fx?: string;
+  backgroundColor?: string;
+  [_: string]: any;
 }
 
 export interface Report {
@@ -48,7 +55,7 @@ export interface ChartConfig {
     version?: ChartRenderer;
   };
 
-  reports?: Array<any>;
+  reports?: Array<Report>;
 }
 
 export const aggregateFunctions = [
@@ -179,10 +186,6 @@ export const predefinedFilters = [
   },
 ]
 
-export interface KV {
-  [_: string]: string
-}
-
 export function makeColorSteps (base: string, steps: number) {
   if (!steps) {
     return base
@@ -235,6 +238,9 @@ export const makeDataLabel = ({
 
   return `${prefix ? prefix + ': ' : ''}${(newValue)}${suffix}`
 }
+
+// Makes a standarised alias from modifier or dimension report option
+export const makeAlias = ({ alias, aggregate, modifier, field }: Metric) => alias || `${aggregate || modifier || 'none'}_${field}`
 
 const chartUtil = {
   dimensionFunctions,

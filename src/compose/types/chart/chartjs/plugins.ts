@@ -1,4 +1,4 @@
-import { makeDataLabel } from './util'
+import { makeDataLabel } from '../util'
 interface PluginOptions {
   [_: string]: any;
 }
