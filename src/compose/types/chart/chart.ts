@@ -11,10 +11,10 @@ import {
   Report,
 } from './util'
 
+import { defaultBGColor } from './common'
+
 import { makeTipper } from './chartjs/plugins'
 const ChartJS = require('chart.js')
-
-const defaultBGColor = 'rgba(165, 165, 165, 1)'
 
 // The default dataset post processing function to use.
 // This one simply returns the current value.
