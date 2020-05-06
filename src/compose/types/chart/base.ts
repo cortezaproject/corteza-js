@@ -221,13 +221,20 @@ export class BaseChart {
 
       // Any sub class has the ability to define how the dataset looks like.
       // this comes in handy when we want to support charts with different definitions.
-      return this.makeDataset(m, data, alias)
+      return this.makeDataset(m, dimension, data, alias)
     })
 
-    return { labels, datasets }
+    return {
+      labels: this.processLabels(labels, dimension),
+      datasets,
+    }
   }
 
-  makeDataset (m: Metric, data: Array<number|any>, alias: string) {
+  processLabels (ll: Array<string>, d: Dimension) {
+    return ll
+  }
+
+  makeDataset (m: Metric, d: Dimension, data: Array<number|any>, alias: string) {
     throw new Error('method.makeDataset.notImplemented')
   }
 

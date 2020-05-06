@@ -57,7 +57,7 @@ export default class FunnelChart extends BaseChart {
   }
 
   // Funnel chart creates a metric including all reports, so this step is deferred to there
-  makeDataset (m: Metric, data: Array<number|any>, alias: string) {
+  makeDataset (m: Metric, d: Dimension, data: Array<number|any>, alias: string) {
     const ds: any = { data }
     return ds
   }

@@ -66,7 +66,7 @@ export default class Chart extends BaseChart {
     return data
   }
 
-  makeDataset (m: Metric, data: Array<number|any>, alias: string) {
+  makeDataset (m: Metric, d: Dimension, data: Array<number|any>, alias: string) {
     data = this.datasetPostProc(data, m)
     const ds: any = { data }
 

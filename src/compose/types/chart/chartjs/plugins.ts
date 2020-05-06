@@ -39,8 +39,8 @@ export function makeTipper (Tooltip: any, options: PluginOptions = {}) {
               return makeDataLabel({
                 value: dataset.data[index],
                 dataset,
-                relativeValue: dataset.tooltips.relativeValue,
-                relativePrecision: dataset.tooltips.relativePrecision,
+                relativeValue: dataset.tooltips?.relativeValue,
+                relativePrecision: dataset.tooltips?.relativePrecision,
               })
             },
             labelTextColor: function() {
