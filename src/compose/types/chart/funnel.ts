@@ -29,6 +29,18 @@ export default class FunnelChart extends BaseChart {
   }
 
   /**
+   * Since funnel charts always define one type, this check can be simplified
+   */
+  mtrCheck ({ field, aggregate }: Metric) {
+    if (!field) {
+      throw new Error('notification.chart.invalidConfig.missingMetricsField')
+    }
+    if (field !== 'count' && !aggregate) {
+      throw new Error('notification.chart.invalidConfig.missingMetricsAggregate')
+    }
+  }
+
+  /**
    * Extend this method to include filtering for just specific values.
    * For example:
    * We wish to show only new and converted leads.
