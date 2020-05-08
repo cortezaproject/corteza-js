@@ -87,6 +87,8 @@ export default class Compose {
     const {
       query,
       slug,
+      limit,
+      offset,
       page,
       perPage,
       sort,
@@ -98,6 +100,8 @@ export default class Compose {
     cfg.params = {
       query,
       slug,
+      limit,
+      offset,
       page,
       perPage,
       sort,
@@ -280,6 +284,8 @@ export default class Compose {
       selfID,
       query,
       handle,
+      limit,
+      offset,
       page,
       perPage,
       sort,
@@ -298,6 +304,8 @@ export default class Compose {
       selfID,
       query,
       handle,
+      limit,
+      offset,
       page,
       perPage,
       sort,
@@ -625,6 +633,8 @@ export default class Compose {
       query,
       name,
       handle,
+      limit,
+      offset,
       page,
       perPage,
       sort,
@@ -643,6 +653,8 @@ export default class Compose {
       query,
       name,
       handle,
+      limit,
+      offset,
       page,
       perPage,
       sort,
@@ -912,11 +924,14 @@ export default class Compose {
     const {
       namespaceID,
       moduleID,
+      query,
       filter,
+      deleted,
+      limit,
+      offset,
       page,
       perPage,
       sort,
-      deleted,
     } = (a as KV) || {}
     if (!namespaceID) {
       console.error('recordList failed, field namespaceID is empty', a)
@@ -933,11 +948,14 @@ export default class Compose {
       }),
     }
     cfg.params = {
+      query,
       filter,
+      deleted,
+      limit,
+      offset,
       page,
       perPage,
       sort,
-      deleted,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))
@@ -1465,12 +1483,53 @@ export default class Compose {
     return `/namespace/${namespaceID}/module/${moduleID}/record/${recordID}/trigger`
   }
 
+  // Fire compose:record trigger
+  async recordTriggerScriptOnList (a: KV): Promise<KV> {
+    const {
+      namespaceID,
+      moduleID,
+      script,
+    } = (a as KV) || {}
+    if (!namespaceID) {
+      console.error('recordTriggerScriptOnList failed, field namespaceID is empty', a)
+      throw Error('field namespaceID is empty')
+    }
+    if (!moduleID) {
+      console.error('recordTriggerScriptOnList failed, field moduleID is empty', a)
+      throw Error('field moduleID is empty')
+    }
+    if (!script) {
+      console.error('recordTriggerScriptOnList failed, field script is empty', a)
+      throw Error('field script is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.recordTriggerScriptOnListEndpoint({
+        namespaceID, moduleID,
+      }),
+    }
+    cfg.data = {
+      script,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  recordTriggerScriptOnListEndpoint (a: KV): string {
+    const {
+      namespaceID,
+      moduleID,
+    } = a || {}
+    return `/namespace/${namespaceID}/module/${moduleID}/record/trigger`
+  }
+
   // List/read charts
   async chartList (a: KV): Promise<KV> {
     const {
       namespaceID,
       query,
       handle,
+      limit,
+      offset,
       page,
       perPage,
       sort,
@@ -1488,6 +1547,8 @@ export default class Compose {
     cfg.params = {
       query,
       handle,
+      limit,
+      offset,
       page,
       perPage,
       sort,
@@ -1705,6 +1766,8 @@ export default class Compose {
       moduleID,
       recordID,
       fieldName,
+      limit,
+      offset,
       page,
       perPage,
     } = (a as KV) || {}
@@ -1729,6 +1792,8 @@ export default class Compose {
       moduleID,
       recordID,
       fieldName,
+      limit,
+      offset,
       page,
       perPage,
     }

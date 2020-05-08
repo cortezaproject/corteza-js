@@ -414,6 +414,37 @@ export default class System {
     return `/settings/${key}`
   }
 
+  // Set value for specific setting
+  async settingsSet (a: KV): Promise<KV> {
+    const {
+      key,
+      upload,
+      ownerID,
+    } = (a as KV) || {}
+    if (!key) {
+      console.error('settingsSet failed, field key is empty', a)
+      throw Error('field key is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.settingsSetEndpoint({
+        key,
+      }),
+    }
+    cfg.data = {
+      upload,
+      ownerID,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  settingsSetEndpoint (a: KV): string {
+    const {
+      key,
+    } = a || {}
+    return `/settings/${key}`
+  }
+
   // Current compose settings
   async settingsCurrent (): Promise<KV> {
 
@@ -600,6 +631,8 @@ export default class System {
       query,
       deleted,
       archived,
+      limit,
+      offset,
       page,
       perPage,
       sort,
@@ -612,6 +645,8 @@ export default class System {
       query,
       deleted,
       archived,
+      limit,
+      offset,
       page,
       perPage,
       sort,
@@ -1021,9 +1056,11 @@ export default class System {
       incSuspended,
       deleted,
       suspended,
-      sort,
+      limit,
+      offset,
       page,
       perPage,
+      sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
       method: 'get',
@@ -1041,9 +1078,11 @@ export default class System {
       incSuspended,
       deleted,
       suspended,
-      sort,
+      limit,
+      offset,
       page,
       perPage,
+      sort,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))
@@ -1417,6 +1456,8 @@ export default class System {
       name,
       query,
       deleted,
+      limit,
+      offset,
       page,
       perPage,
       sort,
@@ -1429,6 +1470,8 @@ export default class System {
       name,
       query,
       deleted,
+      limit,
+      offset,
       page,
       perPage,
       sort,
@@ -1750,6 +1793,8 @@ export default class System {
       scheduledUntil,
       scheduledOnly,
       excludeDismissed,
+      limit,
+      offset,
       page,
       perPage,
       sort,
@@ -1766,6 +1811,8 @@ export default class System {
       scheduledUntil,
       scheduledOnly,
       excludeDismissed,
+      limit,
+      offset,
       page,
       perPage,
       sort,
@@ -1971,6 +2018,172 @@ export default class System {
       reminderID,
     } = a || {}
     return `/reminder/${reminderID}/snooze`
+  }
+
+  // Attachment details
+  async attachmentRead (a: KV): Promise<KV> {
+    const {
+      kind,
+      attachmentID,
+      sign,
+      userID,
+    } = (a as KV) || {}
+    if (!kind) {
+      console.error('attachmentRead failed, field kind is empty', a)
+      throw Error('field kind is empty')
+    }
+    if (!attachmentID) {
+      console.error('attachmentRead failed, field attachmentID is empty', a)
+      throw Error('field attachmentID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.attachmentReadEndpoint({
+        kind, attachmentID,
+      }),
+    }
+    cfg.params = {
+      sign,
+      userID,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  attachmentReadEndpoint (a: KV): string {
+    const {
+      kind,
+      attachmentID,
+    } = a || {}
+    return `/attachment/${kind}/${attachmentID}`
+  }
+
+  // Delete attachment
+  async attachmentDelete (a: KV): Promise<KV> {
+    const {
+      kind,
+      attachmentID,
+      sign,
+      userID,
+    } = (a as KV) || {}
+    if (!kind) {
+      console.error('attachmentDelete failed, field kind is empty', a)
+      throw Error('field kind is empty')
+    }
+    if (!attachmentID) {
+      console.error('attachmentDelete failed, field attachmentID is empty', a)
+      throw Error('field attachmentID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'delete',
+      url: this.attachmentDeleteEndpoint({
+        kind, attachmentID,
+      }),
+    }
+    cfg.params = {
+      sign,
+      userID,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  attachmentDeleteEndpoint (a: KV): string {
+    const {
+      kind,
+      attachmentID,
+    } = a || {}
+    return `/attachment/${kind}/${attachmentID}`
+  }
+
+  // Serves attached file
+  async attachmentOriginal (a: KV): Promise<KV> {
+    const {
+      kind,
+      attachmentID,
+      name,
+      sign,
+      userID,
+      download,
+    } = (a as KV) || {}
+    if (!kind) {
+      console.error('attachmentOriginal failed, field kind is empty', a)
+      throw Error('field kind is empty')
+    }
+    if (!attachmentID) {
+      console.error('attachmentOriginal failed, field attachmentID is empty', a)
+      throw Error('field attachmentID is empty')
+    }
+    if (!name) {
+      console.error('attachmentOriginal failed, field name is empty', a)
+      throw Error('field name is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.attachmentOriginalEndpoint({
+        kind, attachmentID, name,
+      }),
+    }
+    cfg.params = {
+      sign,
+      userID,
+      download,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  attachmentOriginalEndpoint (a: KV): string {
+    const {
+      kind,
+      attachmentID,
+      name,
+    } = a || {}
+    return `/attachment/${kind}/${attachmentID}/original/${name}`
+  }
+
+  // Serves preview of an attached file
+  async attachmentPreview (a: KV): Promise<KV> {
+    const {
+      kind,
+      attachmentID,
+      ext,
+      sign,
+      userID,
+    } = (a as KV) || {}
+    if (!kind) {
+      console.error('attachmentPreview failed, field kind is empty', a)
+      throw Error('field kind is empty')
+    }
+    if (!attachmentID) {
+      console.error('attachmentPreview failed, field attachmentID is empty', a)
+      throw Error('field attachmentID is empty')
+    }
+    if (!ext) {
+      console.error('attachmentPreview failed, field ext is empty', a)
+      throw Error('field ext is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.attachmentPreviewEndpoint({
+        kind, attachmentID, ext,
+      }),
+    }
+    cfg.params = {
+      sign,
+      userID,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  attachmentPreviewEndpoint (a: KV): string {
+    const {
+      kind,
+      attachmentID,
+      ext,
+    } = a || {}
+    return `/attachment/${kind}/${attachmentID}/preview.${ext}`
   }
 
   // List system statistics
