@@ -20,7 +20,7 @@ interface FieldIndex {
 
 interface RawValue {
   name: string;
-  value: string;
+  value?: string;
 }
 
 interface PartialRecord extends Partial<Omit<Record, 'values' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
@@ -35,7 +35,14 @@ export interface Values {
   [name: string]: string|string[]|undefined;
 }
 
-type ValueCombo = RawValue | RawValue[] | Values | Values[]
+/**
+ * Combination of valid value types/structures
+ */
+type ValueCombo = RawValue[] | Values | Values[]
+
+/**
+ * Combination of valid types that  can be passed as Record ctor's 1st (and 2nd) parameter
+ */
 type RecordCtorCombo = Record | Module | PartialRecord | ValueCombo
 
 /**
@@ -46,7 +53,7 @@ function isModule (m?: unknown): m is Module {
 }
 
 function isRawValue (v: unknown): v is RawValue {
-  return IsOf<RawValue>(v, 'name', 'value')
+  return IsOf<RawValue>(v, 'name')
 }
 
 /**
@@ -101,6 +108,11 @@ export class Record {
     return new Record(JSON.parse(JSON.stringify(this)))
   }
 
+  /**
+   * apply (partially) updates record and it's values
+   *
+   * @param p
+   */
   apply (p?: unknown): void {
     if (p === undefined) return
 
@@ -239,14 +251,16 @@ export class Record {
     return vv
   }
 
-  // Removes and resets all values
+  /**
+   * Removes existing, resets default values and updates it with new ones
+   */
   public setValues (...i: ValueCombo[]): void {
     this.initValues()
     this.updateValues(...i)
   }
 
   /**
-   * Makes destination values
+   * Removes existing and resets default values
    */
   protected initValues (): void {
     const dst: Values = {}
@@ -274,17 +288,24 @@ export class Record {
 
   /**
    * Updates record's values object with provided input
+   *
+   * Accepted values:
+   * 1. Array of RawValue objects:
+   *    updateValues([{ name: ..., value: ...}, ...])
+   *
+   * 2. One or more Value object:
+   *    updateValues({ foo: ..., bar: ... }, ...)
    */
   protected updateValues (...combo: ValueCombo[]): void {
-    combo.forEach(v => {
+    // If all values are formatted as raw value
+    if (combo.length === 1 && AreObjectsOf<RawValue>(combo[0], 'name')) {
+      (combo[0] as Array<RawValue>).forEach(({ name, value }) => this.setValue(name, value))
+      return
+    }
+
+    (combo as Array<Values>).forEach(v => {
       if (Array.isArray(v)) {
         this.updateValues(...v)
-        return
-      }
-
-      if (isRawValue(v)) {
-        const { name, value } = v
-        this.setValue(name, value)
         return
       }
 
