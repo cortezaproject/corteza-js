@@ -219,6 +219,12 @@ describe(__filename, () => {
       expect(r.values.alt).to.eq(undefined)
     })
 
+    it('it should set some values for name when constructing an object', () => {
+      const r = new Record(m, [{ name: 'alt' }, { name: 'name', value: 'bar' }])
+      expect(r.values.name).to.eq('bar')
+      expect(r.values.alt).to.eq(undefined)
+    })
+
     it('it should not set value for name when applying new values as array', () => {
       const r = new Record(m)
       r.apply([{ name: 'alt' }])
