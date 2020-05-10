@@ -17,23 +17,6 @@ import {
   Apply,
 } from '../../../cast'
 
-const defDimension = () => Object.assign({}, { conditions: {}, meta: {} })
-const defMetrics = () => Object.assign({}, {})
-
-const defReport = () => Object.assign({}, {
-  moduleID: null,
-  filter: null,
-  dimensions: [defDimension()],
-  metrics: [defMetrics()],
-})
-
-const defConfig = () => Object.assign({}, {
-  reports: [defReport()],
-  renderer: {
-    version: 'chart.js',
-  },
-})
-
 export interface PartialChart extends Partial<BaseChart>{}
 
 /**
@@ -85,7 +68,7 @@ export class BaseChart {
       conf = { renderer, reports: reports || [] }
     }
 
-    this.config = (conf ? _.merge(defConfig(), conf) : false) || this.config || defConfig()
+    this.config = (conf ? _.merge(this.defConfig(), conf) : false) || this.config || this.defConfig()
   }
 
   /**
@@ -284,6 +267,31 @@ export class BaseChart {
       return r
     })
     return copy
+  }
+
+  defDimension (): Dimension {
+    return Object.assign({}, { conditions: {}, meta: {} })
+  }
+  defMetrics (): Metric {
+    return Object.assign({}, {})
+  }
+
+  defReport (): Report {
+    return Object.assign({}, {
+      moduleID: null,
+      filter: null,
+      dimensions: [this.defDimension()],
+      metrics: [this.defMetrics()],
+    })
+  }
+
+  defConfig () {
+    return Object.assign({}, {
+      reports: [this.defReport()],
+      renderer: {
+        version: 'chart.js',
+      },
+    })
   }
 }
 

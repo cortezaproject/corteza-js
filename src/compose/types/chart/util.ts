@@ -9,6 +9,8 @@ export enum ChartType {
   bar = 'bar',
   line = 'line',
   doughnut='doughnut',
+  funnel = 'funnel',
+  gauge = 'gauge',
 }
 
 export enum ChartRenderer {
@@ -44,8 +46,8 @@ export interface Metric {
 }
 
 export interface Report {
-  moduleID?: string;
-  filter?: string;
+  moduleID?: string|null;
+  filter?: string|null;
   dimensions?: Array<Dimension>;
   metrics?: Array<Metric>;
 }

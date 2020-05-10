@@ -3,6 +3,7 @@ import {
   Metric,
   Report,
   Dimension,
+  ChartType,
 } from './util'
 import { makeTipper } from './chartjs/plugins'
 import { defaultBGColor } from './common'
@@ -112,5 +113,9 @@ export default class GaugeChart extends BaseChart {
 
   baseChartType (datasets: Array<any>) {
     return 'gauge'
+  }
+
+  defMetrics (): Metric {
+    return Object.assign({}, { type: ChartType.gauge })
   }
 }

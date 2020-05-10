@@ -3,6 +3,7 @@ import {
   Dimension,
   Metric,
   Report,
+  ChartType,
 } from './util'
 
 import { defaultBGColor } from './common'
@@ -152,5 +153,13 @@ export default class FunnelChart extends BaseChart {
         backgroundColor: labels.map(l => colorMap[l] || defaultBGColor),
       }],
     }
+  }
+
+  defMetrics (): Metric {
+    return Object.assign({}, { type: ChartType.funnel })
+  }
+
+  defDimension (): Dimension {
+    return Object.assign({}, { conditions: {}, meta: { fields: [] } })
   }
 }
