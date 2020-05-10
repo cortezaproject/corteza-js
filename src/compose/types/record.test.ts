@@ -204,4 +204,46 @@ describe(__filename, () => {
         '[{"name":"simple","value":"foo"},{"name":"multi","value":"bar"},{"name":"multi","value":"baz"}]')
     })
   })
+
+  describe('prevent value corruption when when value prop is missing on rawValue and one of the fields is named "name"', () => {
+    const m = Object.freeze(new Module({
+      fields: [
+        { name: 'name' },
+        { name: 'alt' },
+      ],
+    }))
+
+    it('it should not set value for name when constructing an object', () => {
+      const r = new Record(m, [{ name: 'alt' }])
+      expect(r.values.name).to.eq(undefined)
+      expect(r.values.alt).to.eq(undefined)
+    })
+
+    it('it should set some values for name when constructing an object', () => {
+      const r = new Record(m, [{ name: 'alt' }, { name: 'name', value: 'bar' }])
+      expect(r.values.name).to.eq('bar')
+      expect(r.values.alt).to.eq(undefined)
+    })
+
+    it('it should not set value for name when applying new values as array', () => {
+      const r = new Record(m)
+      r.apply([{ name: 'alt' }])
+      expect(r.values.name).to.eq(undefined)
+      expect(r.values.alt).to.eq(undefined)
+    })
+
+    it('it should set value for name when applying new values as object', () => {
+      const r = new Record(m)
+      r.apply({ name: 'alt' })
+      expect(r.values.name).to.eq('alt')
+      expect(r.values.alt).to.eq(undefined)
+    })
+
+    it('it should not set value for name when applying new values', () => {
+      const r = new Record(m)
+      r.apply([{ name: 'alt' }, { alt: 'foo' }])
+      expect(r.values.name).to.eq('alt')
+      expect(r.values.alt).to.eq('foo')
+    })
+  })
 })
