@@ -64,11 +64,11 @@ export default class GaugeChart extends BaseChart {
     }
   }
 
-  makeOptions () {
+  makeOptions (data: any) {
     const rep = this.config.reports?.[0]
     const { metrics: [metric] = [] } = rep || {}
 
-    return {
+    const options: any = {
       needle: {
         radiusPercentage: 2,
         widthPercentage: 3.5,
@@ -83,12 +83,32 @@ export default class GaugeChart extends BaseChart {
         color: 'rgba(0, 0, 0, 1)',
         backgroundColor: 'rgba(255,255,255,0.5)',
         borderRadius: 5,
+        bottomMarginPercentage: 0,
         padding: {
           top: 10,
           bottom: 10
         }
       }
     }
+
+    if (this.config.colorScheme) {
+      options.plugins = {
+        colorschemes: {
+          scheme: this.config.colorScheme,
+          // this is a bit of a hack to make the plugin work on each dataset value
+          // we should improve this at a later point in time, but is ok for now.
+          custom: (e: Array<string>) => {
+            const cls = [...e]
+            while (cls.length < data.datasets[0].data.length) {
+              cls.push(...e)
+            }
+            data.datasets[0].backgroundColor = cls.slice(0, data.datasets[0].data.length)
+            return e
+          },
+        },
+      }
+    }
+    return options
   }
 
   /**

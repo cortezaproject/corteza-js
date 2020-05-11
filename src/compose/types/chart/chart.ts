@@ -5,7 +5,6 @@ import {
   dimensionFunctions,
   makeAlias,
   isRadialChart,
-  makeColorSteps,
   makeDataLabel,
   KV,
   Report,
@@ -71,14 +70,9 @@ export default class Chart extends BaseChart {
     const ds: any = { data }
 
     // colors
-    if (typeof m.backgroundColor === 'string') {
-      if (isRadialChart(m)) {
-        ds.backgroundColor = makeColorSteps(m.backgroundColor || defaultBGColor, data.length)
-        ds.hoverBackgroundColor = m.backgroundColor
-      } else {
-        ds.backgroundColor = 'rgba(' + parseInt(m.backgroundColor.slice(-6, -4), 16) + ',' + parseInt(m.backgroundColor.slice(-4, -2), 16) + ',' + parseInt(m.backgroundColor.slice(-2), 16) + ',0.7)'
-        ds.hoverBackgroundColor = m.backgroundColor
-      }
+    if (typeof m.backgroundColor === 'string' && !isRadialChart(m)) {
+      ds.backgroundColor = 'rgba(' + parseInt(m.backgroundColor.slice(-6, -4), 16) + ',' + parseInt(m.backgroundColor.slice(-4, -2), 16) + ',' + parseInt(m.backgroundColor.slice(-2), 16) + ',0.7)'
+      ds.hoverBackgroundColor = m.backgroundColor
     }
 
     return Object.assign(ds, {
@@ -103,6 +97,14 @@ export default class Chart extends BaseChart {
       animation: {
         duration: 500,
       },
+    }
+
+    if (this.config.colorScheme) {
+      options.plugins = {
+        colorschemes: {
+          scheme: this.config.colorScheme,
+        },
+      }
     }
 
     this.config.reports?.forEach(r => {

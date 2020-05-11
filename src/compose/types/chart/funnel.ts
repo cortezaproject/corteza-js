@@ -76,10 +76,29 @@ export default class FunnelChart extends BaseChart {
   }
 
   // No much configurations available for funnel charts
-  makeOptions () {
-    return {
+  makeOptions (data: any) {
+    const options: any = {
       sort: 'desc',
     }
+
+    if (this.config.colorScheme) {
+      options.plugins = {
+        colorschemes: {
+          scheme: this.config.colorScheme,
+          // this is a bit of a hack to make the plugin work on each dataset value
+          // we should improve this at a later point in time, but is ok for now.
+          custom: (e: Array<string>) => {
+            const cls = [...e]
+            while (cls.length < data.datasets[0].data.length) {
+              cls.push(...e)
+            }
+            data.datasets[0].backgroundColor = cls.slice(0, data.datasets[0].data.length)
+            return e
+          },
+        },
+      }
+    }
+    return options
   }
 
   /**

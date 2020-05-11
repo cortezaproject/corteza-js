@@ -58,6 +58,7 @@ export interface ChartConfig {
   };
 
   reports?: Array<Report>;
+  colorScheme?: string;
 }
 
 export const aggregateFunctions = [
@@ -187,25 +188,6 @@ export const predefinedFilters = [
     text: 'recordsCreatedLastMonth',
   },
 ]
-
-export function makeColorSteps (base: string, steps: number) {
-  if (!steps) {
-    return base
-  }
-
-  let pts = rgbaRegex.exec(base)
-  if (!pts || pts.length < 4) {
-    throw new Error('notification.color.RGBA.invalid')
-  }
-  const clean = pts.slice(1).map(parseFloat)
-  const a = clean.pop() || 1.0
-
-  const rtr = []
-  for (let i = 0; i < steps; i++) {
-    rtr.push(toRGBA(clean.map((p: number) => (p - i * (p / steps))).concat([a])))
-  }
-  return rtr
-}
 
 dimensionFunctions.lookup = (d) => dimensionFunctions.find(f => d.modifier === f.value)
 dimensionFunctions.convert = (d) => (dimensionFunctions.lookup(d) || {}).convert(d.field)

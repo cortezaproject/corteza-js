@@ -53,7 +53,7 @@ export class BaseChart {
 
     if (typeof c.config === 'object') {
       // Verify & normalize
-      let { renderer, reports } = c.config
+      let { renderer, reports, ...rest } = c.config
 
       if (renderer) {
         const { version } = renderer || {}
@@ -65,7 +65,7 @@ export class BaseChart {
         renderer = { version: ChartRenderer.chartJS }
       }
 
-      conf = { renderer, reports: reports || [] }
+      conf = { renderer, reports: reports || [], ...rest }
     }
 
     this.config = (conf ? _.merge(this.defConfig(), conf) : false) || this.config || this.defConfig()
@@ -221,7 +221,7 @@ export class BaseChart {
     throw new Error('method.makeDataset.notImplemented')
   }
 
-  makeOptions () {
+  makeOptions (data?: any) {
     throw new Error('method.makeOptions.notImplemented')
   }
   plugins (mm: Array<Metric>) {
@@ -285,11 +285,12 @@ export class BaseChart {
     })
   }
 
-  defConfig () {
+  defConfig (): ChartConfig {
     return Object.assign({}, {
+      colorScheme: undefined,
       reports: [this.defReport()],
       renderer: {
-        version: 'chart.js',
+        version: ChartRenderer.chartJS,
       },
     })
   }
