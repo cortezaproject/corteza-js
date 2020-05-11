@@ -282,6 +282,7 @@ export class BaseChart {
       filter: null,
       dimensions: [this.defDimension()],
       metrics: [this.defMetrics()],
+      yAxis: {},
     })
   }
 

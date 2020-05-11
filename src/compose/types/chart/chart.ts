@@ -76,7 +76,6 @@ export default class Chart extends BaseChart {
     }
 
     return Object.assign(ds, {
-      yAxisID: `y-axis-metric-${alias}`,
       label: m.label || m.field,
       lineTension: 0,
       type: m.type,
@@ -154,23 +153,42 @@ export default class Chart extends BaseChart {
         })
       }
 
-      options.scales.yAxes = r.metrics?.map((m: Metric, i: number) => {
-        return {
-          display: !isRadialChart(m as KV),
-          id: `y-axis-metric-${makeAlias(m)}`,
-          type: m.axisType || 'linear',
-          position: m.axisPosition || 'left',
-          scaleLabel: {
-            display: true,
-            labelString: m.label || m.field,
-          },
-          ticks: {
-            beginAtZero: !!m.beginAtZero,
-          },
-        }
-      })
+      options.scales.yAxes = this.makeYAxis(r)
     })
     return options
+  }
+
+  private makeYAxis (r: Report) {
+    if (r.yAxis) {
+      return [{
+        display: !r.metrics?.find((m: KV) => isRadialChart(m)),
+        type: r.yAxis.axisType || 'linear',
+        position: r.yAxis.axisPosition || 'left',
+        scaleLabel: {
+          display: true,
+          labelString: r.yAxis.label || undefined,
+        },
+        ticks: {
+          beginAtZero: !!r.yAxis.beginAtZero,
+          min: r.yAxis.min ? parseFloat(r.yAxis.min) : undefined,
+          max: r.yAxis.max ? parseFloat(r.yAxis.max) : undefined,
+        },
+      }]
+    } else {
+      const m: Metric = r.metrics?.[0] || {}
+      return [{
+        display: !isRadialChart(m as KV),
+        type: m.axisType || 'linear',
+        position: m.axisPosition || 'left',
+        scaleLabel: {
+          display: true,
+          labelString: m.label || m.field,
+        },
+        ticks: {
+          beginAtZero: !!m.beginAtZero,
+        },
+      }]
+    }
   }
 
   plugins () {

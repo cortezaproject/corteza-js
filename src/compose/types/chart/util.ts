@@ -45,11 +45,21 @@ export interface Metric {
   [_: string]: any;
 }
 
+export interface YAxis {
+  axisPosition?: string;
+  axisType?: string;
+  beginAtZero?: boolean;
+  label?: string;
+  min?: string;
+  max?: string;
+}
+
 export interface Report {
   moduleID?: string|null;
   filter?: string|null;
   dimensions?: Array<Dimension>;
   metrics?: Array<Metric>;
+  yAxis?: YAxis;
 }
 
 export interface ChartConfig {
