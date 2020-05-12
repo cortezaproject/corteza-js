@@ -1,4 +1,4 @@
-import { extractID, genericPermissionUpdater, isFresh, PermissionRule, kv, ListResponse } from './shared'
+import { extractID, genericPermissionUpdater, isFresh, PermissionRule, kv, ListResponse, PermissionRole, PermissionResource } from './shared'
 import { Messaging as MessagingAPI } from '../../api-clients'
 import { Channel, Message } from '../../messaging/'
 import { User } from '../../system'
@@ -215,20 +215,65 @@ export default class MessagingHelper {
   }
 
   /**
-   * Sets permissions on messaging resources
-   *
+   * Allows access for the given role for the given Messaging resource
+   * 
    * @example
-   * Compose.setPermissions([
-   *   // Allow someRole update to delete newChannel
-   *   new AllowAccess(someRole, newChannel, 'delete'),
-   *
-   *   // Allow newRole to update any channel
-   *   new AllowAccess(newRole, new WildcardResource(new Channel), 'update')
-   * ])
-   *
-   * @param rules
+   * // Allows users with `someRole` to access the newly created channel
+   * await Compose.allow({
+   *    role: someRole,
+   *    resource: newChannel,
+   *    operation: 'read',
+   * })
    */
-  async setPermissions (rules: PermissionRule[]): Promise<void> {
-    return genericPermissionUpdater(this.MessagingAPI, rules)
+  async allow (...pr: { role: PermissionRole, resource: PermissionResource, operation: string }[]) {
+    const rr = pr.map(p => ({
+      role: p.role,
+      resource: p.resource,
+      operation: p.operation,
+      access: 'allow',
+    }))
+    return genericPermissionUpdater(this.MessagingAPI, rr)
+  }
+
+  /**
+   * Denies access for the given role for the given Messaging resource
+   * 
+   * @example
+   * // Denies users with `someRole` from accessing the newly created channel
+   * await Compose.deny({
+   *    role: someRole,
+   *    resource: newChannel,
+   *    operation: 'read',
+   * })
+   */
+  async deny (...pr: { role: PermissionRole, resource: PermissionResource, operation: string }[]) {
+    const rr = pr.map(p => ({
+      role: p.role,
+      resource: p.resource,
+      operation: p.operation,
+      access: 'deny',
+    }))
+    return genericPermissionUpdater(this.MessagingAPI, rr)
+  }
+
+  /**
+   * Inherits access for the given role for the given Messaging resource
+   * 
+   * @example
+   * // Uses inherited permissions for the `sameRole` for the newly created channel
+   * await Compose.inherit({
+   *    role: someRole,
+   *    resource: newChannel,
+   *    operation: 'read',
+   * })
+   */
+  async inherit (...pr: { role: PermissionRole, resource: PermissionResource, operation: string }[]) {
+    const rr = pr.map(p => ({
+      role: p.role,
+      resource: p.resource,
+      operation: p.operation,
+      access: 'inherit',
+    }))
+    return genericPermissionUpdater(this.MessagingAPI, rr)
   }
 }

@@ -1,4 +1,4 @@
-import { extractID, genericPermissionUpdater, isFresh, PermissionRule, kv, ListResponse } from './shared'
+import { extractID, genericPermissionUpdater, isFresh, PermissionRule, kv, ListResponse, PermissionRole, PermissionResource } from './shared'
 import { System as SystemAPI } from '../../api-clients'
 import { User, Role, Application } from '../../system/'
 import { IsCortezaID } from '../../cast'
@@ -436,20 +436,65 @@ export default class SystemHelper {
   }
 
   /**
-   * Sets permissions on system resources
-   *
+   * Allows access for the given role for the given System resource
+   * 
    * @example
-   * Compose.setPermissions([
-   *   // Allow someRole update permissions on someUser
-   *   new AllowAccess(someRole, someUser, 'update'),
-   *
-   *   // Allow someRole update permissions on all users
-   *   new AllowAccess(anotherRole, new WildcardResource(new User), 'update')
-   * ])
-   *
-   * @param rules
+   * // Allows users with `someRole` to access the newly created user
+   * await Compose.allow({
+   *    role: someRole,
+   *    resource: newUser,
+   *    operation: 'read',
+   * })
    */
-  async setPermissions (rules: PermissionRule[]): Promise<void> {
-    return genericPermissionUpdater(this.SystemAPI, rules)
+  async allow (...pr: { role: PermissionRole, resource: PermissionResource, operation: string }[]) {
+    const rr = pr.map(p => ({
+      role: p.role,
+      resource: p.resource,
+      operation: p.operation,
+      access: 'allow',
+    }))
+    return genericPermissionUpdater(this.SystemAPI, rr)
+  }
+
+  /**
+   * Denies access for the given role for the given System resource
+   * 
+   * @example
+   * // Denies users with `someRole` from accessing the newly created user
+   * await Compose.deny({
+   *    role: someRole,
+   *    resource: newUser,
+   *    operation: 'read',
+   * })
+   */
+  async deny (...pr: { role: PermissionRole, resource: PermissionResource, operation: string }[]) {
+    const rr = pr.map(p => ({
+      role: p.role,
+      resource: p.resource,
+      operation: p.operation,
+      access: 'deny',
+    }))
+    return genericPermissionUpdater(this.SystemAPI, rr)
+  }
+
+  /**
+   * Inherits access for the given role for the given System resource
+   * 
+   * @example
+   * // Uses inherited permissions for the `sameRole` for the newly created user
+   * await Compose.inherit({
+   *    role: someRole,
+   *    resource: newUser,
+   *    operation: 'read',
+   * })
+   */
+  async inherit (...pr: { role: PermissionRole, resource: PermissionResource, operation: string }[]) {
+    const rr = pr.map(p => ({
+      role: p.role,
+      resource: p.resource,
+      operation: p.operation,
+      access: 'inherit',
+    }))
+    return genericPermissionUpdater(this.SystemAPI, rr)
   }
 }

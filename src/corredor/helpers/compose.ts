@@ -1,4 +1,4 @@
-import { extractID, genericPermissionUpdater, isFresh, PermissionRule, kv, ListResponse } from './shared'
+import { extractID, genericPermissionUpdater, isFresh, kv, ListResponse, PermissionResource, PermissionRole } from './shared'
 import { Attachment } from '../../shared'
 import { Compose as ComposeAPI } from '../../api-clients'
 import { Namespace, Record, Module, Page } from '../../compose'
@@ -1075,20 +1075,65 @@ export default class ComposeHelper {
   }
 
   /**
-   * Sets permissions on messaging resources
-   *
+   * Allows access for the given role for the given Compose resource
+   * 
    * @example
-   * Compose.setPermissions([
-   *   // Allow someRole update to delete newModule
-   *   new AllowAccess(someRole, newModule, 'delete'),
-   *
-   *   // Allow newRole to update any module
-   *   new AllowAccess(newRole, new WildcardResource(new Module), 'update')
-   * ])
-   *
-   * @param rules
+   * // Allows users with `someRole` to access the newly created namespace
+   * await Compose.allow({
+   *    role: someRole,
+   *    resource: newNamespace,
+   *    operation: 'read',
+   * })
    */
-  async setPermissions (rules: PermissionRule[]): Promise<void> {
-    return genericPermissionUpdater(this.ComposeAPI, rules)
+  async allow (...pr: { role: PermissionRole, resource: PermissionResource, operation: string }[]) {
+    const rr = pr.map(p => ({
+      role: p.role,
+      resource: p.resource,
+      operation: p.operation,
+      access: 'allow',
+    }))
+    return genericPermissionUpdater(this.ComposeAPI, rr)
+  }
+
+  /**
+   * Denies access for the given role for the given Compose resource
+   * 
+   * @example
+   * // Denies users with `someRole` from accessing the newly created namespace
+   * await Compose.deny({
+   *    role: someRole,
+   *    resource: newNamespace,
+   *    operation: 'read',
+   * })
+   */
+  async deny (...pr: { role: PermissionRole, resource: PermissionResource, operation: string }[]) {
+    const rr = pr.map(p => ({
+      role: p.role,
+      resource: p.resource,
+      operation: p.operation,
+      access: 'deny',
+    }))
+    return genericPermissionUpdater(this.ComposeAPI, rr)
+  }
+
+  /**
+   * Inherits access for the given role for the given Compose resource
+   * 
+   * @example
+   * // Uses inherited permissions for the `sameRole` for the newly created namespace
+   * await Compose.inherit({
+   *    role: someRole,
+   *    resource: newNamespace,
+   *    operation: 'read',
+   * })
+   */
+  async inherit (...pr: { role: PermissionRole, resource: PermissionResource, operation: string }[]) {
+    const rr = pr.map(p => ({
+      role: p.role,
+      resource: p.resource,
+      operation: p.operation,
+      access: 'inherit',
+    }))
+    return genericPermissionUpdater(this.ComposeAPI, rr)
   }
 }

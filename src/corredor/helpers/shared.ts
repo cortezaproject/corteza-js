@@ -8,14 +8,29 @@ interface PermissionUpdater {
   permissionsUpdate({ roleID, rules }: { roleID: string; rules: Array<object>}): void;
 }
 
+export interface PermissionResource {
+  resourceID: string;
+  [_: string]: any;
+}
+
+export interface PermissionRole {
+  roleID: string;
+  [_: string]: any;
+}
+
 export interface PermissionRule {
-  role: {
-    roleID: string;
-  };
+  role: PermissionRole;
+  resource: PermissionResource;
+  operation: string;
+  access: string;
 }
 
 export interface Permissions {
-  [key: string]: PermissionRule[];
+  [key: string]: {
+    resource: string,
+    operation: string,
+    access: string,
+  }[];
 }
 
 export function kv (a: unknown): KV { return a as KV }
@@ -53,7 +68,11 @@ export function genericPermissionUpdater (API: PermissionUpdater, rules: Permiss
       acc[p.role.roleID] = []
     }
 
-    acc[p.role.roleID].push(p)
+    acc[p.role.roleID].push({
+      resource: p.resource.resourceID,
+      operation: p.operation,
+      access: p.access,
+    })
     return acc
   }, {})
 
