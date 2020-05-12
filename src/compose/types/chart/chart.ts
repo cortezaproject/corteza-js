@@ -84,6 +84,7 @@ export default class Chart extends BaseChart {
         enabled: true,
         relativeValue: !!m.relativeValue,
         relativePrecision: m.relativePrecision,
+        labelCallback: m.fixTooltips ? this.makeLabel : this.makeTooltip,
       },
     })
   }
@@ -121,13 +122,7 @@ export default class Chart extends BaseChart {
         callbacks: {
           label: ({ datasetIndex, index }: any, { datasets, labels }: any) => {
             const dataset = datasets[datasetIndex]
-            return makeDataLabel({
-              prefix: labels[index],
-              value: dataset.data[index],
-              dataset,
-              relativeValue: dataset.tooltips.relativeValue,
-              relativePrecision: dataset.tooltips.relativePrecision,
-            })
+            return dataset.tooltips.labelCallback({ datasetIndex, index }, { datasets, labels })
           },
         },
       }
@@ -156,6 +151,27 @@ export default class Chart extends BaseChart {
       options.scales.yAxes = this.makeYAxis(r)
     })
     return options
+  }
+
+  private makeTooltip ({ datasetIndex, index }: any, { datasets, labels }: any): any {
+    const dataset = datasets[datasetIndex]
+    return makeDataLabel({
+      prefix: labels[index],
+      value: dataset.data[index],
+      dataset,
+      relativeValue: dataset.tooltips.relativeValue,
+      relativePrecision: dataset.tooltips.relativePrecision,
+    })
+  }
+
+  private makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): any {
+    const dataset = datasets[datasetIndex]
+    return makeDataLabel({
+      value: dataset.data[index],
+      dataset,
+      relativeValue: dataset.tooltips.relativeValue,
+      relativePrecision: dataset.tooltips.relativePrecision,
+    })
   }
 
   private makeYAxis (r: Report) {

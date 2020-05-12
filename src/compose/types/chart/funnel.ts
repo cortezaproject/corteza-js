@@ -4,9 +4,12 @@ import {
   Metric,
   Report,
   ChartType,
+  makeDataLabel,
 } from './util'
 
 import { defaultBGColor } from './common'
+import { makeTipper } from './chartjs/plugins'
+const ChartJS = require('chart.js')
 
 /**
  * Funnel chart provides the definitions for the chartjs-plugin-funnel plugin.
@@ -98,7 +101,27 @@ export default class FunnelChart extends BaseChart {
         },
       }
     }
+
+    options.tooltips = {
+      enabled: true,
+      displayColors: false,
+      callbacks: {
+        label: this.makeLabel,
+      },
+    }
     return options
+  }
+
+  private makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): any {
+    const dataset = datasets[datasetIndex]
+    const total = dataset.data.reduce((acc: number, v: number) => acc + v, 0)
+
+    return makeDataLabel({
+      prefix: labels[index],
+      value: dataset.data[index],
+      dataset,
+      suffix: ` (${((dataset.data[index] * 100) / total).toFixed(2)}%)`,
+    })
   }
 
   /**
@@ -108,7 +131,7 @@ export default class FunnelChart extends BaseChart {
    * We should fix this at a later point in time...
    */
   plugins (mm: Array<Metric>) {
-    return []
+    return [makeTipper(ChartJS.Tooltip, {})]
   }
 
   baseChartType (datasets: Array<any>) {

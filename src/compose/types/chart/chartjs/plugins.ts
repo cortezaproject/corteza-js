@@ -22,27 +22,11 @@ export function makeTipper (Tooltip: any, options: PluginOptions = {}) {
             ...chart.options.tooltips,
             // force these values
             displayColors: false,
-            caretPadding: 0,
-            caretSize: 0,
-            xPadding: 4,
-            yPadding: 2,
-            cornerRadius: 0,
-            borderWidth: 0,
             backgroundColor: 'rgba(255,255,255,0.5)',
             ...options,
           }
           opts.callbacks = {
             ...opts.callbacks,
-            label: ({ datasetIndex, index }: any, { datasets, labels }: any) => {
-              // get the concerned dataset
-              const dataset = datasets[datasetIndex]
-              return makeDataLabel({
-                value: dataset.data[index],
-                dataset,
-                relativeValue: dataset.tooltips?.relativeValue,
-                relativePrecision: dataset.tooltips?.relativePrecision,
-              })
-            },
             labelTextColor: function() {
                 return '#000000'
             },

@@ -4,6 +4,7 @@ import {
   Report,
   Dimension,
   ChartType,
+  makeDataLabel,
 } from './util'
 import { makeTipper } from './chartjs/plugins'
 import { defaultBGColor } from './common'
@@ -61,6 +62,10 @@ export default class GaugeChart extends BaseChart {
       value: data.reduce((acc, cur) => acc + cur, 0),
       data: steps.map(({ value }: any) => parseFloat(value)),
       backgroundColor: steps.map(({ color }: any) => color),
+      tooltips: {
+        enabled: true,
+        labelCallback: m.fixTooltips ? this.makeLabel : this.makeTooltip,
+      }
     }
   }
 
@@ -77,18 +82,26 @@ export default class GaugeChart extends BaseChart {
       },
       tooltips: {
         enabled: true,
+        displayColors: false,
+        callbacks: {
+          title: () => '',
+          label: ({ datasetIndex, index }: any, { datasets, labels }: any) => {
+            const dataset = datasets[datasetIndex]
+            return dataset.tooltips.labelCallback({ datasetIndex, index }, { datasets, labels })
+          },
+        },
       },
       valueLabel: {
         display: true,
         color: 'rgba(0, 0, 0, 1)',
         backgroundColor: 'rgba(255,255,255,0.5)',
         borderRadius: 5,
-        bottomMarginPercentage: 0,
+        bottomMarginPercentage: 5,
         padding: {
           top: 10,
-          bottom: 10
-        }
-      }
+          bottom: 10,
+        },
+      },
     }
 
     if (this.config.colorScheme) {
@@ -109,6 +122,24 @@ export default class GaugeChart extends BaseChart {
       }
     }
     return options
+  }
+
+  private makeTooltip ({ datasetIndex, index }: any, { datasets, labels }: any): any {
+    const dataset = datasets[datasetIndex]
+    return makeDataLabel({
+      value: dataset.data[index],
+      dataset,
+      relativeValue: dataset.tooltips.relativeValue,
+      relativePrecision: dataset.tooltips.relativePrecision,
+    })
+  }
+
+  private makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): any {
+    const dataset = datasets[datasetIndex]
+    return makeDataLabel({
+      value: labels[index],
+      dataset,
+    })
   }
 
   /**
