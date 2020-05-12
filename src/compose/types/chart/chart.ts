@@ -77,9 +77,9 @@ export default class Chart extends BaseChart {
 
     return Object.assign(ds, {
       label: m.label || m.field,
-      lineTension: 0,
       type: m.type,
       fill: !!m.fill,
+      lineTension: m.lineTension || 0,
       tooltips: {
         enabled: true,
         relativeValue: !!m.relativeValue,
