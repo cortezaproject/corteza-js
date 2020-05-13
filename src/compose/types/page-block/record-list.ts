@@ -22,6 +22,13 @@ interface Options {
   allowExport: boolean;
   perPage: number;
 
+  // Record-lines
+  editable: boolean;
+  draggable?: boolean;
+  positionField?: string;
+  refField?: string;
+  editFields?: unknown[];
+
   // Are table rows selectable
   selectable: boolean;
   selectMode: 'multi' | 'single' | 'range';
@@ -47,6 +54,12 @@ const defaults: Readonly<Options> = Object.freeze({
   allowExport: false,
   perPage: 20,
 
+  editable: false,
+  draggable: false,
+  positionField: undefined,
+  refField: undefined,
+  editFields: [],
+
   selectable: false,
   selectMode: 'multi',
 
@@ -67,10 +80,14 @@ export class PageBlockRecordList extends PageBlock {
     if (!o) return
 
     Apply(this.options, o, CortezaID, 'moduleID')
-    Apply(this.options, o, String, 'prefilter', 'presort', 'selectMode')
+    Apply(this.options, o, String, 'prefilter', 'presort', 'selectMode', 'positionField', 'refField')
 
     if (o.fields) {
       this.options.fields = o.fields
+    }
+
+    if (o.editFields) {
+      this.options.editFields = o.editFields
     }
 
     Apply(this.options, o, Boolean,
@@ -85,6 +102,8 @@ export class PageBlockRecordList extends PageBlock {
       'hideRecordCloneButton',
       'hideRecordEditButton',
       'hideRecordViewButton',
+      'editable',
+      'draggable',
     )
 
     if (o.selectionButtons) {
