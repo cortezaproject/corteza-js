@@ -10,6 +10,7 @@ export { PageBlockRecordOrganizer } from './record-organizer'
 export { PageBlockSocialFeed } from './social-feed'
 export { PageBlockCalendar } from './calendar'
 export { PageBlockMetric } from './metric'
+export { PageBlockRecordLines } from './record-lines'
 
 export function PageBlockMaker<T extends PageBlock> (i: { kind: string }): T {
   const PageBlockTemp = Registry.get(i.kind)
