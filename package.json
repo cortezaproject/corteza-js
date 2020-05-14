@@ -1,7 +1,7 @@
 {
   "name": "@cortezaproject/corteza-js",
   "description": "Corteza JavaScript/TypeScript libs",
-  "version": "2020.3.0-rc.18",
+  "version": "2020.3.0-rc.19",
   "license": "Apache-2.0",
   "author": "Denis Arh <denis.arh@crust.tech>",
   "main": "dist/index.js",
@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "axios": "^0.19.1",
+    "chart.js": "^2.7.3",
     "hex-rgb": "^4.1.0",
     "lodash": "^4.17.15",
     "minimatch": "^3.0.4",
@@ -42,7 +43,6 @@
     "@typescript-eslint/parser": "^2.16.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "chart.js": "^2.7.3",
     "esformatter": "^0.11.2",
     "esformatter-add-trailing-commas": "^1.1.0",
     "eslint": "^6.7.2",
@@ -66,9 +66,6 @@
     "ts-node": "^8.6.2",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.7.2"
-  },
-  "peerDependencies": {
-    "chart.js": "^2.7.3"
   },
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",
