@@ -11,6 +11,7 @@ interface Options {
   queryFields: Array<string>;
   selectType: string;
   multiDelimiter: string;
+  prefilter?: string;
 }
 
 const defaults: Readonly<Options> = Object.freeze({
@@ -19,6 +20,7 @@ const defaults: Readonly<Options> = Object.freeze({
   queryFields: [],
   selectType: '',
   multiDelimiter: '\n',
+  prefilter: undefined,
 })
 
 export class ModuleFieldRecord extends ModuleField {
@@ -35,7 +37,7 @@ export class ModuleFieldRecord extends ModuleField {
     if (!o) return
 
     Apply(this.options, o, CortezaID, 'moduleID')
-    Apply(this.options, o, String, 'labelField', 'selectType', 'multiDelimiter')
+    Apply(this.options, o, String, 'labelField', 'selectType', 'multiDelimiter', 'prefilter')
     Apply(this.options, o, (o) => {
       if (!o) {
         return []
