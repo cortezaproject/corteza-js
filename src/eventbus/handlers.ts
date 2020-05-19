@@ -13,14 +13,6 @@ export class Handler {
   readonly scriptName?: string
 
   constructor (h: HandlerFn, t: Trigger) {
-    if (t.scriptName && !t.eventTypes.includes(onManual)) {
-      throw new Error('cannot make handler from trigger with script name without onManual eventType')
-    }
-
-    if (!t.scriptName && t.eventTypes.includes(onManual)) {
-      throw new Error('cannot make handler from trigger with onManual eventType without script name')
-    }
-
     this.handle = h
     this.eventTypes = t.eventTypes
     this.resourceTypes = t.resourceTypes

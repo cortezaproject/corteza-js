@@ -70,10 +70,12 @@ export class EventBus {
 
     if (script) {
       if (ev.eventType !== onManual) {
+        console.warn('EventBus: explicit events require onManual event type', ev)
         return null
       }
     } else {
       if (ev.eventType === onManual) {
+        console.warn('EventBus: implicit events can not define onManual event type', ev)
         return null
       }
     }
