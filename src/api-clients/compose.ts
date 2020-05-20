@@ -330,6 +330,7 @@ export default class Compose {
       title,
       handle,
       description,
+      weight,
       visible,
       blocks,
     } = (a as KV) || {}
@@ -353,6 +354,7 @@ export default class Compose {
       title,
       handle,
       description,
+      weight,
       visible,
       blocks,
     }
