@@ -62,6 +62,20 @@ interface NamespaceListFilter {
 }
 
 /**
+ * Helpers to determine if specific object looks like the type we are interested in.
+ * It does not rely on instanceof, because of bundling issues.
+ */
+function isRecord (o: any) {
+  return o && !!o.recordID && o.moduleID && o.namespaceID
+}
+function isModule (o: any) {
+  return o && !!o.moduleID && o.namespaceID
+}
+function isPage (o: any) {
+  return o && !!o.pageID && o.namespaceID
+}
+
+/**
  * ComposeHelper provides layer over Compose API and utilities that simplify automation script writing
  *
  * Initiated as Compose object and provides a few handy shortcuts and fallback that will enable you
@@ -112,11 +126,11 @@ export default class ComposeHelper {
    */
   async savePage (page: Promise<Page>|Page|Partial<Page>): Promise<Page> {
     return Promise.resolve(page).then(page => {
-      if (!(page instanceof Page)) {
+      if (!isPage(page)) {
         throw Error('expecting Page type')
       }
 
-      if (isFresh(page.pageID)) {
+      if (page.pageID && isFresh(page.pageID)) {
         return this.ComposeAPI.pageCreate(kv(page)).then(page => new Page(page))
       } else {
         return this.ComposeAPI.pageUpdate(kv(page)).then(page => new Page(page))
@@ -134,7 +148,7 @@ export default class ComposeHelper {
    */
   async deletePage (page: Page): Promise<unknown> {
     return Promise.resolve(page).then(page => {
-      if (!(page instanceof Page)) {
+      if (!isPage(page)) {
         throw Error('expecting Page type')
       }
 
@@ -266,7 +280,7 @@ export default class ComposeHelper {
    */
   async saveRecord (record: Record|Promise<Record>): Promise<Record> {
     return Promise.resolve(record).then(record => {
-      if (!(record instanceof Record)) {
+      if (!isRecord(record)) {
         throw Error('expecting Record type')
       }
 
@@ -290,7 +304,7 @@ export default class ComposeHelper {
    */
   async deleteRecord (record: Record): Promise<unknown> {
     return Promise.resolve(record).then(record => {
-      if (!(record instanceof Record)) {
+      if (!isRecord(record)) {
         throw Error('expecting Record type')
       }
 
@@ -485,7 +499,7 @@ export default class ComposeHelper {
    */
   async saveModule (module: Promise<Module>|Module): Promise<Module> {
     return Promise.resolve(module).then(module => {
-      if (!(module instanceof Module)) {
+      if (!isModule(module)) {
         throw new Error('expecting Module type')
       }
 
@@ -848,8 +862,8 @@ export default class ComposeHelper {
       throw new Error('formatter.undefined')
     }
 
-    if (fwl instanceof Record) {
-      record = fwl
+    if (isRecord(fwl)) {
+      record = fwl as Record
       fwl = undefined
     }
 
@@ -968,8 +982,9 @@ export default class ComposeHelper {
       // and wait for results
       module = await module
 
-      if (module instanceof Record) {
-        return this.resolveModule(module.module, module.moduleID)
+      if (isRecord(module)) {
+        const m = module as Record
+        return this.resolveModule(m.module, m.moduleID)
       }
 
       if (IsOf<ListResponse<ModuleListFilter, Module[]>>(module, 'set', 'filter')) {
@@ -988,7 +1003,7 @@ export default class ComposeHelper {
         }
       }
 
-      if (!(module instanceof Module)) {
+      if (!isModule(module)) {
         // not module? is it an object with moduleID & namespaceID?
         if ((module as Module).moduleID === undefined || (module as Module).namespaceID === undefined) {
           break
@@ -997,7 +1012,7 @@ export default class ComposeHelper {
         return Promise.resolve(new Module(module as Module))
       }
 
-      return Promise.resolve(module)
+      return Promise.resolve(module as Module)
     }
 
     return Promise.reject(Error('unexpected input type for module resolver'))
@@ -1039,8 +1054,9 @@ export default class ComposeHelper {
       // and wait for results
       ns = await ns
 
-      if (ns instanceof Record) {
-        return this.resolveNamespace(ns.namespaceID)
+      if (isRecord(ns)) {
+        const n = ns as Record
+        return this.resolveNamespace(n.namespaceID)
       }
 
       if ((ns as ListResponse<NamespaceListFilter, Namespace[]>).set && (ns as ListResponse<NamespaceListFilter, Namespace[]>).filter) {

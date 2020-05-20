@@ -192,7 +192,13 @@ describe(__filename, () => {
 
     describe('record saving', () => {
       it('should reject invalid record', async () => {
-        expect(async () => { await h.saveRecord(null as unknown as Record) }).to.throw
+        const tests = [
+          { val: null, label: 'Null value' },
+          { val: {}, label: 'Empty object' },
+        ]
+        for (const t of tests) {
+          expect(async () => { await h.saveRecord(t.val as unknown as Record) }, t.label).to.throw
+        }
       })
 
       it('should create new', async () => {

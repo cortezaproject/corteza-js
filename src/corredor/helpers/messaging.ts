@@ -17,6 +17,17 @@ interface ChannelListFilter {
 }
 
 /**
+ * Helpers to determine if specific object looks like the type we are interested in.
+ * It does not rely on instanceof, because of bundling issues.
+ */
+function isUser (o: any) {
+  return o && !!o.userID
+}
+function isChannel (o: any) {
+  return o && !!o.channelID
+}
+
+/**
  * MessagingHelper provides layer over Messaging API and utilities that simplify automation script writing
  *
  */
@@ -56,7 +67,7 @@ export default class MessagingHelper {
    * @param ch - User, Channel object or ID
    */
   async sendMessage (message: string|Message, ch: string|Channel|User): Promise<Message> {
-    if (ch instanceof User) {
+    if (isUser(ch)) {
       ch = await this.directChannel(ch)
     }
 
@@ -199,9 +210,9 @@ export default class MessagingHelper {
         continue
       }
 
-      if (c instanceof Channel) {
+      if (isChannel(c)) {
         // Already got what we need
-        return c
+        return c as Channel
       }
 
       // Other kind of object with properties that might hold channel ID

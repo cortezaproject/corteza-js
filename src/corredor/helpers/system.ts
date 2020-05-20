@@ -35,6 +35,17 @@ interface RoleListFilter {
 }
 
 /**
+ * Helpers to determine if specific object looks like the type we are interested in.
+ * It does not rely on instanceof, because of bundling issues.
+ */
+function isUser (o: any) {
+  return o && !!o.userID
+}
+function isRole (o: any) {
+  return o && !!o.roleID
+}
+
+/**
  * SystemHelper provides layer over System API and utilities that simplify automation script writing
  */
 export default class SystemHelper {
@@ -373,9 +384,9 @@ export default class SystemHelper {
         continue
       }
 
-      if (u instanceof User) {
+      if (isUser(u)) {
         // Already got what we need
-        return Promise.resolve(u)
+        return Promise.resolve(u as User)
       }
 
       // Other kind of object with properties that might hold user ID
@@ -420,9 +431,9 @@ export default class SystemHelper {
         continue
       }
 
-      if (r instanceof Role) {
+      if (isRole(r)) {
         // Already got what we need
-        return r
+        return r as Role
       }
 
       // Other kind of object with properties that might hold role ID
