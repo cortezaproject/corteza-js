@@ -11,14 +11,24 @@ import { Caster } from './shared'
  * All these variables are casted (if passed as an argument) to proper types ($record => Record, $module => Module, ...)
  */
 export class Args {
+  private cachedArgs: { [_: string]: any };
+
   constructor (args: {[_: string]: unknown}, caster: Caster = CortezaTypes) {
+    this.cachedArgs = {}
+
     for (const arg in args) {
       if (caster && caster.has(arg)) {
         const cast = caster.get(arg)
 
         if (cast) {
           Object.defineProperty(this, `$${arg}`, {
-            get: () => cast.call(this, args[arg]),
+            get: () => {
+              if (!this.cachedArgs[arg]) {
+                this.cachedArgs[arg] = cast.call(this, args[arg])
+              }
+
+              return this.cachedArgs[arg]
+            },
             configurable: false,
             enumerable: true,
           })
