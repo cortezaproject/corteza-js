@@ -35,10 +35,10 @@ describe(__filename, () => {
       const API = stubObject<SystemAPI>(new SystemAPI({}))
 
       await genericPermissionUpdater(API, [
-        { role: { roleID: '1111' } },
-        { role: { roleID: '1111' } },
-        { role: { roleID: '5555' } },
-        { role: { roleID: '5555' } },
+        { role: { roleID: '1111' }, resource: { resourceID: 'r.0001' }, operation: 'read', access: '1' },
+        { role: { roleID: '1111' }, resource: { resourceID: 'r.0001' }, operation: 'read', access: '1' },
+        { role: { roleID: '5555' }, resource: { resourceID: 'r.0001' }, operation: 'read', access: '1' },
+        { role: { roleID: '5555' }, resource: { resourceID: 'r.0001' }, operation: 'read', access: '1' },
       ])
 
       expect(API.permissionsUpdate.calledTwice).true
