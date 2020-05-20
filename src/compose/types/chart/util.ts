@@ -9,13 +9,20 @@ export enum ChartType {
   bar = 'bar',
   line = 'line',
   doughnut='doughnut',
+  funnel = 'funnel',
+  gauge = 'gauge',
 }
 
 export enum ChartRenderer {
   chartJS = 'chart.js'
 }
 
+export interface KV {
+  [_: string]: any
+}
+
 export interface Dimension {
+  meta?: KV;
   conditions: object;
   field?: string;
   modifier?: string;
@@ -33,14 +40,26 @@ export interface Metric {
   alias?: string;
   aggregate?: string;
   modifier?: string;
-  [_: string]: unknown;
+  fx?: string;
+  backgroundColor?: string;
+  [_: string]: any;
+}
+
+export interface YAxis {
+  axisPosition?: string;
+  axisType?: string;
+  beginAtZero?: boolean;
+  label?: string;
+  min?: string;
+  max?: string;
 }
 
 export interface Report {
-  moduleID?: string;
-  filter?: string;
+  moduleID?: string|null;
+  filter?: string|null;
   dimensions?: Array<Dimension>;
   metrics?: Array<Metric>;
+  yAxis?: YAxis;
 }
 
 export interface ChartConfig {
@@ -48,7 +67,8 @@ export interface ChartConfig {
     version?: ChartRenderer;
   };
 
-  reports?: Array<any>;
+  reports?: Array<Report>;
+  colorScheme?: string;
 }
 
 export const aggregateFunctions = [
@@ -179,29 +199,6 @@ export const predefinedFilters = [
   },
 ]
 
-export interface KV {
-  [_: string]: string
-}
-
-export function makeColorSteps (base: string, steps: number) {
-  if (!steps) {
-    return base
-  }
-
-  let pts = rgbaRegex.exec(base)
-  if (!pts || pts.length < 4) {
-    throw new Error('notification.color.RGBA.invalid')
-  }
-  const clean = pts.slice(1).map(parseFloat)
-  const a = clean.pop() || 1.0
-
-  const rtr = []
-  for (let i = 0; i < steps; i++) {
-    rtr.push(toRGBA(clean.map((p: number) => (p - i * (p / steps))).concat([a])))
-  }
-  return rtr
-}
-
 dimensionFunctions.lookup = (d) => dimensionFunctions.find(f => d.modifier === f.value)
 dimensionFunctions.convert = (d) => (dimensionFunctions.lookup(d) || {}).convert(d.field)
 
@@ -235,6 +232,9 @@ export const makeDataLabel = ({
 
   return `${prefix ? prefix + ': ' : ''}${(newValue)}${suffix}`
 }
+
+// Makes a standarised alias from modifier or dimension report option
+export const makeAlias = ({ alias, aggregate, modifier, field }: Metric) => alias || `${aggregate || modifier || 'none'}_${field}`
 
 const chartUtil = {
   dimensionFunctions,
