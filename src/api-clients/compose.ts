@@ -1196,6 +1196,7 @@ export default class Compose {
       namespaceID,
       moduleID,
       values,
+      records,
     } = (a as KV) || {}
     if (!namespaceID) {
       console.error('recordCreate failed, field namespaceID is empty', a)
@@ -1205,10 +1206,6 @@ export default class Compose {
       console.error('recordCreate failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
-    if (!values) {
-      console.error('recordCreate failed, field values is empty', a)
-      throw Error('field values is empty')
-    }
     const cfg: AxiosRequestConfig = {
       method: 'post',
       url: this.recordCreateEndpoint({
@@ -1217,6 +1214,7 @@ export default class Compose {
     }
     cfg.data = {
       values,
+      records,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -1274,6 +1272,7 @@ export default class Compose {
       moduleID,
       recordID,
       values,
+      records,
     } = (a as KV) || {}
     if (!namespaceID) {
       console.error('recordUpdate failed, field namespaceID is empty', a)
@@ -1287,10 +1286,6 @@ export default class Compose {
       console.error('recordUpdate failed, field recordID is empty', a)
       throw Error('field recordID is empty')
     }
-    if (!values) {
-      console.error('recordUpdate failed, field values is empty', a)
-      throw Error('field values is empty')
-    }
     const cfg: AxiosRequestConfig = {
       method: 'post',
       url: this.recordUpdateEndpoint({
@@ -1299,6 +1294,7 @@ export default class Compose {
     }
     cfg.data = {
       values,
+      records,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
