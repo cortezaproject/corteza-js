@@ -2280,40 +2280,4 @@ export default class System {
     return '/automation/trigger'
   }
 
-  // Action log events
-  async actionlogList (a: KV): Promise<KV> {
-    const {
-      from,
-      to,
-      resource,
-      action,
-      actorID,
-      limit,
-      offset,
-      page,
-      perPage,
-    } = (a as KV) || {}
-    const cfg: AxiosRequestConfig = {
-      method: 'get',
-      url: this.actionlogListEndpoint(),
-    }
-    cfg.params = {
-      from,
-      to,
-      resource,
-      action,
-      actorID,
-      limit,
-      offset,
-      page,
-      perPage,
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  actionlogListEndpoint (): string {
-    return '/actionlog/'
-  }
-
 }
