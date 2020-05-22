@@ -8,7 +8,6 @@ interface Options {
   fieldsEdit?: Array<string>;
   positionField: string;
   parentField: string;
-  selectable: boolean;
 }
 
 const defaults: Readonly<Options> = Object.freeze({
@@ -17,7 +16,6 @@ const defaults: Readonly<Options> = Object.freeze({
   fieldsEdit: undefined,
   positionField: '',
   parentField: '',
-  selectable: false,
 })
 
 export class PageBlockRecordLines extends PageBlock {
@@ -36,8 +34,6 @@ export class PageBlockRecordLines extends PageBlock {
     Apply(this.options, o, CortezaID, 'moduleID')
 
     Apply(this.options, o, String, 'positionField', 'parentField')
-
-    Apply(this.options, o, Boolean, 'selectable')
 
     if (o.fieldsView) {
       this.options.fieldsView = o.fieldsView
