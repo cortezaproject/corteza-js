@@ -17,6 +17,11 @@ export enum ChartRenderer {
   chartJS = 'chart.js'
 }
 
+export interface TemporalDataPoint {
+  t: Date,
+  y: number,
+}
+
 export interface KV {
   [_: string]: any
 }

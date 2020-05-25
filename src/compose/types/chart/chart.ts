@@ -8,6 +8,7 @@ import {
   makeDataLabel,
   KV,
   Report,
+  TemporalDataPoint,
 } from './util'
 
 import { defaultBGColor } from './common'
@@ -41,7 +42,7 @@ export default class Chart extends BaseChart {
    * @param data Array of values in the given data set
    * @param m Metric for the given dataset
    */
-  private datasetPostProc (data: Array<number>, m: Metric): Array<number> {
+  private datasetPostProc (data: Array<number|TemporalDataPoint>, m: Metric): Array<number|TemporalDataPoint> {
     // Define a valid function to evaluate
     let fxRaw = (m.fx || defaultFx).trim()
     if (!fxRaw.startsWith('return')) {
@@ -53,13 +54,31 @@ export default class Chart extends BaseChart {
     const r = [...data]
 
     // Run postprocessing for all data in the given data set
-    for (let i = 0; i < data.length; i++) {
-      const n = data[i]
-      let m: number|undefined = undefined
-      if (i > 0) {
-        m = data[i - 1]
+    // There is a slight difference between temporal data points and categorical data points.
+    if (data[0] instanceof Object) {
+      // Temporal
+      for (let i = 0; i < data.length; i++) {
+        const a = data[i] as TemporalDataPoint
+        const b = data[i - 1] as TemporalDataPoint|undefined
+
+        const n = a.y
+        let m: number|undefined = undefined
+        if (i > 0) {
+          m = b?.y
+        }
+
+        a.y = fx(n, m, r)
       }
-      data[i] = fx(n, m, r)
+    } else {
+      // Categorical
+      for (let i = 0; i < data.length; i++) {
+        const n = data[i] as number
+        let m: number|undefined = undefined
+        if (i > 0) {
+          m = data[i - 1] as number
+        }
+        data[i] = fx(n, m, r)
+      }
     }
 
     return data
