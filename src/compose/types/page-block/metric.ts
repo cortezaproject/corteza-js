@@ -6,6 +6,10 @@ const kind = 'Metric'
 
 enum Operation {
   COUNT = 'countd',
+  SUM = 'sum',
+  MAX = 'max',
+  MIN = 'min',
+  AVG = 'avg',
 }
 
 type Reporter = (p: ReporterParams) => Promise<any>
@@ -13,7 +17,7 @@ type Reporter = (p: ReporterParams) => Promise<any>
 interface ReporterParams {
   moduleID: string;
   filter?: string;
-  metrics?: Array<string>;
+  metrics?: string;
   dimensions: string;
 }
 
@@ -24,13 +28,19 @@ interface Style {
 }
 
 interface Metric {
+  label: string;
   moduleID: string;
-  operation: Operation;
+  dimensionField: string;
+  dateFormat?: string;
   filter?: string;
   bucketSize?: string;
-  label: string;
+  metricField: string;
+  operation: Operation;
   numberFormat?: string;
-  dateFormat?: string;
+  prefix?: string;
+  suffix?: string;
+  transformFx?: string;
+
   // @todo allow conditional styles; eg. if value is < 10 render with bold red text
   labelStyle?: Style;
   valueStyle?: Style;
@@ -67,27 +77,42 @@ export class PageBlockMetric extends PageBlock {
    */
   async fetch ({ m }: { m: Metric }, reporter: Reporter): Promise<object> {
     const w = await reporter(this.formatParams(m))
-    const dLabel = 'dimension_0'
-    let rtr = w.map((r: any) => {
-      const label = r[dLabel]
-      const value = r.count
-      return { label, value }
-    })
+    let datasets = w.map((r: any) => r.rp || r.count)
 
-    return rtr
+    let rtr: number
+    if (m.operation === Operation.MAX) {
+      rtr = datasets.sort((a: number, b: number) => b - a)[0]
+    } else if (m.operation === Operation.MIN) {
+      rtr = datasets.sort((a: number, b: number) => a - b)[0]
+    } else if (m.operation === Operation.AVG) {
+      rtr = datasets.reduce((acc: number, cur: number) => acc + cur, 0) / datasets.length
+    } else {
+      rtr = datasets.reduce((acc: number, cur: number) => acc + cur, 0)
+    }
+
+    if (m.transformFx) {
+      rtr = (new Function('v', `return ${m.transformFx}`))(rtr)
+    }
+
+    return [{ value: rtr }]
   }
 
   /**
    * Helper to construct reporter's params
    */
-  private formatParams ({ moduleID, filter, bucketSize }: Metric): ReporterParams {
-    const field = 'created_at'
+  private formatParams ({ moduleID, filter, metricField, operation }: Metric): ReporterParams {
+    const metrics: Array<any> = []
+
+    if (metricField !== 'count') {
+      metrics.push(`${operation}(${metricField}) AS rp`)
+    }
+
 
     return {
       moduleID,
       filter,
-      metrics: [],
-      dimensions: dimensionFunctions.convert({ modifier: bucketSize, field })
+      metrics: metrics.join(','),
+      dimensions: dimensionFunctions.convert({ modifier: 'YEAR', field: 'created_at' })
     }
   }
 }
