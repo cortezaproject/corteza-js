@@ -6,16 +6,16 @@ interface Options {
   moduleID: string;
   fieldsView?: Array<string>;
   fieldsEdit?: Array<string>;
-  positionField: string;
-  parentField: string;
+  positionField?: string;
+  parentField?: string;
 }
 
 const defaults: Readonly<Options> = Object.freeze({
   moduleID: NoID,
   fieldsView: undefined,
   fieldsEdit: undefined,
-  positionField: '',
-  parentField: '',
+  positionField: undefined,
+  parentField: undefined,
 })
 
 export class PageBlockRecordLines extends PageBlock {
