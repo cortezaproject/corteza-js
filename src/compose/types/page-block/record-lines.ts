@@ -4,16 +4,16 @@ import { Apply, CortezaID, NoID } from '../../../cast'
 const kind = 'RecordLines'
 interface Options {
   moduleID: string;
-  fieldsView?: Array<string>;
-  fieldsEdit?: Array<string>;
+  viewFields?: Array<string>;
+  editFields?: Array<string>;
   positionField?: string;
   parentField?: string;
 }
 
 const defaults: Readonly<Options> = Object.freeze({
   moduleID: NoID,
-  fieldsView: undefined,
-  fieldsEdit: undefined,
+  viewFields: undefined,
+  editFields: undefined,
   positionField: undefined,
   parentField: undefined,
 })
@@ -35,11 +35,11 @@ export class PageBlockRecordLines extends PageBlock {
 
     Apply(this.options, o, String, 'positionField', 'parentField')
 
-    if (o.fieldsView) {
-      this.options.fieldsView = o.fieldsView
+    if (o.viewFields) {
+      this.options.viewFields = o.viewFields
     }
-    if (o.fieldsEdit) {
-      this.options.fieldsEdit = o.fieldsEdit
+    if (o.editFields) {
+      this.options.editFields = o.editFields
     }
   }
 }
