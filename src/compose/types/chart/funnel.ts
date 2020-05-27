@@ -166,7 +166,7 @@ export default class FunnelChart extends BaseChart {
       const d = report?.dimensions?.[0] as Dimension
       for (const { value } of d.meta?.fields || []) {
         labels.push(value)
-        data.push(valMap[value])
+        data.push(valMap[value] || 0)
       }
     }
 
