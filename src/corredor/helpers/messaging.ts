@@ -81,7 +81,7 @@ export default class MessagingHelper {
 
       m.channelID = ch.channelID
       return this.MessagingAPI
-        .messageCreate(kv(message))
+        .messageCreate(kv(m))
         .then(m => new Message(m))
     })
   }
