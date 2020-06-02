@@ -42,7 +42,7 @@ const defaults: Readonly<Options> = Object.freeze({
   prefilter: '',
   presort: '',
   fields: [],
-  editFields: undefined,
+  editFields: [],
   hideHeader: false,
   hideAddButton: false,
   hideSearch: false,
