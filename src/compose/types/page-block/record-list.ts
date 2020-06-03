@@ -10,7 +10,6 @@ interface Options {
   prefilter: string;
   presort: string;
   fields: unknown[];
-  editFields?: unknown[];
   hideHeader: boolean;
   hideAddButton: boolean;
   hideSearch: boolean;
@@ -24,10 +23,11 @@ interface Options {
   perPage: number;
 
   // Record-lines
-  inlineEditor: boolean;
+  editable: boolean;
   draggable?: boolean;
   positionField?: string;
-  parentField?: string;
+  refField?: string;
+  editFields?: unknown[];
 
   // Are table rows selectable
   selectable: boolean;
@@ -42,7 +42,6 @@ const defaults: Readonly<Options> = Object.freeze({
   prefilter: '',
   presort: '',
   fields: [],
-  editFields: [],
   hideHeader: false,
   hideAddButton: false,
   hideSearch: false,
@@ -55,10 +54,11 @@ const defaults: Readonly<Options> = Object.freeze({
   allowExport: false,
   perPage: 20,
 
-  inlineEditor: false,
+  editable: false,
   draggable: false,
   positionField: undefined,
-  parentField: undefined,
+  refField: undefined,
+  editFields: [],
 
   selectable: false,
   selectMode: 'multi',
@@ -80,7 +80,7 @@ export class PageBlockRecordList extends PageBlock {
     if (!o) return
 
     Apply(this.options, o, CortezaID, 'moduleID')
-    Apply(this.options, o, String, 'prefilter', 'presort', 'selectMode', 'positionField', 'parentField')
+    Apply(this.options, o, String, 'prefilter', 'presort', 'selectMode', 'positionField', 'refField')
 
     if (o.fields) {
       this.options.fields = o.fields
@@ -102,7 +102,7 @@ export class PageBlockRecordList extends PageBlock {
       'hideRecordCloneButton',
       'hideRecordEditButton',
       'hideRecordViewButton',
-      'inlineEditor',
+      'editable',
       'draggable',
     )
 
