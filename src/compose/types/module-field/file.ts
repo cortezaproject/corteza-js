@@ -19,6 +19,7 @@ interface Options {
   allowDocuments: boolean;
   maxSize: number;
   mode: string;
+  inline: boolean;
 }
 
 const defaults: Readonly<Options> = Object.freeze({
@@ -26,6 +27,7 @@ const defaults: Readonly<Options> = Object.freeze({
   allowDocuments: true,
   maxSize: 0,
   mode: '\n',
+  inline: true,
 })
 
 export class ModuleFieldFile extends ModuleField {
@@ -42,7 +44,7 @@ export class ModuleFieldFile extends ModuleField {
     if (!o) return
 
     Apply(this.options, o, Number, 'maxSize')
-    Apply(this.options, o, Boolean, 'allowImages', 'allowDocuments')
+    Apply(this.options, o, Boolean, 'allowImages', 'allowDocuments', 'inline')
     ApplyWhitelisted(this.options, o, modes, 'mode')
   }
 }
