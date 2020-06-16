@@ -81,6 +81,7 @@ export class PageBlockRecordList extends PageBlock {
 
     Apply(this.options, o, CortezaID, 'moduleID')
     Apply(this.options, o, String, 'prefilter', 'presort', 'selectMode', 'positionField', 'refField')
+    Apply(this.options, o, Number, 'perPage')
 
     if (o.fields) {
       this.options.fields = o.fields
