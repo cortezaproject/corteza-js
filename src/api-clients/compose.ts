@@ -1108,6 +1108,7 @@ export default class Compose {
       ext,
       filter,
       fields,
+      timezone,
     } = (a as KV) || {}
     if (!namespaceID) {
       console.error('recordExport failed, field namespaceID is empty', a)
@@ -1134,6 +1135,7 @@ export default class Compose {
     cfg.params = {
       filter,
       fields,
+      timezone,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))

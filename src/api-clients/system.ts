@@ -112,6 +112,29 @@ export default class System {
     return '/auth/check'
   }
 
+  // Impersonate a user
+  async authImpersonate (a: KV): Promise<KV> {
+    const {
+      userID,
+    } = (a as KV) || {}
+    if (!userID) {
+      console.error('authImpersonate failed, field userID is empty', a)
+      throw Error('field userID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.authImpersonateEndpoint(),
+    }
+    cfg.data = {
+      userID,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  authImpersonateEndpoint (): string {
+    return '/auth/impersonate'
+  }
+
   // Exchange auth token for JWT
   async authExchangeAuthToken (a: KV): Promise<KV> {
     const {
