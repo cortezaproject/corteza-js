@@ -90,12 +90,7 @@ export default class SystemHelper {
     return this.SystemAPI
       .userList(filter || {})
       .then(res => {
-        if (res && Array.isArray(res.set)) {
-          res.set = res.set.map(r => new User(r))
-        } else {
-          res.set = []
-        }
-
+        res.set = (res.set as any[]).map(u => new User(u))
         return res as unknown as ListResponse<UserListFilter, User[]>
       })
   }
@@ -230,12 +225,7 @@ export default class SystemHelper {
     return this.SystemAPI
       .roleList(filter || {})
       .then(res => {
-        if (res && Array.isArray(res.set)) {
-          res.set = res.set.map(r => new Role(r))
-        } else {
-          res.set = []
-        }
-
+        res.set = (res.set as any[]).map(r => new Role(r))
         return res as unknown as ListResponse<RoleListFilter, Role[]>
       })
   }

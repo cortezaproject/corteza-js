@@ -173,12 +173,8 @@ export default class ComposeHelper {
     return this.resolveNamespace(ns).then(ns => {
       const namespaceID = extractID(ns, 'namespaceID')
       return this.ComposeAPI.pageList({ namespaceID, ...filter as object }).then(res => {
-        if (!Array.isArray(res.set) || res.set.length === 0) {
-          throw new Error('pages not found')
-        }
-
         // Casting all we got to to Page
-        res.set = res.set.map(m => new Page(m))
+        res.set = (res.set as any[]).map(m => new Page(m))
         return res as unknown as ListResponse<PageListFilter, Page[]>
       })
     })
@@ -376,12 +372,8 @@ export default class ComposeHelper {
       }
 
       return this.ComposeAPI.recordList(params).then(res => {
-        if (!Array.isArray(res.set) || res.set.length === 0) {
-          throw new Error('records not found')
-        }
-
         // Casting all we got to to Record
-        res.set = res.set.map(record => new Record(module, record))
+        res.set = (res.set as any[]).map(record => new Record(module, record))
         return res as unknown as ListResponse<RecordListFilter, Record[]>
       })
     })
@@ -527,12 +519,8 @@ export default class ComposeHelper {
       const namespaceID = extractID(ns, 'namespaceID')
 
       return this.ComposeAPI.moduleList({ namespaceID, ...filter as object }).then(res => {
-        if (!Array.isArray(res.set) || res.set.length === 0) {
-          throw new Error('modules not found')
-        }
-
         // Casting all we got to to Module
-        res.set = res.set.map(m => new Module(m))
+        res.set = (res.set as any[]).map(m => new Module(m))
         return res as unknown as ListResponse<ModuleListFilter, Module[]>
       })
     })
@@ -686,12 +674,8 @@ export default class ComposeHelper {
     }
 
     return this.ComposeAPI.namespaceList({ ...filter }).then(res => {
-      if (!Array.isArray(res.set) || res.set.length === 0) {
-        throw new Error('namespaces not found')
-      }
-
       // Casting all we got to to Namespace
-      res.set = res.set.map(m => new Namespace(m))
+      res.set = (res.set as any[]).map(m => new Namespace(m))
       return res as unknown as ListResponse<NamespaceListFilter, Namespace[]>
     })
   }

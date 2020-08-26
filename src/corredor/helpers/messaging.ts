@@ -97,11 +97,7 @@ export default class MessagingHelper {
     }
 
     return this.MessagingAPI.channelList(filter).then(res => {
-      if (!Array.isArray(res.set) || res.set.length === 0) {
-        throw new Error('channel not found')
-      }
-
-      res.set = res.set.map(m => new Channel(m))
+      res.set = (res.set as any[]).map(m => new Channel(m))
       return res as unknown as ListResponse<ChannelListFilter, Channel[]>
     })
   }
