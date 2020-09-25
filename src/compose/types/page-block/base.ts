@@ -27,7 +27,9 @@ export class PageBlock {
 
   public options = {}
   public style: PageBlockStyle = {
-    variants: {},
+    variants: {
+      headerText: 'primary',
+    },
     wrap: {
       kind: 'card',
     },
