@@ -88,9 +88,7 @@ export default class Compose {
       query,
       slug,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
@@ -101,9 +99,7 @@ export default class Compose {
       query,
       slug,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     }
 
@@ -123,11 +119,9 @@ export default class Compose {
       meta,
     } = (a as KV) || {}
     if (!name) {
-      console.error('namespaceCreate failed, field name is empty', a)
       throw Error('field name is empty')
     }
     if (!meta) {
-      console.error('namespaceCreate failed, field meta is empty', a)
       throw Error('field meta is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -153,7 +147,6 @@ export default class Compose {
       namespaceID,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('namespaceRead failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -184,15 +177,12 @@ export default class Compose {
       updatedAt,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('namespaceUpdate failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!name) {
-      console.error('namespaceUpdate failed, field name is empty', a)
       throw Error('field name is empty')
     }
     if (!meta) {
-      console.error('namespaceUpdate failed, field meta is empty', a)
       throw Error('field meta is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -224,7 +214,6 @@ export default class Compose {
       namespaceID,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('namespaceDelete failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -251,11 +240,9 @@ export default class Compose {
       script,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('namespaceTriggerScript failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!script) {
-      console.error('namespaceTriggerScript failed, field script is empty', a)
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -285,13 +272,10 @@ export default class Compose {
       query,
       handle,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('pageList failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -305,9 +289,7 @@ export default class Compose {
       query,
       handle,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     }
 
@@ -335,11 +317,9 @@ export default class Compose {
       blocks,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('pageCreate failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!title) {
-      console.error('pageCreate failed, field title is empty', a)
       throw Error('field title is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -375,11 +355,9 @@ export default class Compose {
       pageID,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('pageRead failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!pageID) {
-      console.error('pageRead failed, field pageID is empty', a)
       throw Error('field pageID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -406,7 +384,6 @@ export default class Compose {
       namespaceID,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('pageTree failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -441,15 +418,12 @@ export default class Compose {
       blocks,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('pageUpdate failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!pageID) {
-      console.error('pageUpdate failed, field pageID is empty', a)
       throw Error('field pageID is empty')
     }
     if (!title) {
-      console.error('pageUpdate failed, field title is empty', a)
       throw Error('field title is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -487,15 +461,12 @@ export default class Compose {
       pageIDs,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('pageReorder failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!selfID) {
-      console.error('pageReorder failed, field selfID is empty', a)
       throw Error('field selfID is empty')
     }
     if (!pageIDs) {
-      console.error('pageReorder failed, field pageIDs is empty', a)
       throw Error('field pageIDs is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -525,11 +496,9 @@ export default class Compose {
       pageID,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('pageDelete failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!pageID) {
-      console.error('pageDelete failed, field pageID is empty', a)
       throw Error('field pageID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -558,15 +527,12 @@ export default class Compose {
       upload,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('pageUpload failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!pageID) {
-      console.error('pageUpload failed, field pageID is empty', a)
       throw Error('field pageID is empty')
     }
     if (!upload) {
-      console.error('pageUpload failed, field upload is empty', a)
       throw Error('field upload is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -597,15 +563,12 @@ export default class Compose {
       script,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('pageTriggerScript failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!pageID) {
-      console.error('pageTriggerScript failed, field pageID is empty', a)
       throw Error('field pageID is empty')
     }
     if (!script) {
-      console.error('pageTriggerScript failed, field script is empty', a)
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -636,13 +599,10 @@ export default class Compose {
       name,
       handle,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('moduleList failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -656,9 +616,7 @@ export default class Compose {
       name,
       handle,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     }
 
@@ -682,19 +640,15 @@ export default class Compose {
       meta,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('moduleCreate failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!name) {
-      console.error('moduleCreate failed, field name is empty', a)
       throw Error('field name is empty')
     }
     if (!fields) {
-      console.error('moduleCreate failed, field fields is empty', a)
       throw Error('field fields is empty')
     }
     if (!meta) {
-      console.error('moduleCreate failed, field meta is empty', a)
       throw Error('field meta is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -726,11 +680,9 @@ export default class Compose {
       moduleID,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('moduleRead failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('moduleRead failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -763,23 +715,18 @@ export default class Compose {
       updatedAt,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('moduleUpdate failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('moduleUpdate failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     if (!name) {
-      console.error('moduleUpdate failed, field name is empty', a)
       throw Error('field name is empty')
     }
     if (!fields) {
-      console.error('moduleUpdate failed, field fields is empty', a)
       throw Error('field fields is empty')
     }
     if (!meta) {
-      console.error('moduleUpdate failed, field meta is empty', a)
       throw Error('field meta is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -813,11 +760,9 @@ export default class Compose {
       moduleID,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('moduleDelete failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('moduleDelete failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -846,15 +791,12 @@ export default class Compose {
       script,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('moduleTriggerScript failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('moduleTriggerScript failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     if (!script) {
-      console.error('moduleTriggerScript failed, field script is empty', a)
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -887,15 +829,12 @@ export default class Compose {
       filter,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('recordReport failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('recordReport failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     if (!dimensions) {
-      console.error('recordReport failed, field dimensions is empty', a)
       throw Error('field dimensions is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -936,11 +875,9 @@ export default class Compose {
       sort,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('recordList failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('recordList failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -979,15 +916,12 @@ export default class Compose {
       upload,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('recordImportInit failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('recordImportInit failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     if (!upload) {
-      console.error('recordImportInit failed, field upload is empty', a)
       throw Error('field upload is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1020,23 +954,18 @@ export default class Compose {
       onError,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('recordImportRun failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('recordImportRun failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     if (!sessionID) {
-      console.error('recordImportRun failed, field sessionID is empty', a)
       throw Error('field sessionID is empty')
     }
     if (!fields) {
-      console.error('recordImportRun failed, field fields is empty', a)
       throw Error('field fields is empty')
     }
     if (!onError) {
-      console.error('recordImportRun failed, field onError is empty', a)
       throw Error('field onError is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1069,15 +998,12 @@ export default class Compose {
       sessionID,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('recordImportProgress failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('recordImportProgress failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     if (!sessionID) {
-      console.error('recordImportProgress failed, field sessionID is empty', a)
       throw Error('field sessionID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1111,19 +1037,15 @@ export default class Compose {
       timezone,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('recordExport failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('recordExport failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     if (!ext) {
-      console.error('recordExport failed, field ext is empty', a)
       throw Error('field ext is empty')
     }
     if (!fields) {
-      console.error('recordExport failed, field fields is empty', a)
       throw Error('field fields is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1160,15 +1082,12 @@ export default class Compose {
       args,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('recordExec failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('recordExec failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     if (!procedure) {
-      console.error('recordExec failed, field procedure is empty', a)
       throw Error('field procedure is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1201,11 +1120,9 @@ export default class Compose {
       records,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('recordCreate failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('recordCreate failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1237,15 +1154,12 @@ export default class Compose {
       recordID,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('recordRead failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('recordRead failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     if (!recordID) {
-      console.error('recordRead failed, field recordID is empty', a)
       throw Error('field recordID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1277,15 +1191,12 @@ export default class Compose {
       records,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('recordUpdate failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('recordUpdate failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     if (!recordID) {
-      console.error('recordUpdate failed, field recordID is empty', a)
       throw Error('field recordID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1319,11 +1230,9 @@ export default class Compose {
       truncate,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('recordBulkDelete failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('recordBulkDelete failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1355,15 +1264,12 @@ export default class Compose {
       recordID,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('recordDelete failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('recordDelete failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     if (!recordID) {
-      console.error('recordDelete failed, field recordID is empty', a)
       throw Error('field recordID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1395,19 +1301,15 @@ export default class Compose {
       upload,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('recordUpload failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('recordUpload failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     if (!fieldName) {
-      console.error('recordUpload failed, field fieldName is empty', a)
       throw Error('field fieldName is empty')
     }
     if (!upload) {
-      console.error('recordUpload failed, field upload is empty', a)
       throw Error('field upload is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1442,23 +1344,18 @@ export default class Compose {
       values,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('recordTriggerScript failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('recordTriggerScript failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     if (!recordID) {
-      console.error('recordTriggerScript failed, field recordID is empty', a)
       throw Error('field recordID is empty')
     }
     if (!script) {
-      console.error('recordTriggerScript failed, field script is empty', a)
       throw Error('field script is empty')
     }
     if (!values) {
-      console.error('recordTriggerScript failed, field values is empty', a)
       throw Error('field values is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1491,15 +1388,12 @@ export default class Compose {
       script,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('recordTriggerScriptOnList failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!moduleID) {
-      console.error('recordTriggerScriptOnList failed, field moduleID is empty', a)
       throw Error('field moduleID is empty')
     }
     if (!script) {
-      console.error('recordTriggerScriptOnList failed, field script is empty', a)
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1529,13 +1423,10 @@ export default class Compose {
       query,
       handle,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('chartList failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1548,9 +1439,7 @@ export default class Compose {
       query,
       handle,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     }
 
@@ -1573,15 +1462,12 @@ export default class Compose {
       handle,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('chartCreate failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!config) {
-      console.error('chartCreate failed, field config is empty', a)
       throw Error('field config is empty')
     }
     if (!name) {
-      console.error('chartCreate failed, field name is empty', a)
       throw Error('field name is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1612,11 +1498,9 @@ export default class Compose {
       chartID,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('chartRead failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!chartID) {
-      console.error('chartRead failed, field chartID is empty', a)
       throw Error('field chartID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1648,19 +1532,15 @@ export default class Compose {
       updatedAt,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('chartUpdate failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!chartID) {
-      console.error('chartUpdate failed, field chartID is empty', a)
       throw Error('field chartID is empty')
     }
     if (!config) {
-      console.error('chartUpdate failed, field config is empty', a)
       throw Error('field config is empty')
     }
     if (!name) {
-      console.error('chartUpdate failed, field name is empty', a)
       throw Error('field name is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1693,11 +1573,9 @@ export default class Compose {
       chartID,
     } = (a as KV) || {}
     if (!namespaceID) {
-      console.error('chartDelete failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!chartID) {
-      console.error('chartDelete failed, field chartID is empty', a)
       throw Error('field chartID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1729,11 +1607,9 @@ export default class Compose {
       remoteAttachments,
     } = (a as KV) || {}
     if (!to) {
-      console.error('notificationEmailSend failed, field to is empty', a)
       throw Error('field to is empty')
     }
     if (!content) {
-      console.error('notificationEmailSend failed, field content is empty', a)
       throw Error('field content is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1772,11 +1648,9 @@ export default class Compose {
       perPage,
     } = (a as KV) || {}
     if (!kind) {
-      console.error('attachmentList failed, field kind is empty', a)
       throw Error('field kind is empty')
     }
     if (!namespaceID) {
-      console.error('attachmentList failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1819,15 +1693,12 @@ export default class Compose {
       userID,
     } = (a as KV) || {}
     if (!kind) {
-      console.error('attachmentRead failed, field kind is empty', a)
       throw Error('field kind is empty')
     }
     if (!namespaceID) {
-      console.error('attachmentRead failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!attachmentID) {
-      console.error('attachmentRead failed, field attachmentID is empty', a)
       throw Error('field attachmentID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1863,15 +1734,12 @@ export default class Compose {
       userID,
     } = (a as KV) || {}
     if (!kind) {
-      console.error('attachmentDelete failed, field kind is empty', a)
       throw Error('field kind is empty')
     }
     if (!namespaceID) {
-      console.error('attachmentDelete failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!attachmentID) {
-      console.error('attachmentDelete failed, field attachmentID is empty', a)
       throw Error('field attachmentID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1909,19 +1777,15 @@ export default class Compose {
       download,
     } = (a as KV) || {}
     if (!kind) {
-      console.error('attachmentOriginal failed, field kind is empty', a)
       throw Error('field kind is empty')
     }
     if (!namespaceID) {
-      console.error('attachmentOriginal failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!attachmentID) {
-      console.error('attachmentOriginal failed, field attachmentID is empty', a)
       throw Error('field attachmentID is empty')
     }
     if (!name) {
-      console.error('attachmentOriginal failed, field name is empty', a)
       throw Error('field name is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1960,19 +1824,15 @@ export default class Compose {
       userID,
     } = (a as KV) || {}
     if (!kind) {
-      console.error('attachmentPreview failed, field kind is empty', a)
       throw Error('field kind is empty')
     }
     if (!namespaceID) {
-      console.error('attachmentPreview failed, field namespaceID is empty', a)
       throw Error('field namespaceID is empty')
     }
     if (!attachmentID) {
-      console.error('attachmentPreview failed, field attachmentID is empty', a)
       throw Error('field attachmentID is empty')
     }
     if (!ext) {
-      console.error('attachmentPreview failed, field ext is empty', a)
       throw Error('field ext is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -2040,7 +1900,6 @@ export default class Compose {
       roleID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('permissionsRead failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -2066,7 +1925,6 @@ export default class Compose {
       roleID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('permissionsDelete failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -2093,11 +1951,9 @@ export default class Compose {
       rules,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('permissionsUpdate failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     if (!rules) {
-      console.error('permissionsUpdate failed, field rules is empty', a)
       throw Error('field rules is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -2117,94 +1973,6 @@ export default class Compose {
       roleID,
     } = a || {}
     return `/permissions/${roleID}/rules`
-  }
-
-  // List settings
-  async settingsList (a: KV): Promise<KV> {
-    const {
-      prefix,
-    } = (a as KV) || {}
-    const cfg: AxiosRequestConfig = {
-      method: 'get',
-      url: this.settingsListEndpoint(),
-    }
-    cfg.params = {
-      prefix,
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  settingsListEndpoint (): string {
-    return '/settings/'
-  }
-
-  // Update settings
-  async settingsUpdate (a: KV): Promise<KV> {
-    const {
-      values,
-    } = (a as KV) || {}
-    if (!values) {
-      console.error('settingsUpdate failed, field values is empty', a)
-      throw Error('field values is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'patch',
-      url: this.settingsUpdateEndpoint(),
-    }
-    cfg.data = {
-      values,
-    }
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  settingsUpdateEndpoint (): string {
-    return '/settings/'
-  }
-
-  // Get a value for a key
-  async settingsGet (a: KV): Promise<KV> {
-    const {
-      key,
-      ownerID,
-    } = (a as KV) || {}
-    if (!key) {
-      console.error('settingsGet failed, field key is empty', a)
-      throw Error('field key is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'get',
-      url: this.settingsGetEndpoint({
-        key,
-      }),
-    }
-    cfg.params = {
-      ownerID,
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  settingsGetEndpoint (a: KV): string {
-    const {
-      key,
-    } = a || {}
-    return `/settings/${key}`
-  }
-
-  // Current compose settings
-  async settingsCurrent (): Promise<KV> {
-
-    const cfg: AxiosRequestConfig = {
-      method: 'get',
-      url: this.settingsCurrentEndpoint(),
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  settingsCurrentEndpoint (): string {
-    return '/settings/current'
   }
 
   // List all available automation scripts for compose resources
@@ -2269,7 +2037,6 @@ export default class Compose {
       script,
     } = (a as KV) || {}
     if (!script) {
-      console.error('automationTriggerScript failed, field script is empty', a)
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {

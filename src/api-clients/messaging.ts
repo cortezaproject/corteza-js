@@ -158,7 +158,6 @@ export default class Messaging {
       kind,
     } = (a as KV) || {}
     if (!kind) {
-      console.error('activitySend failed, field kind is empty', a)
       throw Error('field kind is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -235,7 +234,6 @@ export default class Messaging {
       organisationID,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('channelUpdate failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -268,11 +266,9 @@ export default class Messaging {
       state,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('channelState failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     if (!state) {
-      console.error('channelState failed, field state is empty', a)
       throw Error('field state is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -301,11 +297,9 @@ export default class Messaging {
       flag,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('channelSetFlag failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     if (!flag) {
-      console.error('channelSetFlag failed, field flag is empty', a)
       throw Error('field flag is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -333,7 +327,6 @@ export default class Messaging {
       channelID,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('channelRemoveFlag failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -359,7 +352,6 @@ export default class Messaging {
       channelID,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('channelRead failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -385,7 +377,6 @@ export default class Messaging {
       channelID,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('channelMembers failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -412,7 +403,6 @@ export default class Messaging {
       userID,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('channelJoin failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -440,7 +430,6 @@ export default class Messaging {
       userID,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('channelPart failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -468,7 +457,6 @@ export default class Messaging {
       userID,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('channelInvite failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -498,11 +486,9 @@ export default class Messaging {
       upload,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('channelAttach failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     if (!upload) {
-      console.error('channelAttach failed, field upload is empty', a)
       throw Error('field upload is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -532,11 +518,9 @@ export default class Messaging {
       message,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('messageCreate failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     if (!message) {
-      console.error('messageCreate failed, field message is empty', a)
       throw Error('field message is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -567,11 +551,9 @@ export default class Messaging {
       params,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('messageExecuteCommand failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     if (!command) {
-      console.error('messageExecuteCommand failed, field command is empty', a)
       throw Error('field command is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -603,7 +585,6 @@ export default class Messaging {
       lastReadMessageID,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('messageMarkAsRead failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -635,15 +616,12 @@ export default class Messaging {
       message,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('messageEdit failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     if (!messageID) {
-      console.error('messageEdit failed, field messageID is empty', a)
       throw Error('field messageID is empty')
     }
     if (!message) {
-      console.error('messageEdit failed, field message is empty', a)
       throw Error('field message is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -673,11 +651,9 @@ export default class Messaging {
       messageID,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('messageDelete failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     if (!messageID) {
-      console.error('messageDelete failed, field messageID is empty', a)
       throw Error('field messageID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -706,15 +682,12 @@ export default class Messaging {
       message,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('messageReplyCreate failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     if (!messageID) {
-      console.error('messageReplyCreate failed, field messageID is empty', a)
       throw Error('field messageID is empty')
     }
     if (!message) {
-      console.error('messageReplyCreate failed, field message is empty', a)
       throw Error('field message is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -744,11 +717,9 @@ export default class Messaging {
       messageID,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('messagePinCreate failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     if (!messageID) {
-      console.error('messagePinCreate failed, field messageID is empty', a)
       throw Error('field messageID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -776,11 +747,9 @@ export default class Messaging {
       messageID,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('messagePinRemove failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     if (!messageID) {
-      console.error('messagePinRemove failed, field messageID is empty', a)
       throw Error('field messageID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -808,11 +777,9 @@ export default class Messaging {
       messageID,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('messageBookmarkCreate failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     if (!messageID) {
-      console.error('messageBookmarkCreate failed, field messageID is empty', a)
       throw Error('field messageID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -840,11 +807,9 @@ export default class Messaging {
       messageID,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('messageBookmarkRemove failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     if (!messageID) {
-      console.error('messageBookmarkRemove failed, field messageID is empty', a)
       throw Error('field messageID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -873,15 +838,12 @@ export default class Messaging {
       reaction,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('messageReactionCreate failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     if (!messageID) {
-      console.error('messageReactionCreate failed, field messageID is empty', a)
       throw Error('field messageID is empty')
     }
     if (!reaction) {
-      console.error('messageReactionCreate failed, field reaction is empty', a)
       throw Error('field reaction is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -911,15 +873,12 @@ export default class Messaging {
       reaction,
     } = (a as KV) || {}
     if (!channelID) {
-      console.error('messageReactionRemove failed, field channelID is empty', a)
       throw Error('field channelID is empty')
     }
     if (!messageID) {
-      console.error('messageReactionRemove failed, field messageID is empty', a)
       throw Error('field messageID is empty')
     }
     if (!reaction) {
-      console.error('messageReactionRemove failed, field reaction is empty', a)
       throw Error('field reaction is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -951,19 +910,15 @@ export default class Messaging {
       download,
     } = (a as KV) || {}
     if (!attachmentID) {
-      console.error('attachmentOriginal failed, field attachmentID is empty', a)
       throw Error('field attachmentID is empty')
     }
     if (!name) {
-      console.error('attachmentOriginal failed, field name is empty', a)
       throw Error('field name is empty')
     }
     if (!sign) {
-      console.error('attachmentOriginal failed, field sign is empty', a)
       throw Error('field sign is empty')
     }
     if (!userID) {
-      console.error('attachmentOriginal failed, field userID is empty', a)
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -998,19 +953,15 @@ export default class Messaging {
       userID,
     } = (a as KV) || {}
     if (!attachmentID) {
-      console.error('attachmentPreview failed, field attachmentID is empty', a)
       throw Error('field attachmentID is empty')
     }
     if (!ext) {
-      console.error('attachmentPreview failed, field ext is empty', a)
       throw Error('field ext is empty')
     }
     if (!sign) {
-      console.error('attachmentPreview failed, field sign is empty', a)
       throw Error('field sign is empty')
     }
     if (!userID) {
-      console.error('attachmentPreview failed, field userID is empty', a)
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1142,7 +1093,6 @@ export default class Messaging {
       roleID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('permissionsRead failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1168,7 +1118,6 @@ export default class Messaging {
       roleID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('permissionsDelete failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1195,11 +1144,9 @@ export default class Messaging {
       rules,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('permissionsUpdate failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     if (!rules) {
-      console.error('permissionsUpdate failed, field rules is empty', a)
       throw Error('field rules is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1219,94 +1166,6 @@ export default class Messaging {
       roleID,
     } = a || {}
     return `/permissions/${roleID}/rules`
-  }
-
-  // List settings
-  async settingsList (a: KV): Promise<KV> {
-    const {
-      prefix,
-    } = (a as KV) || {}
-    const cfg: AxiosRequestConfig = {
-      method: 'get',
-      url: this.settingsListEndpoint(),
-    }
-    cfg.params = {
-      prefix,
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  settingsListEndpoint (): string {
-    return '/settings/'
-  }
-
-  // Update settings
-  async settingsUpdate (a: KV): Promise<KV> {
-    const {
-      values,
-    } = (a as KV) || {}
-    if (!values) {
-      console.error('settingsUpdate failed, field values is empty', a)
-      throw Error('field values is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'patch',
-      url: this.settingsUpdateEndpoint(),
-    }
-    cfg.data = {
-      values,
-    }
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  settingsUpdateEndpoint (): string {
-    return '/settings/'
-  }
-
-  // Get a value for a key
-  async settingsGet (a: KV): Promise<KV> {
-    const {
-      key,
-      ownerID,
-    } = (a as KV) || {}
-    if (!key) {
-      console.error('settingsGet failed, field key is empty', a)
-      throw Error('field key is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'get',
-      url: this.settingsGetEndpoint({
-        key,
-      }),
-    }
-    cfg.params = {
-      ownerID,
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  settingsGetEndpoint (a: KV): string {
-    const {
-      key,
-    } = a || {}
-    return `/settings/${key}`
-  }
-
-  // Current compose settings
-  async settingsCurrent (): Promise<KV> {
-
-    const cfg: AxiosRequestConfig = {
-      method: 'get',
-      url: this.settingsCurrentEndpoint(),
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  settingsCurrentEndpoint (): string {
-    return '/settings/current'
   }
 
 }

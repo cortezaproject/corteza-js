@@ -118,7 +118,6 @@ export default class System {
       userID,
     } = (a as KV) || {}
     if (!userID) {
-      console.error('authImpersonate failed, field userID is empty', a)
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -141,7 +140,6 @@ export default class System {
       token,
     } = (a as KV) || {}
     if (!token) {
-      console.error('authExchangeAuthToken failed, field token is empty', a)
       throw Error('field token is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -180,11 +178,9 @@ export default class System {
       password,
     } = (a as KV) || {}
     if (!email) {
-      console.error('authInternalLogin failed, field email is empty', a)
       throw Error('field email is empty')
     }
     if (!password) {
-      console.error('authInternalLogin failed, field password is empty', a)
       throw Error('field password is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -212,11 +208,9 @@ export default class System {
       name,
     } = (a as KV) || {}
     if (!email) {
-      console.error('authInternalSignup failed, field email is empty', a)
       throw Error('field email is empty')
     }
     if (!password) {
-      console.error('authInternalSignup failed, field password is empty', a)
       throw Error('field password is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -243,7 +237,6 @@ export default class System {
       email,
     } = (a as KV) || {}
     if (!email) {
-      console.error('authInternalRequestPasswordReset failed, field email is empty', a)
       throw Error('field email is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -266,7 +259,6 @@ export default class System {
       token,
     } = (a as KV) || {}
     if (!token) {
-      console.error('authInternalExchangePasswordResetToken failed, field token is empty', a)
       throw Error('field token is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -290,11 +282,9 @@ export default class System {
       password,
     } = (a as KV) || {}
     if (!token) {
-      console.error('authInternalResetPassword failed, field token is empty', a)
       throw Error('field token is empty')
     }
     if (!password) {
-      console.error('authInternalResetPassword failed, field password is empty', a)
       throw Error('field password is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -318,7 +308,6 @@ export default class System {
       token,
     } = (a as KV) || {}
     if (!token) {
-      console.error('authInternalConfirmEmail failed, field token is empty', a)
       throw Error('field token is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -342,11 +331,9 @@ export default class System {
       newPassword,
     } = (a as KV) || {}
     if (!oldPassword) {
-      console.error('authInternalChangePassword failed, field oldPassword is empty', a)
       throw Error('field oldPassword is empty')
     }
     if (!newPassword) {
-      console.error('authInternalChangePassword failed, field newPassword is empty', a)
       throw Error('field newPassword is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -390,7 +377,6 @@ export default class System {
       values,
     } = (a as KV) || {}
     if (!values) {
-      console.error('settingsUpdate failed, field values is empty', a)
       throw Error('field values is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -414,7 +400,6 @@ export default class System {
       ownerID,
     } = (a as KV) || {}
     if (!key) {
-      console.error('settingsGet failed, field key is empty', a)
       throw Error('field key is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -445,7 +430,6 @@ export default class System {
       ownerID,
     } = (a as KV) || {}
     if (!key) {
-      console.error('settingsSet failed, field key is empty', a)
       throw Error('field key is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -498,156 +482,6 @@ export default class System {
     return '/subscription/'
   }
 
-  // List organisations
-  async organisationList (a: KV): Promise<KV> {
-    const {
-      query,
-    } = (a as KV) || {}
-    const cfg: AxiosRequestConfig = {
-      method: 'get',
-      url: this.organisationListEndpoint(),
-    }
-    cfg.params = {
-      query,
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  organisationListEndpoint (): string {
-    return '/organisations/'
-  }
-
-  // Create organisation
-  async organisationCreate (a: KV): Promise<KV> {
-    const {
-      name,
-    } = (a as KV) || {}
-    if (!name) {
-      console.error('organisationCreate failed, field name is empty', a)
-      throw Error('field name is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'post',
-      url: this.organisationCreateEndpoint(),
-    }
-    cfg.data = {
-      name,
-    }
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  organisationCreateEndpoint (): string {
-    return '/organisations/'
-  }
-
-  // Update organisation details
-  async organisationUpdate (a: KV): Promise<KV> {
-    const {
-      id,
-      name,
-    } = (a as KV) || {}
-    if (!name) {
-      console.error('organisationUpdate failed, field name is empty', a)
-      throw Error('field name is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'put',
-      url: this.organisationUpdateEndpoint({
-        id,
-      }),
-    }
-    cfg.data = {
-      name,
-    }
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  organisationUpdateEndpoint (a: KV): string {
-    const {
-      id,
-    } = a || {}
-    return `/organisations/${id}`
-  }
-
-  // Remove organisation
-  async organisationDelete (a: KV): Promise<KV> {
-    const {
-      id,
-    } = (a as KV) || {}
-    if (!id) {
-      console.error('organisationDelete failed, field id is empty', a)
-      throw Error('field id is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'delete',
-      url: this.organisationDeleteEndpoint({
-        id,
-      }),
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  organisationDeleteEndpoint (a: KV): string {
-    const {
-      id,
-    } = a || {}
-    return `/organisations/${id}`
-  }
-
-  // Read organisation details
-  async organisationRead (a: KV): Promise<KV> {
-    const {
-      id,
-    } = (a as KV) || {}
-    if (!id) {
-      console.error('organisationRead failed, field id is empty', a)
-      throw Error('field id is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'get',
-      url: this.organisationReadEndpoint({
-        id,
-      }),
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  organisationReadEndpoint (a: KV): string {
-    const {
-      id,
-    } = a || {}
-    return `/organisations/${id}`
-  }
-
-  // Archive organisation
-  async organisationArchive (a: KV): Promise<KV> {
-    const {
-      id,
-    } = (a as KV) || {}
-    if (!id) {
-      console.error('organisationArchive failed, field id is empty', a)
-      throw Error('field id is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'post',
-      url: this.organisationArchiveEndpoint({
-        id,
-      }),
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  organisationArchiveEndpoint (a: KV): string {
-    const {
-      id,
-    } = a || {}
-    return `/organisations/${id}/archive`
-  }
-
   // List roles
   async roleList (a: KV): Promise<KV> {
     const {
@@ -655,9 +489,7 @@ export default class System {
       deleted,
       archived,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
@@ -669,9 +501,7 @@ export default class System {
       deleted,
       archived,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     }
 
@@ -690,11 +520,9 @@ export default class System {
       members,
     } = (a as KV) || {}
     if (!name) {
-      console.error('roleCreate failed, field name is empty', a)
       throw Error('field name is empty')
     }
     if (!handle) {
-      console.error('roleCreate failed, field handle is empty', a)
       throw Error('field handle is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -722,7 +550,6 @@ export default class System {
       members,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('roleUpdate failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -752,7 +579,6 @@ export default class System {
       roleID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('roleRead failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -778,7 +604,6 @@ export default class System {
       roleID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('roleDelete failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -804,7 +629,6 @@ export default class System {
       roleID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('roleArchive failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -830,7 +654,6 @@ export default class System {
       roleID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('roleUnarchive failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -856,7 +679,6 @@ export default class System {
       roleID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('roleUndelete failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -883,11 +705,9 @@ export default class System {
       organisationID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('roleMove failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     if (!organisationID) {
-      console.error('roleMove failed, field organisationID is empty', a)
       throw Error('field organisationID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -916,11 +736,9 @@ export default class System {
       destination,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('roleMerge failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     if (!destination) {
-      console.error('roleMerge failed, field destination is empty', a)
       throw Error('field destination is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -948,7 +766,6 @@ export default class System {
       roleID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('roleMemberList failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -975,11 +792,9 @@ export default class System {
       userID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('roleMemberAdd failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     if (!userID) {
-      console.error('roleMemberAdd failed, field userID is empty', a)
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1007,11 +822,9 @@ export default class System {
       userID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('roleMemberRemove failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     if (!userID) {
-      console.error('roleMemberRemove failed, field userID is empty', a)
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1039,11 +852,9 @@ export default class System {
       script,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('roleTriggerScript failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     if (!script) {
-      console.error('roleTriggerScript failed, field script is empty', a)
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1080,9 +891,7 @@ export default class System {
       deleted,
       suspended,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
@@ -1102,9 +911,7 @@ export default class System {
       deleted,
       suspended,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     }
 
@@ -1124,7 +931,6 @@ export default class System {
       kind,
     } = (a as KV) || {}
     if (!email) {
-      console.error('userCreate failed, field email is empty', a)
       throw Error('field email is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1154,15 +960,12 @@ export default class System {
       kind,
     } = (a as KV) || {}
     if (!userID) {
-      console.error('userUpdate failed, field userID is empty', a)
       throw Error('field userID is empty')
     }
     if (!email) {
-      console.error('userUpdate failed, field email is empty', a)
       throw Error('field email is empty')
     }
     if (!name) {
-      console.error('userUpdate failed, field name is empty', a)
       throw Error('field name is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1193,7 +996,6 @@ export default class System {
       userID,
     } = (a as KV) || {}
     if (!userID) {
-      console.error('userRead failed, field userID is empty', a)
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1219,7 +1021,6 @@ export default class System {
       userID,
     } = (a as KV) || {}
     if (!userID) {
-      console.error('userDelete failed, field userID is empty', a)
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1245,7 +1046,6 @@ export default class System {
       userID,
     } = (a as KV) || {}
     if (!userID) {
-      console.error('userSuspend failed, field userID is empty', a)
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1271,7 +1071,6 @@ export default class System {
       userID,
     } = (a as KV) || {}
     if (!userID) {
-      console.error('userUnsuspend failed, field userID is empty', a)
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1297,7 +1096,6 @@ export default class System {
       userID,
     } = (a as KV) || {}
     if (!userID) {
-      console.error('userUndelete failed, field userID is empty', a)
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1324,11 +1122,9 @@ export default class System {
       password,
     } = (a as KV) || {}
     if (!userID) {
-      console.error('userSetPassword failed, field userID is empty', a)
       throw Error('field userID is empty')
     }
     if (!password) {
-      console.error('userSetPassword failed, field password is empty', a)
       throw Error('field password is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1356,7 +1152,6 @@ export default class System {
       userID,
     } = (a as KV) || {}
     if (!userID) {
-      console.error('userMembershipList failed, field userID is empty', a)
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1383,11 +1178,9 @@ export default class System {
       userID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('userMembershipAdd failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     if (!userID) {
-      console.error('userMembershipAdd failed, field userID is empty', a)
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1415,11 +1208,9 @@ export default class System {
       userID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('userMembershipRemove failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     if (!userID) {
-      console.error('userMembershipRemove failed, field userID is empty', a)
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1447,11 +1238,9 @@ export default class System {
       script,
     } = (a as KV) || {}
     if (!userID) {
-      console.error('userTriggerScript failed, field userID is empty', a)
       throw Error('field userID is empty')
     }
     if (!script) {
-      console.error('userTriggerScript failed, field script is empty', a)
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1480,9 +1269,7 @@ export default class System {
       query,
       deleted,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
@@ -1494,9 +1281,7 @@ export default class System {
       query,
       deleted,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     }
 
@@ -1516,7 +1301,6 @@ export default class System {
       config,
     } = (a as KV) || {}
     if (!name) {
-      console.error('applicationCreate failed, field name is empty', a)
       throw Error('field name is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1546,11 +1330,9 @@ export default class System {
       config,
     } = (a as KV) || {}
     if (!applicationID) {
-      console.error('applicationUpdate failed, field applicationID is empty', a)
       throw Error('field applicationID is empty')
     }
     if (!name) {
-      console.error('applicationUpdate failed, field name is empty', a)
       throw Error('field name is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1581,7 +1363,6 @@ export default class System {
       applicationID,
     } = (a as KV) || {}
     if (!applicationID) {
-      console.error('applicationRead failed, field applicationID is empty', a)
       throw Error('field applicationID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1607,7 +1388,6 @@ export default class System {
       applicationID,
     } = (a as KV) || {}
     if (!applicationID) {
-      console.error('applicationDelete failed, field applicationID is empty', a)
       throw Error('field applicationID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1633,7 +1413,6 @@ export default class System {
       applicationID,
     } = (a as KV) || {}
     if (!applicationID) {
-      console.error('applicationUndelete failed, field applicationID is empty', a)
       throw Error('field applicationID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1660,11 +1439,9 @@ export default class System {
       script,
     } = (a as KV) || {}
     if (!applicationID) {
-      console.error('applicationTriggerScript failed, field applicationID is empty', a)
       throw Error('field applicationID is empty')
     }
     if (!script) {
-      console.error('applicationTriggerScript failed, field script is empty', a)
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1727,7 +1504,6 @@ export default class System {
       roleID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('permissionsRead failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1753,7 +1529,6 @@ export default class System {
       roleID,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('permissionsDelete failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1780,11 +1555,9 @@ export default class System {
       rules,
     } = (a as KV) || {}
     if (!roleID) {
-      console.error('permissionsUpdate failed, field roleID is empty', a)
       throw Error('field roleID is empty')
     }
     if (!rules) {
-      console.error('permissionsUpdate failed, field rules is empty', a)
       throw Error('field rules is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1817,9 +1590,7 @@ export default class System {
       scheduledOnly,
       excludeDismissed,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
@@ -1835,9 +1606,7 @@ export default class System {
       scheduledOnly,
       excludeDismissed,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     }
 
@@ -1857,15 +1626,12 @@ export default class System {
       remindAt,
     } = (a as KV) || {}
     if (!resource) {
-      console.error('reminderCreate failed, field resource is empty', a)
       throw Error('field resource is empty')
     }
     if (!assignedTo) {
-      console.error('reminderCreate failed, field assignedTo is empty', a)
       throw Error('field assignedTo is empty')
     }
     if (!payload) {
-      console.error('reminderCreate failed, field payload is empty', a)
       throw Error('field payload is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1895,19 +1661,15 @@ export default class System {
       remindAt,
     } = (a as KV) || {}
     if (!reminderID) {
-      console.error('reminderUpdate failed, field reminderID is empty', a)
       throw Error('field reminderID is empty')
     }
     if (!resource) {
-      console.error('reminderUpdate failed, field resource is empty', a)
       throw Error('field resource is empty')
     }
     if (!assignedTo) {
-      console.error('reminderUpdate failed, field assignedTo is empty', a)
       throw Error('field assignedTo is empty')
     }
     if (!payload) {
-      console.error('reminderUpdate failed, field payload is empty', a)
       throw Error('field payload is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1938,7 +1700,6 @@ export default class System {
       reminderID,
     } = (a as KV) || {}
     if (!reminderID) {
-      console.error('reminderRead failed, field reminderID is empty', a)
       throw Error('field reminderID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1964,7 +1725,6 @@ export default class System {
       reminderID,
     } = (a as KV) || {}
     if (!reminderID) {
-      console.error('reminderDelete failed, field reminderID is empty', a)
       throw Error('field reminderID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -1990,7 +1750,6 @@ export default class System {
       reminderID,
     } = (a as KV) || {}
     if (!reminderID) {
-      console.error('reminderDismiss failed, field reminderID is empty', a)
       throw Error('field reminderID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -2017,11 +1776,9 @@ export default class System {
       remindAt,
     } = (a as KV) || {}
     if (!reminderID) {
-      console.error('reminderSnooze failed, field reminderID is empty', a)
       throw Error('field reminderID is empty')
     }
     if (!remindAt) {
-      console.error('reminderSnooze failed, field remindAt is empty', a)
       throw Error('field remindAt is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -2052,11 +1809,9 @@ export default class System {
       userID,
     } = (a as KV) || {}
     if (!kind) {
-      console.error('attachmentRead failed, field kind is empty', a)
       throw Error('field kind is empty')
     }
     if (!attachmentID) {
-      console.error('attachmentRead failed, field attachmentID is empty', a)
       throw Error('field attachmentID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -2090,11 +1845,9 @@ export default class System {
       userID,
     } = (a as KV) || {}
     if (!kind) {
-      console.error('attachmentDelete failed, field kind is empty', a)
       throw Error('field kind is empty')
     }
     if (!attachmentID) {
-      console.error('attachmentDelete failed, field attachmentID is empty', a)
       throw Error('field attachmentID is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -2130,15 +1883,12 @@ export default class System {
       download,
     } = (a as KV) || {}
     if (!kind) {
-      console.error('attachmentOriginal failed, field kind is empty', a)
       throw Error('field kind is empty')
     }
     if (!attachmentID) {
-      console.error('attachmentOriginal failed, field attachmentID is empty', a)
       throw Error('field attachmentID is empty')
     }
     if (!name) {
-      console.error('attachmentOriginal failed, field name is empty', a)
       throw Error('field name is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -2175,15 +1925,12 @@ export default class System {
       userID,
     } = (a as KV) || {}
     if (!kind) {
-      console.error('attachmentPreview failed, field kind is empty', a)
       throw Error('field kind is empty')
     }
     if (!attachmentID) {
-      console.error('attachmentPreview failed, field attachmentID is empty', a)
       throw Error('field attachmentID is empty')
     }
     if (!ext) {
-      console.error('attachmentPreview failed, field ext is empty', a)
       throw Error('field ext is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -2286,7 +2033,6 @@ export default class System {
       script,
     } = (a as KV) || {}
     if (!script) {
-      console.error('automationTriggerScript failed, field script is empty', a)
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
@@ -2312,9 +2058,7 @@ export default class System {
       action,
       actorID,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
       method: 'get',
@@ -2327,9 +2071,7 @@ export default class System {
       action,
       actorID,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))
