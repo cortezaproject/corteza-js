@@ -142,7 +142,7 @@ export default class Federation {
   }
 
   nodeSearchEndpoint (): string {
-    return '/nodesundefined'
+    return '/nodes/'
   }
 
   // Create a new federation node
@@ -167,7 +167,7 @@ export default class Federation {
   }
 
   nodeCreateEndpoint (): string {
-    return '/nodes'
+    return '/nodes/'
   }
 
   // Creates new sharable federation URI
