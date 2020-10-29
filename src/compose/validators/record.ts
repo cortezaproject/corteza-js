@@ -4,7 +4,7 @@ import { Module } from '../types/module'
 import { ModuleField } from '../types/module-field'
 import { IsOf } from '../../guards'
 
-const emptyErr = new ValidatorError('empty')
+const emptyErr = new ValidatorError({ kind: 'empty', message: 'This field is required'})
 const duplicateValueInSetErr = new ValidatorError('duplicateValueInSet')
 
 // Validator value types
