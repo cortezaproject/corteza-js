@@ -488,6 +488,7 @@ export default class System {
       query,
       deleted,
       archived,
+      labels,
       limit,
       pageCursor,
       sort,
@@ -500,6 +501,7 @@ export default class System {
       query,
       deleted,
       archived,
+      labels,
       limit,
       pageCursor,
       sort,
@@ -518,6 +520,7 @@ export default class System {
       name,
       handle,
       members,
+      labels,
     } = (a as KV) || {}
     if (!name) {
       throw Error('field name is empty')
@@ -533,6 +536,7 @@ export default class System {
       name,
       handle,
       members,
+      labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -548,6 +552,7 @@ export default class System {
       name,
       handle,
       members,
+      labels,
     } = (a as KV) || {}
     if (!roleID) {
       throw Error('field roleID is empty')
@@ -562,6 +567,7 @@ export default class System {
       name,
       handle,
       members,
+      labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -890,6 +896,7 @@ export default class System {
       incSuspended,
       deleted,
       suspended,
+      labels,
       limit,
       pageCursor,
       sort,
@@ -910,6 +917,7 @@ export default class System {
       incSuspended,
       deleted,
       suspended,
+      labels,
       limit,
       pageCursor,
       sort,
@@ -929,6 +937,7 @@ export default class System {
       name,
       handle,
       kind,
+      labels,
     } = (a as KV) || {}
     if (!email) {
       throw Error('field email is empty')
@@ -942,6 +951,7 @@ export default class System {
       name,
       handle,
       kind,
+      labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -958,6 +968,7 @@ export default class System {
       name,
       handle,
       kind,
+      labels,
     } = (a as KV) || {}
     if (!userID) {
       throw Error('field userID is empty')
@@ -979,6 +990,7 @@ export default class System {
       name,
       handle,
       kind,
+      labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -1268,6 +1280,7 @@ export default class System {
       name,
       query,
       deleted,
+      labels,
       limit,
       pageCursor,
       sort,
@@ -1280,6 +1293,7 @@ export default class System {
       name,
       query,
       deleted,
+      labels,
       limit,
       pageCursor,
       sort,
@@ -1299,6 +1313,7 @@ export default class System {
       enabled,
       unify,
       config,
+      labels,
     } = (a as KV) || {}
     if (!name) {
       throw Error('field name is empty')
@@ -1312,6 +1327,7 @@ export default class System {
       enabled,
       unify,
       config,
+      labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -1328,6 +1344,7 @@ export default class System {
       enabled,
       unify,
       config,
+      labels,
     } = (a as KV) || {}
     if (!applicationID) {
       throw Error('field applicationID is empty')
@@ -1346,6 +1363,7 @@ export default class System {
       enabled,
       unify,
       config,
+      labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }

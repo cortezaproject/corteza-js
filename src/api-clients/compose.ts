@@ -88,6 +88,7 @@ export default class Compose {
       query,
       slug,
       limit,
+      labels,
       pageCursor,
       sort,
     } = (a as KV) || {}
@@ -99,6 +100,7 @@ export default class Compose {
       query,
       slug,
       limit,
+      labels,
       pageCursor,
       sort,
     }
@@ -114,6 +116,7 @@ export default class Compose {
   async namespaceCreate (a: KV): Promise<KV> {
     const {
       name,
+      labels,
       slug,
       enabled,
       meta,
@@ -130,6 +133,7 @@ export default class Compose {
     }
     cfg.data = {
       name,
+      labels,
       slug,
       enabled,
       meta,
@@ -174,6 +178,7 @@ export default class Compose {
       slug,
       enabled,
       meta,
+      labels,
       updatedAt,
     } = (a as KV) || {}
     if (!namespaceID) {
@@ -196,6 +201,7 @@ export default class Compose {
       slug,
       enabled,
       meta,
+      labels,
       updatedAt,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
@@ -271,6 +277,7 @@ export default class Compose {
       selfID,
       query,
       handle,
+      labels,
       limit,
       pageCursor,
       sort,
@@ -288,6 +295,7 @@ export default class Compose {
       selfID,
       query,
       handle,
+      labels,
       limit,
       pageCursor,
       sort,
@@ -313,6 +321,7 @@ export default class Compose {
       handle,
       description,
       weight,
+      labels,
       visible,
       blocks,
     } = (a as KV) || {}
@@ -335,6 +344,7 @@ export default class Compose {
       handle,
       description,
       weight,
+      labels,
       visible,
       blocks,
     }
@@ -414,6 +424,7 @@ export default class Compose {
       handle,
       description,
       weight,
+      labels,
       visible,
       blocks,
     } = (a as KV) || {}
@@ -439,6 +450,7 @@ export default class Compose {
       handle,
       description,
       weight,
+      labels,
       visible,
       blocks,
     }
@@ -600,6 +612,7 @@ export default class Compose {
       handle,
       limit,
       pageCursor,
+      labels,
       sort,
     } = (a as KV) || {}
     if (!namespaceID) {
@@ -617,6 +630,7 @@ export default class Compose {
       handle,
       limit,
       pageCursor,
+      labels,
       sort,
     }
 
@@ -638,6 +652,7 @@ export default class Compose {
       handle,
       fields,
       meta,
+      labels,
     } = (a as KV) || {}
     if (!namespaceID) {
       throw Error('field namespaceID is empty')
@@ -662,6 +677,7 @@ export default class Compose {
       handle,
       fields,
       meta,
+      labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -713,6 +729,7 @@ export default class Compose {
       fields,
       meta,
       updatedAt,
+      labels,
     } = (a as KV) || {}
     if (!namespaceID) {
       throw Error('field namespaceID is empty')
@@ -741,6 +758,7 @@ export default class Compose {
       fields,
       meta,
       updatedAt,
+      labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -867,11 +885,10 @@ export default class Compose {
       moduleID,
       query,
       filter,
+      labels,
       deleted,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     } = (a as KV) || {}
     if (!namespaceID) {
@@ -889,11 +906,10 @@ export default class Compose {
     cfg.params = {
       query,
       filter,
+      labels,
       deleted,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
       sort,
     }
 
@@ -1118,6 +1134,7 @@ export default class Compose {
       moduleID,
       values,
       records,
+      labels,
     } = (a as KV) || {}
     if (!namespaceID) {
       throw Error('field namespaceID is empty')
@@ -1134,6 +1151,7 @@ export default class Compose {
     cfg.data = {
       values,
       records,
+      labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -1189,6 +1207,7 @@ export default class Compose {
       recordID,
       values,
       records,
+      labels,
     } = (a as KV) || {}
     if (!namespaceID) {
       throw Error('field namespaceID is empty')
@@ -1208,6 +1227,7 @@ export default class Compose {
     cfg.data = {
       values,
       records,
+      labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -1422,6 +1442,7 @@ export default class Compose {
       namespaceID,
       query,
       handle,
+      labels,
       limit,
       pageCursor,
       sort,
@@ -1438,6 +1459,7 @@ export default class Compose {
     cfg.params = {
       query,
       handle,
+      labels,
       limit,
       pageCursor,
       sort,
@@ -1460,6 +1482,7 @@ export default class Compose {
       config,
       name,
       handle,
+      labels,
     } = (a as KV) || {}
     if (!namespaceID) {
       throw Error('field namespaceID is empty')
@@ -1480,6 +1503,7 @@ export default class Compose {
       config,
       name,
       handle,
+      labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -1529,6 +1553,7 @@ export default class Compose {
       config,
       name,
       handle,
+      labels,
       updatedAt,
     } = (a as KV) || {}
     if (!namespaceID) {
@@ -1553,6 +1578,7 @@ export default class Compose {
       config,
       name,
       handle,
+      labels,
       updatedAt,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
@@ -1643,9 +1669,7 @@ export default class Compose {
       recordID,
       fieldName,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
     } = (a as KV) || {}
     if (!kind) {
       throw Error('field kind is empty')
@@ -1667,9 +1691,7 @@ export default class Compose {
       recordID,
       fieldName,
       limit,
-      offset,
-      page,
-      perPage,
+      pageCursor,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))
