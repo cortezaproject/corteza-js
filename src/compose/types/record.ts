@@ -68,6 +68,7 @@ export class Record {
   public namespaceID = NoID;
 
   public values: Values = {}
+  public labels: object = {};
 
   public createdAt?: Date = undefined;
   public updatedAt?: Date = undefined;
@@ -160,6 +161,10 @@ export class Record {
       // When there are no clean values,
       // make copy of values so that we know if change occurred
       this[cleanValues] = Object.freeze({ ...this.values })
+    }
+
+    if (IsOf(r, 'labels')) {
+      this.labels = { ...r.labels }
     }
   }
 

@@ -30,9 +30,11 @@ export const systemFields = Object.freeze([
   { isSystem: true, name: 'deletedAt', label: 'Deleted at', kind: 'DateTime' },
 ].map(f => ModuleFieldMaker(f)))
 
-interface PartialModule extends Partial<Omit<Module, 'fields' | 'meta' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
+interface PartialModule extends Partial<Omit<Module, 'fields' | 'meta' | 'labels' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
   fields?: Array<Partial<ModuleField>> | Array<ModuleField>;
   meta?: Partial<Meta>;
+
+  labels?: Partial<object>;
 
   createdAt?: string|number|Date;
   updatedAt?: string|number|Date;
@@ -46,6 +48,8 @@ export class Module {
   public handle = '';
   public fields: Array<ModuleField> = [];
   public meta: object = {};
+
+  public labels: object = {};
 
   public createdAt?: Date = undefined;
   public updatedAt?: Date = undefined;
@@ -94,6 +98,10 @@ export class Module {
 
     if (IsOf(m, 'meta')) {
       this.meta = { ...m.meta }
+    }
+
+    if (IsOf(m, 'labels')) {
+      this.labels = { ...m.labels }
     }
 
     Apply(this, m, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt')
