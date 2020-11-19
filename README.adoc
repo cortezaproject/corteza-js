@@ -1,3 +1,30 @@
 # Corteza Javascript/TypeScript libs
 
 Types, API clients and other libs that are used across Corteza web applications, Corredor server and automation scripts.
+
+## Workflow
+
+### Prerequisites
+
+.Make sure dependencies are loaded:
+[source,shell script]
+----
+yarn
+----
+
+.Link with projects that use this lib:
+[source,shell script]
+----
+yarn link
+----
+(follow instructions outputed by link command)
+
+### Development
+
+.Bundle changes
+[source,shell script]
+----
+yarn build
+----
+
+Add `-w` flag after build to watch files for changes and auto rebuild
