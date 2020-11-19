@@ -3,6 +3,7 @@ import { Record } from '../types/record'
 import { Module } from '../types/module'
 import { ModuleField } from '../types/module-field'
 import { IsOf } from '../../guards'
+import { NoID } from '../../cast'
 
 const emptyErr = new ValidatorError({ kind: 'empty', message: 'This field is required'})
 const duplicateValueInSetErr = new ValidatorError('duplicateValueInSet')
@@ -106,8 +107,10 @@ export class RecordValidator extends Validator<Record> {
         field,
       }
 
+      const { recordID = NoID } = r || {}
       const results = this.rfv[f].run(r, payload)
-      results.applyMeta({ field: f })
+
+      results.applyMeta({ field: f, id: recordID === NoID ? 'parent:0' : recordID  })
       out.push(results.get())
     }
 

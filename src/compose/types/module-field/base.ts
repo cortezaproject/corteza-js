@@ -1,7 +1,6 @@
 import { merge } from 'lodash'
 import { IsOf } from '../../../guards'
 import { Apply, CortezaID, NoID } from '../../../cast'
-import { IsEmpty, ValidatorError, ValidatorResult } from '../../../validator/validator'
 
 export const FieldNameValidator = /^\w{1,}$/
 
@@ -11,6 +10,23 @@ export interface Capabilities {
   writable: boolean;
   required: boolean;
   private: boolean;
+}
+
+export interface Expressions {
+  value?: string;
+
+  sanitizers?: Array<string>;
+
+  validators?: Array<Validator>;
+  disableDefaultValidators?: boolean
+
+  formatters?: Array<string>;
+  disableDefaultFormatters?: boolean
+}
+
+interface Validator {
+  test: string;
+  error: string;
 }
 
 interface DefaultValue {
@@ -32,6 +48,7 @@ export class ModuleField {
   public isSystem = false
 
   public options: object = {}
+  public expressions: Expressions = {}
 
   public canUpdateRecordValue = false
   public canReadRecordValue = false
@@ -80,6 +97,10 @@ export class ModuleField {
       this.kind = f.kind
     }
 
+    if (IsOf(f, 'expressions')) {
+      this.expressions = f.expressions
+    }
+
     if (IsOf(f, 'options')) {
       this.options = merge({}, this.options, f.options)
     }
@@ -104,20 +125,6 @@ export class ModuleField {
       writable: true,
       required: true,
       private: true,
-    }
-  }
-
-  /**
-   * Creates standard field validator
-   *
-   * It tests value if field is marked as required
-   */
-  public validateValue (newValue: string|string[]): ValidatorResult {
-    if (this.isRequired) {
-      if (IsEmpty(newValue)) {
-        // @todo return something typified...
-        return new ValidatorError('missing required value')
-      }
     }
   }
 
