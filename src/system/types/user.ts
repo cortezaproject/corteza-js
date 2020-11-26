@@ -1,5 +1,5 @@
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
-import { AreStrings } from '../../guards'
+import { IsOf, AreStrings } from '../../guards'
 
 interface PartialUser extends Partial<Omit<User, 'createdAt' | 'updatedAt' | 'deletedAt' | 'suspendedAt'>> {
   createdAt?: string|number|Date;
@@ -14,26 +14,31 @@ export class User {
   public username = ''
   public email = ''
   public name = ''
+  public labels: object = {}
   public createdAt?: Date = undefined
   public updatedAt?: Date = undefined
   public deletedAt?: Date = undefined
   public suspendedAt?: Date = undefined
   public roles?: Array<string>
 
-  constructor (c?: PartialUser) {
-    this.apply(c)
+  constructor (u?: PartialUser) {
+    this.apply(u)
   }
 
-  apply (c?: PartialUser): void {
-    Apply(this, c, CortezaID, 'userID')
-    Apply(this, c, String, 'handle', 'username', 'email', 'name')
-    Apply(this, c, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt', 'suspendedAt')
+  apply (u?: PartialUser): void {
+    Apply(this, u, CortezaID, 'userID')
+    Apply(this, u, String, 'handle', 'username', 'email', 'name')
+    Apply(this, u, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt', 'suspendedAt')
 
-    if (c?.roles) {
+    if (u?.roles) {
       this.roles = []
-      if (AreStrings(c.roles)) {
-        this.roles = c.roles
+      if (AreStrings(u.roles)) {
+        this.roles = u.roles
       }
+    }
+
+    if (IsOf(u, 'labels')) {
+      this.labels = { ...u.labels }
     }
   }
 

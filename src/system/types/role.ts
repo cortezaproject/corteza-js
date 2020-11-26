@@ -1,5 +1,5 @@
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
-import { AreStrings } from '../../guards'
+import { IsOf, AreStrings } from '../../guards'
 
 interface PartialRole extends Partial<Omit<Role, 'createdAt' | 'updatedAt' | 'deletedAt' | 'archivedAt'>> {
   createdAt?: string|number|Date;
@@ -13,28 +13,33 @@ export class Role {
   public name = ''
   public handle = ''
   public members: string[] = []
+  public labels: object = {}
   public createdAt?: Date = undefined
   public updatedAt?: Date = undefined
   public deletedAt?: Date = undefined
   public archivedAt?: Date = undefined
 
-  constructor (c?: PartialRole) {
-    this.apply(c)
+  constructor (r?: PartialRole) {
+    this.apply(r)
   }
 
-  apply (c?: PartialRole): void {
-    Apply(this, c, CortezaID, 'roleID')
+  apply (r?: PartialRole): void {
+    Apply(this, r, CortezaID, 'roleID')
 
-    Apply(this, c, String, 'name', 'handle')
+    Apply(this, r, String, 'name', 'handle')
 
-    if (c?.members) {
+    if (r?.members) {
       this.members = []
-      if (AreStrings(c.members)) {
-        this.members = c.members
+      if (AreStrings(r.members)) {
+        this.members = r.members
       }
     }
 
-    Apply(this, c, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt', 'archivedAt')
+    if (IsOf(r, 'labels')) {
+      this.labels = { ...r.labels }
+    }
+
+    Apply(this, r, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt', 'archivedAt')
   }
 
   /**
