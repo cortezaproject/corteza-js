@@ -27,42 +27,46 @@ interface ComposeContext {
 }
 
 interface PageListFilter {
-  [key: string]: string|number|undefined;
+  [key: string]: string|number|{[key:string]:string}|undefined;
   namespaceID?: string;
   selfID?: string;
   query?: string;
   handle?: string;
+  labels?: {[key:string]:string};
   limit?: number;
   pageCursor?: string;
   sort?: string;
 }
 
 interface RecordListFilter {
-  [key: string]: string|number|undefined;
+  [key: string]: string|number|{[key:string]:string}|undefined;
   namespaceID?: string;
   moduleID?: string;
   query?: string;
   filter?: string;
+  labels?: {[key:string]:string};
   limit?: number;
   pageCursor?: string;
   sort?: string;
 }
 
 interface ModuleListFilter {
-  [key: string]: string|number|undefined;
+  [key: string]: string|number|{[key:string]:string}|undefined;
   namespaceID?: string;
   query?: string;
   name?: string;
   handle?: string;
+  labels?: {[key:string]:string};
   limit?: number;
   pageCursor?: string;
   sort?: string;
 }
 
 interface NamespaceListFilter {
-  [key: string]: string|number|undefined;
+  [key: string]: string|number|{[key:string]:string}|undefined;
   query?: string;
   slug?: string;
+  labels?: {[key:string]:string};
   limit?: number;
   pageCursor?: string;
   sort?: string;

@@ -27,6 +27,8 @@ export class Namespace {
   public slug = ''
   public enabled = false
 
+  public labels: object = {}
+
   public meta: object = {}
 
   public createdAt?: Date = undefined;
@@ -59,6 +61,10 @@ export class Namespace {
 
     if (IsOf(n, 'meta')) {
       this.meta = { ...n.meta }
+    }
+
+    if (IsOf(n, 'labels')) {
+      this.labels = { ...n.labels }
     }
 
     Apply(this, n, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt')

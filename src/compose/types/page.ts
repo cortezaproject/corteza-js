@@ -1,5 +1,5 @@
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
-import { AreObjectsOf } from '../../guards'
+import { IsOf, AreObjectsOf } from '../../guards'
 import { PageBlock, PageBlockMaker } from './page-block'
 
 interface PartialPage extends Partial<Omit<Page, 'children' | 'blocks' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
@@ -22,6 +22,8 @@ export class Page {
   public handle = '';
   public description = '';
   public weight = 0;
+
+  public labels: object = {}
 
   public visible = false;
 
@@ -65,6 +67,10 @@ export class Page {
       if (AreObjectsOf<Page>(i.children, 'pageID')) {
         this.children = i.children.map(c => new Page(c))
       }
+    }
+
+    if (IsOf(i, 'labels')) {
+      this.labels = { ...i.labels }
     }
 
     Apply(this, i, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt')
