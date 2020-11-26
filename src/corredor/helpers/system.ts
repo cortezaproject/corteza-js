@@ -12,16 +12,20 @@ interface SystemContext {
 
 interface UserListFilter {
   [key: string]: string|boolean|number|undefined;
+  userID?: string;
+  roleID?: string;
   query?: string;
   username?: string;
-  handle?: string;
   email?: string;
+  handle?: string;
   kind?: string;
   incDeleted?: boolean;
   incSuspended?: boolean;
-  sort?: number;
-  perPage?: number;
-  page?: number;
+  deleted?: boolean;
+  suspended?: boolean
+  limit?: number;
+  pageCursor?: string
+  sort?: string;
 }
 
 interface RoleListFilter {
@@ -29,9 +33,9 @@ interface RoleListFilter {
   query?: string;
   deleted?: boolean;
   archived?: boolean;
-  page?: number;
-  perPage?: number;
-  sort?: number;
+  limit?: number;
+  pageCursor?: string
+  sort?: string;
 }
 
 /**

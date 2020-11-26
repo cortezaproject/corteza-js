@@ -32,7 +32,6 @@ interface Range {
 export async function ReminderFeed ($SystemAPI: SystemAPI, user: User, feed: Feed, range: Range): Promise<Event[]> {
   feed.options.color = feed.options.color || defaultColor
   return $SystemAPI.reminderList({
-    perPage: 0,
     scheduledFrom: range.start.toISOString(),
     scheduledUntil: range.end.toISOString(),
     scheduledOnly: true,

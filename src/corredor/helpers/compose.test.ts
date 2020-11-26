@@ -422,7 +422,7 @@ describe(__filename, () => {
       it('should find module by handle on $namespace', async () => {
         const module = new Module({ moduleID: '555' })
 
-        composeApiStub.moduleList.resolves({ filter: { count: 1 }, set: [module] })
+        composeApiStub.moduleList.resolves({ filter: { limit: 1 }, set: [module] })
 
         expect(await h.findModuleByHandle('some-module')).to.be.instanceOf(Module)
 
@@ -434,7 +434,7 @@ describe(__filename, () => {
       it('should find module by name on $namespace', async () => {
         const module = new Module({ moduleID: '555' })
 
-        composeApiStub.moduleList.resolves({ filter: { count: 1 }, set: [module] })
+        composeApiStub.moduleList.resolves({ filter: { limit: 1 }, set: [module] })
 
         expect(await h.findModuleByName('some-module')).to.be.instanceOf(Module)
 

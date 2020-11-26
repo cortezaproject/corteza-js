@@ -32,8 +32,8 @@ interface PageListFilter {
   selfID?: string;
   query?: string;
   handle?: string;
-  page?: number;
-  perPage?: number;
+  limit?: number;
+  pageCursor?: string;
   sort?: string;
 }
 
@@ -41,24 +41,31 @@ interface RecordListFilter {
   [key: string]: string|number|undefined;
   namespaceID?: string;
   moduleID?: string;
+  query?: string;
   filter?: string;
-  page?: number;
-  perPage?: number;
+  limit?: number;
+  pageCursor?: string;
   sort?: string;
 }
 
 interface ModuleListFilter {
-  [key: string]: string|undefined;
+  [key: string]: string|number|undefined;
+  namespaceID?: string;
   query?: string;
+  name?: string;
+  handle?: string;
+  limit?: number;
+  pageCursor?: string;
+  sort?: string;
 }
 
 interface NamespaceListFilter {
   [key: string]: string|number|undefined;
   query?: string;
   slug?: string;
-  page?: number;
-  perPage?: number;
-  sort?: number;
+  limit?: number;
+  pageCursor?: string;
+  sort?: string;
 }
 
 /**
@@ -330,13 +337,13 @@ export default class ComposeHelper {
    * Compose.findRecords({
    *   filter: '(netProfit / totalInvestment > 0.15) AND (YEAR(createdAt) = YEAR(NOW()) - 1)'
    *   sort: 'netProfit / totalInvestment DESC',
-   *   perPage: 5,
+   *   limit: 5,
    * }, 'Project')
    *
    * // Accessing returned records
    * Compose.findRecords().then(({ set, filter }) => {
    *    // set: array of records
-   *    // filter: object with filter specs, aso returns `count` with total number of all records that accross all pages
+   *    // filter: object with filter specs
    *
    *    Use internal Array functions
    *    set.forEach(r => {
@@ -352,8 +359,8 @@ export default class ComposeHelper {
    * @param filter - filter object (or filtering conditions when string)
    * @property {string} filter.filter - filtering conditions
    * @property {string} filter.sort - sorting rules
-   * @property {number} filter.perPage - max returned records per page
-   * @property {number} filter.page - page to return (1-based)
+   * @property {number} filter.limit - number of max returned records
+   * @property {number} filter.pageCursor - hashed string that retrieves a specific page
    * @param [module] - if not set, defaults to $module
    */
   async findRecords (filter: string|RecordListFilter = '', module: Module|undefined = this.$module): Promise<ListResponse<RecordListFilter, Record[]>> {
@@ -390,7 +397,7 @@ export default class ComposeHelper {
    * @param module
    */
   async findLastRecord (module: Module|undefined = this.$module): Promise<Record> {
-    return this.findRecords({ sort: 'recordID DESC', page: 1, perPage: 1 }, module).then(res => {
+    return this.findRecords({ sort: 'createdAt DESC', limit: 1 }, module).then(res => {
       if (!Array.isArray(res.set) || res.set.length === 0) {
         throw new Error('records not found')
       }
@@ -410,7 +417,7 @@ export default class ComposeHelper {
    * @param module
    */
   async findFirstRecord (module: Module|undefined = this.$module): Promise<Record> {
-    return this.findRecords({ sort: 'recordID ASC', page: 1, perPage: 1 }, module).then(res => {
+    return this.findRecords({ sort: 'createdAt', limit: 1 }, module).then(res => {
       if (!Array.isArray(res.set) || res.set.length === 0) {
         throw new Error('records not found')
       }
@@ -438,7 +445,6 @@ export default class ComposeHelper {
       return this.ComposeAPI.recordRead({
         moduleID,
         namespaceID,
-
         recordID: extractID(record, 'recordID'),
       }).then(r => new Record(module, r))
     })
@@ -542,7 +548,7 @@ export default class ComposeHelper {
    * // even shorter
    * Compose.findLastRecord('2039248239042').then(....)
    *
-   * @param module - accepts Module, moduleID (when string string) or Record
+   * @param module - accepts Module, moduleID (when string) or Record
    * @param ns - namespace, defaults to current $namespace
    */
   async findModuleByID (module: string|Module|Record, ns: Namespace|undefined = this.$namespace): Promise<Module> {
