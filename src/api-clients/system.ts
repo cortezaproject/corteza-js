@@ -2072,11 +2072,11 @@ export default class System {
     const {
       from,
       to,
+      beforeActionID,
       resource,
       action,
       actorID,
       limit,
-      pageCursor,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
       method: 'get',
@@ -2085,11 +2085,11 @@ export default class System {
     cfg.params = {
       from,
       to,
+      beforeActionID,
       resource,
       action,
       actorID,
       limit,
-      pageCursor,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))

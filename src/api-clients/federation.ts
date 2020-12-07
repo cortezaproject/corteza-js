@@ -352,13 +352,13 @@ export default class Federation {
   async nodeHandshakeComplete (a: KV): Promise<KV> {
     const {
       nodeID,
-      tokenA,
+      authToken,
     } = (a as KV) || {}
     if (!nodeID) {
       throw Error('field nodeID is empty')
     }
-    if (!tokenA) {
-      throw Error('field tokenA is empty')
+    if (!authToken) {
+      throw Error('field authToken is empty')
     }
     const cfg: AxiosRequestConfig = {
       method: 'post',
@@ -367,7 +367,7 @@ export default class Federation {
       }),
     }
     cfg.data = {
-      tokenA,
+      authToken,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
