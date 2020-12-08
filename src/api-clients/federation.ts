@@ -150,6 +150,7 @@ export default class Federation {
     const {
       baseURL,
       name,
+      contact,
       pairingURI,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
@@ -159,6 +160,7 @@ export default class Federation {
     cfg.data = {
       baseURL,
       name,
+      contact,
       pairingURI,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
@@ -223,6 +225,7 @@ export default class Federation {
     const {
       nodeID,
       name,
+      contact,
       baseURL,
     } = (a as KV) || {}
     if (!nodeID) {
@@ -236,6 +239,7 @@ export default class Federation {
     }
     cfg.data = {
       name,
+      contact,
       baseURL,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
@@ -788,6 +792,122 @@ export default class Federation {
       moduleID,
     } = a || {}
     return `/nodes/${nodeID}/modules/${moduleID}/records/`
+  }
+
+  // Retrieve defined permissions
+  async permissionsList (): Promise<KV> {
+
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.permissionsListEndpoint(),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  permissionsListEndpoint (): string {
+    return '/permissions/'
+  }
+
+  // Effective rules for current user
+  async permissionsEffective (a: KV): Promise<KV> {
+    const {
+      resource,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.permissionsEffectiveEndpoint(),
+    }
+    cfg.params = {
+      resource,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  permissionsEffectiveEndpoint (): string {
+    return '/permissions/effective'
+  }
+
+  // Retrieve role permissions
+  async permissionsRead (a: KV): Promise<KV> {
+    const {
+      roleID,
+    } = (a as KV) || {}
+    if (!roleID) {
+      throw Error('field roleID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.permissionsReadEndpoint({
+        roleID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  permissionsReadEndpoint (a: KV): string {
+    const {
+      roleID,
+    } = a || {}
+    return `/permissions/${roleID}/rules`
+  }
+
+  // Remove all defined role permissions
+  async permissionsDelete (a: KV): Promise<KV> {
+    const {
+      roleID,
+    } = (a as KV) || {}
+    if (!roleID) {
+      throw Error('field roleID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'delete',
+      url: this.permissionsDeleteEndpoint({
+        roleID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  permissionsDeleteEndpoint (a: KV): string {
+    const {
+      roleID,
+    } = a || {}
+    return `/permissions/${roleID}/rules`
+  }
+
+  // Update permission settings
+  async permissionsUpdate (a: KV): Promise<KV> {
+    const {
+      roleID,
+      rules,
+    } = (a as KV) || {}
+    if (!roleID) {
+      throw Error('field roleID is empty')
+    }
+    if (!rules) {
+      throw Error('field rules is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'patch',
+      url: this.permissionsUpdateEndpoint({
+        roleID,
+      }),
+    }
+    cfg.data = {
+      rules,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  permissionsUpdateEndpoint (a: KV): string {
+    const {
+      roleID,
+    } = a || {}
+    return `/permissions/${roleID}/rules`
   }
 
 }
