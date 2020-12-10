@@ -24,7 +24,7 @@
     "lodash": "^4.17.15",
     "minimalist": "^1.0.0",
     "minimatch": "^3.0.4",
-    "moment": "^2.24.0",
+    "moment": "^2.25.1",
     "numeral": "^2.0.6",
     "pino": "^5.16.0",
     "ts-sinon": "^1.0.25"
@@ -68,6 +68,9 @@
     "ts-node": "^8.6.2",
     "ts-node-dev": "^1.0.0",
     "typescript": "^3.7.2"
+  },
+  "resolutions": {
+    "**/**/moment": "^2.25.1"
   },
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",
