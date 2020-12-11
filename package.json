@@ -19,12 +19,12 @@
   },
   "dependencies": {
     "axios": "^0.19.1",
-    "chart.js": "^2.7.3",
+    "chart.js": "2.9.3",
     "hex-rgb": "^4.1.0",
     "lodash": "^4.17.15",
     "minimalist": "^1.0.0",
     "minimatch": "^3.0.4",
-    "moment": "^2.25.1",
+    "moment": "2.25.3",
     "numeral": "^2.0.6",
     "pino": "^5.16.0",
     "ts-sinon": "^1.0.25"
@@ -70,7 +70,7 @@
     "typescript": "^3.7.2"
   },
   "resolutions": {
-    "**/**/moment": "^2.25.1"
+    "**/**/moment": "2.25.3"
   },
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",
