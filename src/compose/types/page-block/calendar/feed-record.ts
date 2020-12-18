@@ -99,6 +99,21 @@ function expandRecord (record: Readonly<Record>, feed: Feed): Event[] {
 }
 
 /**
+ * Checks if the given field can be used with the given record.
+ * A field can be used if it's either defined as a record value OR it's a system field.
+ *
+ * @param r The record to check
+ * @param field The field we wish to use
+ */
+function recordFeedFilter (r: Readonly<Record>, field: string): boolean {
+  if (r.values[field]) {
+    return true
+  }
+
+  return ['createdAt', 'updatedAt', 'deletedAt'].includes(field)
+}
+
+/**
  * Loads & converts module resource into FC events
  * @param {ComposeAPI} $ComposeAPI ComposeAPI provider
  * @param {Module} module Current module
@@ -130,8 +145,7 @@ export async function RecordFeed ($ComposeAPI: ComposeAPI, module: Module, names
       .map(r => Object.freeze(new Record(module, r)))
 
       // drop record w/o proper values
-      // .filter(r => !!r.values[feed.startField] || !!r[feed.startField])
-      .filter(r => !!r.values[feed.startField])
+      .filter(r => recordFeedFilter(r, feed.startField))
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
       .forEach(r => events.push(...expandRecord(r, feed)))
     return events
