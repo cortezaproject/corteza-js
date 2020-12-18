@@ -193,6 +193,7 @@ describe(__filename, () => {
       expect(JSON.stringify(r)).to.equal(
         '{"recordID":"0","moduleID":"0","namespaceID":"0",' +
         '"values":[{"name":"simple","value":"foo"},{"name":"multi","value":"bar"},{"name":"multi","value":"baz"}],' +
+        '"labels":{},' +
         '"ownedBy":"0","createdBy":"0","updatedBy":"0","deletedBy":"0"}')
     })
 

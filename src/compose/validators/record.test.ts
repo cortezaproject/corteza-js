@@ -23,8 +23,8 @@ describe(__filename, () => {
 
   it('should return errors when required values are not set', () => {
     expect(v.run(r).get()).deep.members([
-      new ValidatorError({ kind: 'empty', message: 'This field is required', meta: { field: 'required' } }),
-      new ValidatorError({ kind: 'empty', message: 'This field is required', meta: { field: 'multiRequired' } }),
+      new ValidatorError({ kind: 'empty', message: 'This field is required', meta: { field: 'required', id: 'parent:0' } }),
+      new ValidatorError({ kind: 'empty', message: 'This field is required', meta: { field: 'multiRequired', id: 'parent:0' } }),
     ])
   })
 })

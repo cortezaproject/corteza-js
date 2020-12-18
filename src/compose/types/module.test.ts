@@ -32,17 +32,16 @@ describe(__filename, () => {
           { name: 'f002', kind: 'DateTime' },
           { name: 'f003', kind: 'Email' },
           { name: 'f004', kind: 'File' },
-          { name: 'f005', kind: 'Formula' },
-          { name: 'f006', kind: 'Select' },
-          { name: 'f007', kind: 'Number' },
-          { name: 'f008', kind: 'Record' },
-          { name: 'f009', kind: 'String' },
-          { name: 'f010', kind: 'Url' },
-          { name: 'f011', kind: 'User' },
+          { name: 'f005', kind: 'Select' },
+          { name: 'f006', kind: 'Number' },
+          { name: 'f007', kind: 'Record' },
+          { name: 'f008', kind: 'String' },
+          { name: 'f009', kind: 'Url' },
+          { name: 'f010', kind: 'User' },
         ],
       })
 
-      expect(mod.fields).lengthOf(11)
+      expect(mod.fields).lengthOf(10)
     })
   })
 
