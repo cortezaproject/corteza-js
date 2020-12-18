@@ -888,6 +888,8 @@ export default class Compose {
       labels,
       deleted,
       limit,
+      incTotal,
+      incPageNavigation,
       pageCursor,
       sort,
     } = (a as KV) || {}
@@ -909,6 +911,8 @@ export default class Compose {
       labels,
       deleted,
       limit,
+      incTotal,
+      incPageNavigation,
       pageCursor,
       sort,
     }

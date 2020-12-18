@@ -22,6 +22,9 @@ interface Options {
   allowExport: boolean;
   perPage: number;
 
+  fullPageNavigation: boolean;
+  showTotalCount: boolean;
+
   // Record-lines
   editable: boolean;
   draggable?: boolean;
@@ -53,6 +56,9 @@ const defaults: Readonly<Options> = Object.freeze({
   hideRecordViewButton: true,
   allowExport: false,
   perPage: 20,
+
+  fullPageNavigation: true,
+  showTotalCount: true,
 
   editable: false,
   draggable: false,
@@ -96,6 +102,8 @@ export class PageBlockRecordList extends PageBlock {
       'hideAddButton',
       'hideSearch',
       'hidePaging',
+      'fullPageNavigation',
+      'showTotalCount',
       'hideSorting',
       'allowExport',
       'selectable',
