@@ -1278,8 +1278,6 @@ export default class System {
       query,
       deleted,
       labels,
-      flags,
-      incFlags,
       limit,
       pageCursor,
       sort,
@@ -1293,8 +1291,6 @@ export default class System {
       query,
       deleted,
       labels,
-      flags,
-      incFlags,
       limit,
       pageCursor,
       sort,
@@ -1312,7 +1308,6 @@ export default class System {
     const {
       name,
       enabled,
-      weight,
       unify,
       config,
       labels,
@@ -1327,7 +1322,6 @@ export default class System {
     cfg.data = {
       name,
       enabled,
-      weight,
       unify,
       config,
       labels,
@@ -1345,7 +1339,6 @@ export default class System {
       applicationID,
       name,
       enabled,
-      weight,
       unify,
       config,
       labels,
@@ -1365,7 +1358,6 @@ export default class System {
     cfg.data = {
       name,
       enabled,
-      weight,
       unify,
       config,
       labels,
@@ -1380,97 +1372,10 @@ export default class System {
     return `/application/${applicationID}`
   }
 
-  // Upload application assets
-  async applicationUpload (a: KV): Promise<KV> {
-    const {
-      upload,
-    } = (a as KV) || {}
-    if (!upload) {
-      throw Error('field upload is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'post',
-      url: this.applicationUploadEndpoint(),
-    }
-    cfg.data = {
-      upload,
-    }
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  applicationUploadEndpoint (): string {
-    return '/application/upload'
-  }
-
-  // Flag application
-  async applicationFlagCreate (a: KV): Promise<KV> {
-    const {
-      applicationID,
-      flag,
-      ownedBy,
-    } = (a as KV) || {}
-    if (!applicationID) {
-      throw Error('field applicationID is empty')
-    }
-    if (!flag) {
-      throw Error('field flag is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'post',
-      url: this.applicationFlagCreateEndpoint({
-        applicationID, flag, ownedBy,
-      }),
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  applicationFlagCreateEndpoint (a: KV): string {
-    const {
-      applicationID,
-      flag,
-      ownedBy,
-    } = a || {}
-    return `/application/${applicationID}/flag/${ownedBy}/${flag}`
-  }
-
-  // Unflag application
-  async applicationFlagDelete (a: KV): Promise<KV> {
-    const {
-      applicationID,
-      flag,
-      ownedBy,
-    } = (a as KV) || {}
-    if (!applicationID) {
-      throw Error('field applicationID is empty')
-    }
-    if (!flag) {
-      throw Error('field flag is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'delete',
-      url: this.applicationFlagDeleteEndpoint({
-        applicationID, flag, ownedBy,
-      }),
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  applicationFlagDeleteEndpoint (a: KV): string {
-    const {
-      applicationID,
-      flag,
-      ownedBy,
-    } = a || {}
-    return `/application/${applicationID}/flag/${ownedBy}/${flag}`
-  }
-
   // Read application details
   async applicationRead (a: KV): Promise<KV> {
     const {
       applicationID,
-      incFlags,
     } = (a as KV) || {}
     if (!applicationID) {
       throw Error('field applicationID is empty')
@@ -1480,9 +1385,6 @@ export default class System {
       url: this.applicationReadEndpoint({
         applicationID,
       }),
-    }
-    cfg.params = {
-      incFlags,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))
@@ -1574,28 +1476,6 @@ export default class System {
       applicationID,
     } = a || {}
     return `/application/${applicationID}/trigger`
-  }
-
-  // Reorder applications
-  async applicationReorder (a: KV): Promise<KV> {
-    const {
-      applicationIDs,
-    } = (a as KV) || {}
-    if (!applicationIDs) {
-      throw Error('field applicationIDs is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'post',
-      url: this.applicationReorderEndpoint(),
-    }
-    cfg.data = {
-      applicationIDs,
-    }
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  applicationReorderEndpoint (): string {
-    return '/application/reorder'
   }
 
   // Retrieve defined permissions

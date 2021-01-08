@@ -231,28 +231,6 @@ export default class Compose {
     return `/namespace/${namespaceID}`
   }
 
-  // Upload namespace assets
-  async namespaceUpload (a: KV): Promise<KV> {
-    const {
-      upload,
-    } = (a as KV) || {}
-    if (!upload) {
-      throw Error('field upload is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'post',
-      url: this.namespaceUploadEndpoint(),
-    }
-    cfg.data = {
-      upload,
-    }
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  namespaceUploadEndpoint (): string {
-    return '/namespace/upload'
-  }
-
   // Fire compose:namespace trigger
   async namespaceTriggerScript (a: KV): Promise<KV> {
     const {
