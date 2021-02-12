@@ -1974,6 +1974,235 @@ export default class System {
     return `/attachment/${kind}/${attachmentID}/preview.${ext}`
   }
 
+  // List templates
+  async templateList (a: KV): Promise<KV> {
+    const {
+      handle,
+      type,
+      ownerID,
+      partial,
+      deleted,
+      labels,
+      limit,
+      pageCursor,
+      sort,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.templateListEndpoint(),
+    }
+    cfg.params = {
+      handle,
+      type,
+      ownerID,
+      partial,
+      deleted,
+      labels,
+      limit,
+      pageCursor,
+      sort,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  templateListEndpoint (): string {
+    return '/template/'
+  }
+
+  // Create template
+  async templateCreate (a: KV): Promise<KV> {
+    const {
+      handle,
+      language,
+      type,
+      partial,
+      meta,
+      template,
+      ownerID,
+      labels,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.templateCreateEndpoint(),
+    }
+    cfg.data = {
+      handle,
+      language,
+      type,
+      partial,
+      meta,
+      template,
+      ownerID,
+      labels,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  templateCreateEndpoint (): string {
+    return '/template/'
+  }
+
+  // Read template
+  async templateRead (a: KV): Promise<KV> {
+    const {
+      templateID,
+    } = (a as KV) || {}
+    if (!templateID) {
+      throw Error('field templateID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.templateReadEndpoint({
+        templateID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  templateReadEndpoint (a: KV): string {
+    const {
+      templateID,
+    } = a || {}
+    return `/template/${templateID}`
+  }
+
+  // Update template
+  async templateUpdate (a: KV): Promise<KV> {
+    const {
+      templateID,
+      handle,
+      language,
+      type,
+      partial,
+      meta,
+      template,
+      ownerID,
+      labels,
+    } = (a as KV) || {}
+    if (!templateID) {
+      throw Error('field templateID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'put',
+      url: this.templateUpdateEndpoint({
+        templateID,
+      }),
+    }
+    cfg.data = {
+      handle,
+      language,
+      type,
+      partial,
+      meta,
+      template,
+      ownerID,
+      labels,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  templateUpdateEndpoint (a: KV): string {
+    const {
+      templateID,
+    } = a || {}
+    return `/template/${templateID}`
+  }
+
+  // Delete template
+  async templateDelete (a: KV): Promise<KV> {
+    const {
+      templateID,
+    } = (a as KV) || {}
+    if (!templateID) {
+      throw Error('field templateID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'delete',
+      url: this.templateDeleteEndpoint({
+        templateID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  templateDeleteEndpoint (a: KV): string {
+    const {
+      templateID,
+    } = a || {}
+    return `/template/${templateID}`
+  }
+
+  // Undelete template
+  async templateUndelete (a: KV): Promise<KV> {
+    const {
+      templateID,
+    } = (a as KV) || {}
+    if (!templateID) {
+      throw Error('field templateID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.templateUndeleteEndpoint({
+        templateID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  templateUndeleteEndpoint (a: KV): string {
+    const {
+      templateID,
+    } = a || {}
+    return `/template/${templateID}/undelete`
+  }
+
+  // Render template
+  async templateRender (a: KV): Promise<KV> {
+    const {
+      templateID,
+      filename,
+      ext,
+      variables,
+      options,
+    } = (a as KV) || {}
+    if (!templateID) {
+      throw Error('field templateID is empty')
+    }
+    if (!filename) {
+      throw Error('field filename is empty')
+    }
+    if (!ext) {
+      throw Error('field ext is empty')
+    }
+    if (!variables) {
+      throw Error('field variables is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.templateRenderEndpoint({
+        templateID, filename, ext,
+      }),
+    }
+    cfg.data = {
+      variables,
+      options,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  templateRenderEndpoint (a: KV): string {
+    const {
+      templateID,
+      filename,
+      ext,
+    } = a || {}
+    return `/template/${templateID}/render/${filename}.${ext}`
+  }
+
   // List system statistics
   async statsList (): Promise<KV> {
 
