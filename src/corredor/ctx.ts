@@ -91,11 +91,11 @@ export class Ctx {
    *
    * @returns {Promise<User>}
    */
-  get $authUser (): Promise<User> {
-    return this.SystemAPI
-      .authCheck()
-      .then(r => (r as { user: User }).user)
-  }
+  // get $authUser (): Promise<User> {
+  //   return this.SystemAPI
+  //     .authCheck()
+  //     .then(r => (r as { user: User }).user)
+  // }
 
   /**
    * Configures and returns system API client

@@ -82,36 +82,6 @@ export default class System {
     })
   }
 
-  // Returns auth settings
-  async authSettings (): Promise<KV> {
-
-    const cfg: AxiosRequestConfig = {
-      method: 'get',
-      url: this.authSettingsEndpoint(),
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  authSettingsEndpoint (): string {
-    return '/auth/'
-  }
-
-  // Check JWT token
-  async authCheck (): Promise<KV> {
-
-    const cfg: AxiosRequestConfig = {
-      method: 'get',
-      url: this.authCheckEndpoint(),
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  authCheckEndpoint (): string {
-    return '/auth/check'
-  }
-
   // Impersonate a user
   async authImpersonate (a: KV): Promise<KV> {
     const {
@@ -134,221 +104,242 @@ export default class System {
     return '/auth/impersonate'
   }
 
-  // Exchange auth token for JWT
-  async authExchangeAuthToken (a: KV): Promise<KV> {
+  // List clients
+  async authClientList (a: KV): Promise<KV> {
     const {
-      token,
+      handle,
+      deleted,
+      labels,
+      limit,
+      pageCursor,
+      sort,
     } = (a as KV) || {}
-    if (!token) {
-      throw Error('field token is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'post',
-      url: this.authExchangeAuthTokenEndpoint(),
-    }
-    cfg.data = {
-      token,
-    }
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  authExchangeAuthTokenEndpoint (): string {
-    return '/auth/exchange'
-  }
-
-  // Logout
-  async authLogout (): Promise<KV> {
-
     const cfg: AxiosRequestConfig = {
       method: 'get',
-      url: this.authLogoutEndpoint(),
+      url: this.authClientListEndpoint(),
     }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  authLogoutEndpoint (): string {
-    return '/auth/logout'
-  }
-
-  // Login user
-  async authInternalLogin (a: KV): Promise<KV> {
-    const {
-      email,
-      password,
-    } = (a as KV) || {}
-    if (!email) {
-      throw Error('field email is empty')
-    }
-    if (!password) {
-      throw Error('field password is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'post',
-      url: this.authInternalLoginEndpoint(),
-    }
-    cfg.data = {
-      email,
-      password,
-    }
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  authInternalLoginEndpoint (): string {
-    return '/auth/internal/login'
-  }
-
-  // User signup/registration
-  async authInternalSignup (a: KV): Promise<KV> {
-    const {
-      email,
-      username,
-      password,
+    cfg.params = {
       handle,
-      name,
-    } = (a as KV) || {}
-    if (!email) {
-      throw Error('field email is empty')
+      deleted,
+      labels,
+      limit,
+      pageCursor,
+      sort,
     }
-    if (!password) {
-      throw Error('field password is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'post',
-      url: this.authInternalSignupEndpoint(),
-    }
-    cfg.data = {
-      email,
-      username,
-      password,
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  authClientListEndpoint (): string {
+    return '/auth/clients/'
+  }
+
+  // Create client
+  async authClientCreate (a: KV): Promise<KV> {
+    const {
       handle,
-      name,
+      meta,
+      validGrant,
+      redirectURI,
+      trusted,
+      enabled,
+      validFrom,
+      expiresAt,
+      security,
+      labels,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.authClientCreateEndpoint(),
+    }
+    cfg.data = {
+      handle,
+      meta,
+      validGrant,
+      redirectURI,
+      trusted,
+      enabled,
+      validFrom,
+      expiresAt,
+      security,
+      labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  authInternalSignupEndpoint (): string {
-    return '/auth/internal/signup'
+  authClientCreateEndpoint (): string {
+    return '/auth/clients/'
   }
 
-  // Request password reset token (via email)
-  async authInternalRequestPasswordReset (a: KV): Promise<KV> {
+  // Update user details
+  async authClientUpdate (a: KV): Promise<KV> {
     const {
-      email,
+      clientID,
+      handle,
+      meta,
+      validGrant,
+      redirectURI,
+      trusted,
+      enabled,
+      validFrom,
+      expiresAt,
+      security,
+      labels,
     } = (a as KV) || {}
-    if (!email) {
-      throw Error('field email is empty')
+    if (!clientID) {
+      throw Error('field clientID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'put',
+      url: this.authClientUpdateEndpoint({
+        clientID,
+      }),
+    }
+    cfg.data = {
+      handle,
+      meta,
+      validGrant,
+      redirectURI,
+      trusted,
+      enabled,
+      validFrom,
+      expiresAt,
+      security,
+      labels,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  authClientUpdateEndpoint (a: KV): string {
+    const {
+      clientID,
+    } = a || {}
+    return `/auth/clients/${clientID}`
+  }
+
+  // Read client details
+  async authClientRead (a: KV): Promise<KV> {
+    const {
+      clientID,
+    } = (a as KV) || {}
+    if (!clientID) {
+      throw Error('field clientID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.authClientReadEndpoint({
+        clientID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  authClientReadEndpoint (a: KV): string {
+    const {
+      clientID,
+    } = a || {}
+    return `/auth/clients/${clientID}`
+  }
+
+  // Remove client
+  async authClientDelete (a: KV): Promise<KV> {
+    const {
+      clientID,
+    } = (a as KV) || {}
+    if (!clientID) {
+      throw Error('field clientID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'delete',
+      url: this.authClientDeleteEndpoint({
+        clientID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  authClientDeleteEndpoint (a: KV): string {
+    const {
+      clientID,
+    } = a || {}
+    return `/auth/clients/${clientID}`
+  }
+
+  // Undelete client
+  async authClientUndelete (a: KV): Promise<KV> {
+    const {
+      clientID,
+    } = (a as KV) || {}
+    if (!clientID) {
+      throw Error('field clientID is empty')
     }
     const cfg: AxiosRequestConfig = {
       method: 'post',
-      url: this.authInternalRequestPasswordResetEndpoint(),
+      url: this.authClientUndeleteEndpoint({
+        clientID,
+      }),
     }
-    cfg.data = {
-      email,
-    }
+
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  authInternalRequestPasswordResetEndpoint (): string {
-    return '/auth/internal/request-password-reset'
+  authClientUndeleteEndpoint (a: KV): string {
+    const {
+      clientID,
+    } = a || {}
+    return `/auth/clients/${clientID}/undelete`
   }
 
-  // Exchange password reset token for new token and user info
-  async authInternalExchangePasswordResetToken (a: KV): Promise<KV> {
+  // Regenerate client&#x27;s secret
+  async authClientRegenerateSecret (a: KV): Promise<KV> {
     const {
-      token,
+      clientID,
     } = (a as KV) || {}
-    if (!token) {
-      throw Error('field token is empty')
+    if (!clientID) {
+      throw Error('field clientID is empty')
     }
     const cfg: AxiosRequestConfig = {
       method: 'post',
-      url: this.authInternalExchangePasswordResetTokenEndpoint(),
+      url: this.authClientRegenerateSecretEndpoint({
+        clientID,
+      }),
     }
-    cfg.data = {
-      token,
-    }
+
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  authInternalExchangePasswordResetTokenEndpoint (): string {
-    return '/auth/internal/exchange-password-reset-token'
+  authClientRegenerateSecretEndpoint (a: KV): string {
+    const {
+      clientID,
+    } = a || {}
+    return `/auth/clients/${clientID}/secret`
   }
 
-  // Reset password with exchanged password reset token
-  async authInternalResetPassword (a: KV): Promise<KV> {
+  // Exposes client&#x27;s secret
+  async authClientExposeSecret (a: KV): Promise<KV> {
     const {
-      token,
-      password,
+      clientID,
     } = (a as KV) || {}
-    if (!token) {
-      throw Error('field token is empty')
-    }
-    if (!password) {
-      throw Error('field password is empty')
+    if (!clientID) {
+      throw Error('field clientID is empty')
     }
     const cfg: AxiosRequestConfig = {
-      method: 'post',
-      url: this.authInternalResetPasswordEndpoint(),
+      method: 'get',
+      url: this.authClientExposeSecretEndpoint({
+        clientID,
+      }),
     }
-    cfg.data = {
-      token,
-      password,
-    }
+
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  authInternalResetPasswordEndpoint (): string {
-    return '/auth/internal/reset-password'
-  }
-
-  // Confirm email with token
-  async authInternalConfirmEmail (a: KV): Promise<KV> {
+  authClientExposeSecretEndpoint (a: KV): string {
     const {
-      token,
-    } = (a as KV) || {}
-    if (!token) {
-      throw Error('field token is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'post',
-      url: this.authInternalConfirmEmailEndpoint(),
-    }
-    cfg.data = {
-      token,
-    }
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  authInternalConfirmEmailEndpoint (): string {
-    return '/auth/internal/confirm-email'
-  }
-
-  // Changes password for current user, requires current password
-  async authInternalChangePassword (a: KV): Promise<KV> {
-    const {
-      oldPassword,
-      newPassword,
-    } = (a as KV) || {}
-    if (!oldPassword) {
-      throw Error('field oldPassword is empty')
-    }
-    if (!newPassword) {
-      throw Error('field newPassword is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      method: 'post',
-      url: this.authInternalChangePasswordEndpoint(),
-    }
-    cfg.data = {
-      oldPassword,
-      newPassword,
-    }
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  authInternalChangePasswordEndpoint (): string {
-    return '/auth/internal/change-password'
+      clientID,
+    } = a || {}
+    return `/auth/clients/${clientID}/secret`
   }
 
   // List settings
