@@ -15,7 +15,7 @@ interface Headers {
 
 interface Ctor {
   baseURL?: string;
-  jwt?: string;
+  accessTokenFn: () => string | undefined
   headers?: Headers;
 }
 
@@ -34,31 +34,21 @@ function stdResolve (response: AxiosResponse<CortezaResponse>): KV|Promise<never
 
 export default class Federation {
   protected baseURL?: string
-  protected jwt?: string
+  protected accessTokenFn?: () => string | undefined
   protected headers: Headers = {}
 
-  constructor ({ baseURL, headers, jwt }: Ctor) {
+  constructor ({ baseURL, headers, accessTokenFn }: Ctor) {
     this.baseURL = baseURL
-
+    this.accessTokenFn = accessTokenFn
     this.headers = {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     }
 
     this.setHeaders(headers)
-
-    if (this.isValidJWT(jwt)) {
-      this.setJWT(jwt)
-    }
   }
 
-  setJWT (jwt?: string): Federation {
-    if (this.isValidJWT(jwt)) {
-      this.jwt = jwt
-      this.headers.Authorization = 'Bearer ' + jwt
-    } else {
-      throw new Error('JWT value too short')
-    }
-
+  setAccessTokenFn (fn: () => string | undefined): Federation {
+    this.accessTokenFn = fn
     return this
   }
 
@@ -70,15 +60,17 @@ export default class Federation {
     return this
   }
 
-  isValidJWT (jwt?: string): boolean {
-    return !!jwt && jwt.length > 100
-  }
-
   api (): AxiosInstance {
+    const headers = { ...this.headers }
+    const accessToken = this.accessTokenFn ? this.accessTokenFn() : undefined
+    if (accessToken) {
+      headers.Authorization = 'Bearer ' + accessToken
+    }
+
     return axios.create({
       withCredentials: true,
       baseURL: this.baseURL,
-      headers: this.headers,
+      headers,
     })
   }
 
