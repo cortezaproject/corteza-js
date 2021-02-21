@@ -42,7 +42,7 @@ interface CtxInitArgs {
  *
  * Context accepts pre-assembled *API props or it construct them fly from passed config
  *
- * Naming convertion for properties:
+ * Naming convention for properties:
  *  - Corteza classes, high-level helpers, API clients are upper cased
  *  - low-level helpers are lower cased
  *  - simple scalar are lower cased
@@ -108,7 +108,7 @@ export class Ctx {
 
       this.systemAPI = new apiClients.System({
         baseURL: this.config.cServers.system.apiBaseURL,
-        jwt: this.args.authToken,
+        accessTokenFn: this.args.accessTokenFn,
       })
     }
 
@@ -126,7 +126,7 @@ export class Ctx {
 
       this.composeAPI = new apiClients.Compose({
         baseURL: this.config.cServers.compose.apiBaseURL,
-        jwt: this.args.authToken,
+        accessTokenFn: this.args.accessTokenFn,
       })
     }
 
@@ -144,7 +144,7 @@ export class Ctx {
 
       this.messagingAPI = new apiClients.Messaging({
         baseURL: this.config.cServers.messaging.apiBaseURL,
-        jwt: this.args.authToken,
+        accessTokenFn: this.args.accessTokenFn,
       })
     }
 
