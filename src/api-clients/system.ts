@@ -1298,6 +1298,7 @@ export default class System {
     const {
       name,
       enabled,
+      weight,
       unify,
       config,
       labels,
@@ -1312,6 +1313,7 @@ export default class System {
     cfg.data = {
       name,
       enabled,
+      weight,
       unify,
       config,
       labels,
@@ -1329,6 +1331,7 @@ export default class System {
       applicationID,
       name,
       enabled,
+      weight,
       unify,
       config,
       labels,
@@ -1348,6 +1351,7 @@ export default class System {
     cfg.data = {
       name,
       enabled,
+      weight,
       unify,
       config,
       labels,
@@ -1466,6 +1470,28 @@ export default class System {
       applicationID,
     } = a || {}
     return `/application/${applicationID}/trigger`
+  }
+
+  // Reorder applications
+  async applicationReorder (a: KV): Promise<KV> {
+    const {
+      applicationIDs,
+    } = (a as KV) || {}
+    if (!applicationIDs) {
+      throw Error('field applicationIDs is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.applicationReorderEndpoint(),
+    }
+    cfg.data = {
+      applicationIDs,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  applicationReorderEndpoint (): string {
+    return '/application/reorder'
   }
 
   // Retrieve defined permissions
