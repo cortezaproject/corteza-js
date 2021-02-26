@@ -239,7 +239,7 @@ export const makeDataLabel = ({
 }
 
 // Makes a standarised alias from modifier or dimension report option
-export const makeAlias = ({ alias, aggregate, modifier, field }: Metric) => alias || `${aggregate || modifier || 'none'}_${field}`
+export const makeAlias = ({ alias, aggregate, modifier, field }: Metric) => alias || `${aggregate || modifier || 'none'}_${field}`.toLocaleLowerCase()
 
 const chartUtil = {
   dimensionFunctions,
