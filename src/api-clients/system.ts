@@ -1268,6 +1268,8 @@ export default class System {
       query,
       deleted,
       labels,
+      flags,
+      incFlags,
       limit,
       pageCursor,
       sort,
@@ -1281,6 +1283,8 @@ export default class System {
       query,
       deleted,
       labels,
+      flags,
+      incFlags,
       limit,
       pageCursor,
       sort,
@@ -1366,10 +1370,78 @@ export default class System {
     return `/application/${applicationID}`
   }
 
+  // Flag application
+  async applicationFlagCreate (a: KV): Promise<KV> {
+    const {
+      applicationID,
+      flag,
+      ownedBy,
+    } = (a as KV) || {}
+    console.log(applicationID)
+    console.log(flag)
+    console.log(ownedBy)
+    if (!applicationID) {
+      throw Error('field applicationID is empty')
+    }
+    if (!flag) {
+      throw Error('field flag is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.applicationFlagCreateEndpoint({
+        applicationID, flag, ownedBy,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  applicationFlagCreateEndpoint (a: KV): string {
+    const {
+      applicationID,
+      flag,
+      ownedBy,
+    } = a || {}
+    return `/application/${applicationID}/flag/${ownedBy}/${flag}`
+  }
+
+  // Unflag application
+  async applicationFlagDelete (a: KV): Promise<KV> {
+    const {
+      applicationID,
+      flag,
+      ownedBy,
+    } = (a as KV) || {}
+    if (!applicationID) {
+      throw Error('field applicationID is empty')
+    }
+    if (!flag) {
+      throw Error('field flag is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'delete',
+      url: this.applicationFlagDeleteEndpoint({
+        applicationID, flag, ownedBy,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  applicationFlagDeleteEndpoint (a: KV): string {
+    const {
+      applicationID,
+      flag,
+      ownedBy,
+    } = a || {}
+    return `/application/${applicationID}/flag/${ownedBy}/${flag}`
+  }
+
   // Read application details
   async applicationRead (a: KV): Promise<KV> {
     const {
       applicationID,
+      incFlags,
     } = (a as KV) || {}
     if (!applicationID) {
       throw Error('field applicationID is empty')
@@ -1379,6 +1451,9 @@ export default class System {
       url: this.applicationReadEndpoint({
         applicationID,
       }),
+    }
+    cfg.params = {
+      incFlags,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))
