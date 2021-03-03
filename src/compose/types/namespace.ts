@@ -12,6 +12,13 @@ interface MetaAdmin {
 interface Meta {
   subtitle: string;
   description: string;
+
+  // Temporary icon & logo URLs
+  // @todo rework this when we rework attachment management
+  icon: string;
+  iconID: string;
+  logo: string;
+  logoID: string;
 }
 
 interface PartialNamespace extends Partial<Omit<Namespace, 'meta' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {

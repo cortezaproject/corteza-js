@@ -1370,6 +1370,28 @@ export default class System {
     return `/application/${applicationID}`
   }
 
+  // Upload application assets
+  async applicationUpload (a: KV): Promise<KV> {
+    const {
+      upload,
+    } = (a as KV) || {}
+    if (!upload) {
+      throw Error('field upload is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.applicationUploadEndpoint(),
+    }
+    cfg.data = {
+      upload,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  applicationUploadEndpoint (): string {
+    return '/application/upload'
+  }
+
   // Flag application
   async applicationFlagCreate (a: KV): Promise<KV> {
     const {
@@ -1377,9 +1399,6 @@ export default class System {
       flag,
       ownedBy,
     } = (a as KV) || {}
-    console.log(applicationID)
-    console.log(flag)
-    console.log(ownedBy)
     if (!applicationID) {
       throw Error('field applicationID is empty')
     }
