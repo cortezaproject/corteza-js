@@ -622,6 +622,7 @@ export default class Federation {
     const {
       nodeID,
       moduleID,
+      composeModuleID,
     } = (a as KV) || {}
     if (!nodeID) {
       throw Error('field nodeID is empty')
@@ -635,6 +636,9 @@ export default class Federation {
         nodeID, moduleID,
       }),
     }
+    cfg.params = {
+      composeModuleID,
+    }
 
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -647,12 +651,13 @@ export default class Federation {
     return `/nodes/${nodeID}/modules/${moduleID}/mapped`
   }
 
-  // List of shared/exposed modules
+  // List of shared/exposed/mapped modules
   async manageStructureListAll (a: KV): Promise<KV> {
     const {
       nodeID,
       shared,
       exposed,
+      mapped,
     } = (a as KV) || {}
     if (!nodeID) {
       throw Error('field nodeID is empty')
@@ -666,6 +671,7 @@ export default class Federation {
     cfg.params = {
       shared,
       exposed,
+      mapped,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))
