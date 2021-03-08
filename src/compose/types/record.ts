@@ -115,7 +115,11 @@ export class Record {
    * @param p
    */
   apply (p?: unknown): void {
-    if (p === undefined) return
+    if (p === undefined) {
+      // This is a brand new record; set default values
+      this.defaultValues()
+      return
+    }
 
     let r
 
@@ -152,6 +156,11 @@ export class Record {
     Apply(this, r, CortezaID, 'recordID', 'moduleID', 'namespaceID')
     Apply(this, r, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt')
     Apply(this, r, CortezaID, 'ownedBy', 'createdBy', 'updatedBy', 'deletedBy')
+
+    // This is a brand new record; set default values
+    if (!r.recordID || r.recordID === NoID) {
+      this.defaultValues()
+    }
 
     if (r.values !== undefined) {
       this.updateValues(r.values)
@@ -261,6 +270,7 @@ export class Record {
    */
   public setValues (...i: ValueCombo[]): void {
     this.initValues()
+    this.defaultValues()
     this.updateValues(...i)
   }
 
@@ -274,21 +284,23 @@ export class Record {
     // @ts-ignore
     dst.toJSON = (): RawValue[] => this.serializeValues()
 
+    this.values = dst
+  }
+
+  protected defaultValues (): void {
     this[fieldIndex].forEach(({ isMulti, defaultValue }, name) => {
       if (defaultValue && Array.isArray(defaultValue) && defaultValue.length > 0) {
         if (isMulti) {
-          dst[name] = defaultValue.map(({ value }) => value)
+          this.values[name] = defaultValue.map(({ value }) => value)
         } else {
-          dst[name] = defaultValue[0].value
+          this.values[name] = defaultValue[0].value
         }
       } else if (isMulti) {
-        dst[name] = []
+        this.values[name] = []
       } else {
-        dst[name] = undefined
+        this.values[name] = undefined
       }
     })
-
-    this.values = dst
   }
 
   /**
