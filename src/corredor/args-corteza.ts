@@ -2,7 +2,6 @@
 
 import { User, Role, Application, SinkResponse, SinkRequest } from '../system'
 import { Module, Page, Namespace, Record } from '../compose'
-import { Channel, Message } from '../messaging'
 import { Caster, GenericCaster, GenericCasterFreezer } from './shared'
 
 interface RecordCasterCaller {
@@ -61,10 +60,6 @@ CortezaTypes.set('user', GenericCaster(User))
 CortezaTypes.set('oldUser', GenericCasterFreezer(User))
 CortezaTypes.set('role', GenericCaster(Role))
 CortezaTypes.set('oldRole', GenericCasterFreezer(Role))
-CortezaTypes.set('channel', GenericCaster(Channel))
-CortezaTypes.set('oldChannel', GenericCasterFreezer(Channel))
-CortezaTypes.set('message', GenericCaster(Message))
-CortezaTypes.set('oldMessage', GenericCasterFreezer(Message))
 CortezaTypes.set('record', recordCaster)
 CortezaTypes.set('oldRecord', recordCasterFreezer)
 CortezaTypes.set('request', GenericCasterFreezer(SinkRequest))

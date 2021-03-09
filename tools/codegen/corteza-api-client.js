@@ -30,11 +30,6 @@ const namespaces = [
     className: 'Compose',
   },
   {
-    path: `${path}/messaging/rest.yaml`,
-    namespace: 'messaging',
-    className: 'Messaging',
-  },
-  {
     path: `${path}/federation/rest.yaml`,
     namespace: 'federation',
     className: 'Federation',

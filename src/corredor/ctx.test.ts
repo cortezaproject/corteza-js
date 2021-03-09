@@ -17,17 +17,15 @@ describe(__filename, () => {
           authToken: '',
         },
         pino(),
-        { config: { cServers: { system: cscfg, compose: cscfg, messaging: cscfg } } },
+        { config: { cServers: { system: cscfg, compose: cscfg } } },
       )
 
       expect(ctx.console).to.not.be.undefined
       // expect(ctx.$authUser).to.not.be.undefined
       expect(ctx.SystemAPI).to.not.be.undefined
       expect(ctx.ComposeAPI).to.not.be.undefined
-      expect(ctx.MessagingAPI).to.not.be.undefined
       expect(ctx.System).to.not.be.undefined
       expect(ctx.Compose).to.not.be.undefined
-      expect(ctx.Messaging).to.not.be.undefined
     })
   })
 })

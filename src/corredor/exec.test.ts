@@ -25,7 +25,7 @@ describe('execution', () => {
   const execIt = (name: string, check: CheckerFn, exec: ScriptExecFn): void => {
     it(name, async () => {
       const scriptLogger = pino()
-      const config: Config = { cServers: { compose: {}, messaging: {}, system: {} } }
+      const config: Config = { cServers: { compose: {}, system: {} } }
       const args: BaseArgs = {
         authToken: '',
         $invoker: new User(),

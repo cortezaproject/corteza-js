@@ -1,5 +1,5 @@
 import * as apiClients from '../api-clients'
-import { SystemHelper, ComposeHelper, MessagingHelper } from './helpers'
+import { SystemHelper, ComposeHelper } from './helpers'
 import { BaseLogger } from 'pino'
 import { BaseArgs } from './shared'
 import { User } from '../system'
@@ -7,7 +7,6 @@ import { User } from '../system'
 export interface ConfigCServers {
   system?: ConfigServer;
   compose?: ConfigServer;
-  messaging?: ConfigServer;
 }
 
 export interface ConfigServer {
@@ -32,9 +31,6 @@ interface CtxInitArgs {
 
   composeAPI?:
     apiClients.Compose;
-
-  messagingAPI?:
-    apiClients.Messaging;
 }
 
 /**
@@ -59,9 +55,6 @@ export class Ctx {
 
   protected composeAPI?:
     apiClients.Compose;
-
-  protected messagingAPI?:
-    apiClients.Messaging;
 
   constructor (args: BaseArgs, logger: BaseLogger, a?: CtxInitArgs) {
     this.args = args
@@ -134,24 +127,6 @@ export class Ctx {
   }
 
   /**
-   * Configures and returns messaging API client
-   */
-  get MessagingAPI (): apiClients.Messaging {
-    if (!this.messagingAPI) {
-      if (!this.config?.cServers?.messaging) {
-        throw new Error('configuration for corteza messaging server missing')
-      }
-
-      this.messagingAPI = new apiClients.Messaging({
-        baseURL: this.config.cServers.messaging.apiBaseURL,
-        accessTokenFn: this.args.accessTokenFn,
-      })
-    }
-
-    return this.messagingAPI
-  }
-
-  /**
    * Configures and returns system helper
    */
   get System (): SystemHelper {
@@ -163,13 +138,6 @@ export class Ctx {
    */
   get Compose (): ComposeHelper {
     return new ComposeHelper({ ComposeAPI: this.ComposeAPI, ...this.args })
-  }
-
-  /**
-   * Configures and returns messaging helper
-   */
-  get Messaging (): MessagingHelper {
-    return new MessagingHelper({ MessagingAPI: this.MessagingAPI, ...this.args })
   }
 
   /**
