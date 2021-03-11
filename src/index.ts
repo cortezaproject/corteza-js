@@ -12,12 +12,12 @@ import * as shared from './shared'
 import * as apiClients from './api-clients'
 
 export {
-  automation,
   eventbus,
   corredor,
   validator,
   compose,
   system,
+  automation,
   shared,
   apiClients,
   NoID,

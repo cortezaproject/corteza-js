@@ -555,7 +555,7 @@ export default class Automation {
       sessionID,
       workflowID,
       completed,
-      suspended,
+      status,
       eventType,
       resourceType,
       limit,
@@ -570,7 +570,7 @@ export default class Automation {
       sessionID,
       workflowID,
       completed,
-      suspended,
+      status,
       eventType,
       resourceType,
       limit,
@@ -660,8 +660,23 @@ export default class Automation {
     return `/sessions/${sessionID}`
   }
 
+  // Returns pending prompts from all sessions
+  async sessionListPrompts (): Promise<KV> {
+
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.sessionListPromptsEndpoint(),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  sessionListPromptsEndpoint (): string {
+    return '/sessions/prompts'
+  }
+
   // Resume session
-  async sessionResume (a: KV): Promise<KV> {
+  async sessionResumeState (a: KV): Promise<KV> {
     const {
       sessionID,
       stateID,
@@ -675,22 +690,52 @@ export default class Automation {
     }
     const cfg: AxiosRequestConfig = {
       method: 'post',
-      url: this.sessionResumeEndpoint({
-        sessionID,
+      url: this.sessionResumeStateEndpoint({
+        sessionID, stateID,
       }),
     }
     cfg.data = {
-      stateID,
       input,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  sessionResumeEndpoint (a: KV): string {
+  sessionResumeStateEndpoint (a: KV): string {
     const {
       sessionID,
+      stateID,
     } = a || {}
-    return `/sessions/${sessionID}/resume`
+    return `/sessions/${sessionID}/state/${stateID}`
+  }
+
+  // Cancel session&#x27;s state
+  async sessionDeleteState (a: KV): Promise<KV> {
+    const {
+      sessionID,
+      stateID,
+    } = (a as KV) || {}
+    if (!sessionID) {
+      throw Error('field sessionID is empty')
+    }
+    if (!stateID) {
+      throw Error('field stateID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'delete',
+      url: this.sessionDeleteStateEndpoint({
+        sessionID, stateID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  sessionDeleteStateEndpoint (a: KV): string {
+    const {
+      sessionID,
+      stateID,
+    } = a || {}
+    return `/sessions/${sessionID}/state/${stateID}`
   }
 
   // Available workflow functions
