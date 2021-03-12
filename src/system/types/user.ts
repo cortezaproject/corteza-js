@@ -8,13 +8,35 @@ interface PartialUser extends Partial<Omit<User, 'createdAt' | 'updatedAt' | 'de
   suspendedAt?: string|number|Date;
 }
 
+interface UserMeta {
+  securityPolicy: SecurityPolicy
+}
+
+interface SecurityPolicy {
+  mfa: MFA
+}
+
+interface MFA {
+  enforcedEmailOTP: boolean;
+  enforcedTOTP: boolean;
+}
+
 export class User {
   public userID = NoID
   public handle = ''
   public username = ''
   public email = ''
   public name = ''
+  public emailConfirmed = false
   public labels: object = {}
+  public meta: UserMeta = {
+    securityPolicy: {
+      mfa: {
+        enforcedEmailOTP: false,
+        enforcedTOTP: false,
+      }
+    }
+  }
   public createdAt?: Date = undefined
   public updatedAt?: Date = undefined
   public deletedAt?: Date = undefined
@@ -29,12 +51,17 @@ export class User {
     Apply(this, u, CortezaID, 'userID')
     Apply(this, u, String, 'handle', 'username', 'email', 'name')
     Apply(this, u, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt', 'suspendedAt')
+    Apply(this, u, Boolean, 'emailConfirmed')
 
     if (u?.roles) {
       this.roles = []
       if (AreStrings(u.roles)) {
         this.roles = u.roles
       }
+    }
+
+    if (IsOf(u, 'meta')) {
+      this.meta = { ...u.meta }
     }
 
     if (IsOf(u, 'labels')) {

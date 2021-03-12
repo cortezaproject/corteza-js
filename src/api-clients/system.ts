@@ -454,21 +454,6 @@ export default class System {
     return '/settings/current'
   }
 
-  // Returns current subscription status
-  async subscriptionCurrent (): Promise<KV> {
-
-    const cfg: AxiosRequestConfig = {
-      method: 'get',
-      url: this.subscriptionCurrentEndpoint(),
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  subscriptionCurrentEndpoint (): string {
-    return '/subscription/'
-  }
-
   // List roles
   async roleList (a: KV): Promise<KV> {
     const {
@@ -983,6 +968,31 @@ export default class System {
   }
 
   userUpdateEndpoint (a: KV): string {
+    const {
+      userID,
+    } = a || {}
+    return `/users/${userID}`
+  }
+
+  // Patch user (experimental)
+  async userPartialUpdate (a: KV): Promise<KV> {
+    const {
+      userID,
+    } = (a as KV) || {}
+    if (!userID) {
+      throw Error('field userID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'patch',
+      url: this.userPartialUpdateEndpoint({
+        userID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  userPartialUpdateEndpoint (a: KV): string {
     const {
       userID,
     } = a || {}
