@@ -677,7 +677,7 @@ export default class Federation {
   }
 
   // List all exposed modules changes
-  async syncStructureReadExposedAll (a: KV): Promise<KV> {
+  async syncStructureReadExposedInternal (a: KV): Promise<KV> {
     const {
       nodeID,
       lastSync,
@@ -691,7 +691,7 @@ export default class Federation {
     }
     const cfg: AxiosRequestConfig = {
       method: 'get',
-      url: this.syncStructureReadExposedAllEndpoint({
+      url: this.syncStructureReadExposedInternalEndpoint({
         nodeID,
       }),
     }
@@ -706,11 +706,48 @@ export default class Federation {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  syncStructureReadExposedAllEndpoint (a: KV): string {
+  syncStructureReadExposedInternalEndpoint (a: KV): string {
     const {
       nodeID,
     } = a || {}
     return `/nodes/${nodeID}/modules/exposed/`
+  }
+
+  // List all exposed modules changes in activity streams format
+  async syncStructureReadExposedSocial (a: KV): Promise<KV> {
+    const {
+      nodeID,
+      lastSync,
+      query,
+      limit,
+      pageCursor,
+      sort,
+    } = (a as KV) || {}
+    if (!nodeID) {
+      throw Error('field nodeID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.syncStructureReadExposedSocialEndpoint({
+        nodeID,
+      }),
+    }
+    cfg.params = {
+      lastSync,
+      query,
+      limit,
+      pageCursor,
+      sort,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  syncStructureReadExposedSocialEndpoint (a: KV): string {
+    const {
+      nodeID,
+    } = a || {}
+    return `/nodes/${nodeID}/modules/exposed/activity-stream`
   }
 
   // List all record changes
@@ -751,7 +788,7 @@ export default class Federation {
   }
 
   // List all records per module
-  async syncDataReadExposed (a: KV): Promise<KV> {
+  async syncDataReadExposedInternal (a: KV): Promise<KV> {
     const {
       nodeID,
       moduleID,
@@ -769,7 +806,7 @@ export default class Federation {
     }
     const cfg: AxiosRequestConfig = {
       method: 'get',
-      url: this.syncDataReadExposedEndpoint({
+      url: this.syncDataReadExposedInternalEndpoint({
         nodeID, moduleID,
       }),
     }
@@ -784,12 +821,54 @@ export default class Federation {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  syncDataReadExposedEndpoint (a: KV): string {
+  syncDataReadExposedInternalEndpoint (a: KV): string {
     const {
       nodeID,
       moduleID,
     } = a || {}
     return `/nodes/${nodeID}/modules/${moduleID}/records/`
+  }
+
+  // List all records per module in activitystreams format
+  async syncDataReadExposedSocial (a: KV): Promise<KV> {
+    const {
+      nodeID,
+      moduleID,
+      lastSync,
+      query,
+      limit,
+      pageCursor,
+      sort,
+    } = (a as KV) || {}
+    if (!nodeID) {
+      throw Error('field nodeID is empty')
+    }
+    if (!moduleID) {
+      throw Error('field moduleID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.syncDataReadExposedSocialEndpoint({
+        nodeID, moduleID,
+      }),
+    }
+    cfg.params = {
+      lastSync,
+      query,
+      limit,
+      pageCursor,
+      sort,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  syncDataReadExposedSocialEndpoint (a: KV): string {
+    const {
+      nodeID,
+      moduleID,
+    } = a || {}
+    return `/nodes/${nodeID}/modules/${moduleID}/records/activity-stream/`
   }
 
   // Retrieve defined permissions
