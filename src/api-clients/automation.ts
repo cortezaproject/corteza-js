@@ -321,6 +321,45 @@ export default class Automation {
     return `/workflows/${workflowID}/test`
   }
 
+  // Executes workflow on a specific step (must be orphan step and connected to &#x27;onManual&#x27; trigger)
+  async workflowExec (a: KV): Promise<KV> {
+    const {
+      workflowID,
+      stepID,
+      input,
+      trace,
+      wait,
+      async,
+    } = (a as KV) || {}
+    if (!workflowID) {
+      throw Error('field workflowID is empty')
+    }
+    if (!stepID) {
+      throw Error('field stepID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.workflowExecEndpoint({
+        workflowID,
+      }),
+    }
+    cfg.data = {
+      stepID,
+      input,
+      trace,
+      wait,
+      async,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  workflowExecEndpoint (a: KV): string {
+    const {
+      workflowID,
+    } = a || {}
+    return `/workflows/${workflowID}/exec`
+  }
+
   // List triggers
   async triggerList (a: KV): Promise<KV> {
     const {
