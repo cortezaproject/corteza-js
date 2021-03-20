@@ -18,12 +18,12 @@ export enum ChartRenderer {
 }
 
 export interface TemporalDataPoint {
-  t: Date,
-  y: number,
+  t: Date;
+  y: number;
 }
 
 export interface KV {
-  [_: string]: any
+  [_: string]: any;
 }
 
 export interface Dimension {
@@ -128,7 +128,6 @@ export class DimensionFunctions<T> extends Array<T> {
   }
 }
 
-
 export const dimensionFunctions: DimensionFunctions<DimensionFunction> = DimensionFunctions.create<DimensionFunction>()
 dimensionFunctions.push(...[
   {
@@ -174,7 +173,6 @@ dimensionFunctions.push(...[
   },
 ])
 
-
 export const predefinedFilters = [
   {
     value: 'YEAR(created_at) = YEAR(NOW())',
@@ -206,7 +204,6 @@ export const predefinedFilters = [
 
 dimensionFunctions.lookup = (d) => dimensionFunctions.find(f => d.modifier === f.value)
 dimensionFunctions.convert = (d) => (dimensionFunctions.lookup(d) || {}).convert(d.field)
-
 
 export const isRadialChart = ({ type }: KV) => type === 'doughnut' || type === 'pie'
 export const hasRelativeDisplay = ({ type }: KV) => isRadialChart({ type })

@@ -153,7 +153,7 @@ export default class FunnelChart extends BaseChart {
 
     // Above provided data sets might not have their labels/values ordered
     // correctly
-    let valMap: any = {}
+    const valMap: any = {}
     // Map values to their labels
     for (let ri = 0; ri < rr.length; ri++) {
       const r = rr[ri]
@@ -176,7 +176,7 @@ export default class FunnelChart extends BaseChart {
     data = data.reverse()
 
     // Determine color to render for specific value
-    let colorMap: { [_: string]: string } = {}
+    const colorMap: { [_: string]: string } = {}
     this.config.reports?.forEach(r => {
       for (const { value, color } of r.dimensions?.[0].meta?.fields) {
         colorMap[value] = color

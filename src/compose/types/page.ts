@@ -110,7 +110,7 @@ export class Page {
     const ee: Array<string> = []
 
     if (this.blocks.length === 0) {
-        ee.push('blocks missing')
+      ee.push('blocks missing')
     } else {
       this.blocks.forEach(b => {
         ee.push(...b.validate())

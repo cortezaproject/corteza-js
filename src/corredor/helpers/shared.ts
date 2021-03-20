@@ -27,9 +27,9 @@ export interface PermissionRule {
 
 export interface Permissions {
   [key: string]: {
-    resource: string,
-    operation: string,
-    access: string,
+    resource: string;
+    operation: string;
+    access: string;
   }[];
 }
 

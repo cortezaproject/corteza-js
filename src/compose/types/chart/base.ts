@@ -17,7 +17,7 @@ import {
   Apply,
 } from '../../../cast'
 
-export interface PartialChart extends Partial<BaseChart>{}
+export type PartialChart = Partial<BaseChart>
 
 /**
  * BaseChart represents a structure that stores any configuration data.
@@ -224,9 +224,11 @@ export class BaseChart {
   makeOptions (data?: any) {
     throw new Error('method.makeOptions.notImplemented')
   }
+
   plugins (mm: Array<Metric>) {
     throw new Error('method.plugins.notImplemented')
   }
+
   baseChartType (datasets: Array<any>) {
     throw new Error('method.baseChartType.notImplemented')
   }
@@ -234,7 +236,7 @@ export class BaseChart {
   /**
    * Performs chart export; used by exporter feature.
    */
-  async export (findModuleByID: ({ namespaceID, moduleID }: { namespaceID: string, moduleID: string }) => Promise<any>) {
+  async export (findModuleByID: ({ namespaceID, moduleID }: { namespaceID: string; moduleID: string }) => Promise<any>) {
     const { namespaceID } = this
     const copy = new BaseChart(this)
     if (copy.config?.reports) {
@@ -257,7 +259,7 @@ export class BaseChart {
   /**
    * Performs import; used by importer feature
    */
-  import (getModuleID: ( moduleID: string ) => string) {
+  import (getModuleID: (moduleID: string) => string) {
     const copy = new BaseChart(this)
     copy.config?.reports?.map(r => {
       const { moduleID } = r
@@ -272,6 +274,7 @@ export class BaseChart {
   defDimension (): Dimension {
     return Object.assign({}, { conditions: {}, meta: {} })
   }
+
   defMetrics (): Metric {
     return Object.assign({}, {})
   }

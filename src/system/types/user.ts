@@ -9,11 +9,11 @@ interface PartialUser extends Partial<Omit<User, 'createdAt' | 'updatedAt' | 'de
 }
 
 interface UserMeta {
-  securityPolicy: SecurityPolicy
+  securityPolicy: SecurityPolicy;
 }
 
 interface SecurityPolicy {
-  mfa: MFA
+  mfa: MFA;
 }
 
 interface MFA {
@@ -34,9 +34,10 @@ export class User {
       mfa: {
         enforcedEmailOTP: false,
         enforcedTOTP: false,
-      }
-    }
+      },
+    },
   }
+
   public createdAt?: Date = undefined
   public updatedAt?: Date = undefined
   public deletedAt?: Date = undefined

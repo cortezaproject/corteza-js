@@ -27,8 +27,8 @@ export function makeTipper (Tooltip: any, options: PluginOptions = {}) {
           }
           opts.callbacks = {
             ...opts.callbacks,
-            labelTextColor: function() {
-                return '#000000'
+            labelTextColor: function () {
+              return '#000000'
             },
             // We should only show the value when doing this
             beforeTitle: () => '',

@@ -27,46 +27,46 @@ interface ComposeContext {
 }
 
 interface PageListFilter {
-  [key: string]: string|number|{[key:string]:string}|undefined;
+  [key: string]: string|number|{[key: string]: string}|undefined;
   namespaceID?: string;
   selfID?: string;
   query?: string;
   handle?: string;
-  labels?: {[key:string]:string};
+  labels?: {[key: string]: string};
   limit?: number;
   pageCursor?: string;
   sort?: string;
 }
 
 interface RecordListFilter {
-  [key: string]: string|number|{[key:string]:string}|undefined;
+  [key: string]: string|number|{[key: string]: string}|undefined;
   namespaceID?: string;
   moduleID?: string;
   query?: string;
   filter?: string;
-  labels?: {[key:string]:string};
+  labels?: {[key: string]: string};
   limit?: number;
   pageCursor?: string;
   sort?: string;
 }
 
 interface ModuleListFilter {
-  [key: string]: string|number|{[key:string]:string}|undefined;
+  [key: string]: string|number|{[key: string]: string}|undefined;
   namespaceID?: string;
   query?: string;
   name?: string;
   handle?: string;
-  labels?: {[key:string]:string};
+  labels?: {[key: string]: string};
   limit?: number;
   pageCursor?: string;
   sort?: string;
 }
 
 interface NamespaceListFilter {
-  [key: string]: string|number|{[key:string]:string}|undefined;
+  [key: string]: string|number|{[key: string]: string}|undefined;
   query?: string;
   slug?: string;
-  labels?: {[key:string]:string};
+  labels?: {[key: string]: string};
   limit?: number;
   pageCursor?: string;
   sort?: string;
@@ -1086,7 +1086,7 @@ export default class ComposeHelper {
 
   /**
    * Allows access for the given role for the given Compose resource
-   * 
+   *
    * @example
    * // Allows users with `someRole` to access the newly created namespace
    * await Compose.allow({
@@ -1095,7 +1095,7 @@ export default class ComposeHelper {
    *    operation: 'read',
    * })
    */
-  async allow (...pr: { role: PermissionRole, resource: PermissionResource, operation: string }[]) {
+  async allow (...pr: { role: PermissionRole; resource: PermissionResource; operation: string }[]) {
     const rr = pr.map(p => ({
       role: p.role,
       resource: p.resource,
@@ -1107,7 +1107,7 @@ export default class ComposeHelper {
 
   /**
    * Denies access for the given role for the given Compose resource
-   * 
+   *
    * @example
    * // Denies users with `someRole` from accessing the newly created namespace
    * await Compose.deny({
@@ -1116,7 +1116,7 @@ export default class ComposeHelper {
    *    operation: 'read',
    * })
    */
-  async deny (...pr: { role: PermissionRole, resource: PermissionResource, operation: string }[]) {
+  async deny (...pr: { role: PermissionRole; resource: PermissionResource; operation: string }[]) {
     const rr = pr.map(p => ({
       role: p.role,
       resource: p.resource,
@@ -1128,7 +1128,7 @@ export default class ComposeHelper {
 
   /**
    * Inherits access for the given role for the given Compose resource
-   * 
+   *
    * @example
    * // Uses inherited permissions for the `sameRole` for the newly created namespace
    * await Compose.inherit({
@@ -1137,7 +1137,7 @@ export default class ComposeHelper {
    *    operation: 'read',
    * })
    */
-  async inherit (...pr: { role: PermissionRole, resource: PermissionResource, operation: string }[]) {
+  async inherit (...pr: { role: PermissionRole; resource: PermissionResource; operation: string }[]) {
     const rr = pr.map(p => ({
       role: p.role,
       resource: p.resource,

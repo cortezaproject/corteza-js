@@ -63,7 +63,6 @@ export class Args {
 export class ArgsProxy {
   constructor (args: {[_: string]: unknown}, caster: Caster = CortezaTypes) {
     for (const arg in args) {
-
       // For consistency only prefix args with & and raw that have a defined caster
       if (caster && caster.has(arg)) {
         Object.defineProperty(this, `$${arg}`, {

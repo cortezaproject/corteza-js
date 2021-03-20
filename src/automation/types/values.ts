@@ -1,26 +1,26 @@
 export interface Typed {
-  '@type': string
-  '@value': any
+  '@type': string;
+  '@value': any;
 }
 
 export type Vars = { [_: string]: Typed }
 
-export function IsTyped(a: unknown): a is Typed {
+export function IsTyped (a: unknown): a is Typed {
   return typeof a &&
     a === 'object' &&
     Object.prototype.hasOwnProperty.call(a, '@type') &&
-    Object.prototype.hasOwnProperty.call(a, '@value');
+    Object.prototype.hasOwnProperty.call(a, '@value')
 }
 
-function unwrap(v: unknown): any {
+function unwrap (v: unknown): any {
   return IsTyped(v) ? v['@value'] : v
 }
 
-function cast(v: unknown): Typed {
+function cast (v: unknown): Typed {
   return { '@value': unwrap(v), '@type': guessType(v) }
 }
 
-function guessType(v: unknown): string {
+function guessType (v: unknown): string {
   switch (typeof v) {
     case 'boolean':
       return 'Boolean'
@@ -38,7 +38,7 @@ function guessType(v: unknown): string {
  * @param any
  * @constructor
  */
-export function Encode(input: {[_: string]: any}): Vars {
+export function Encode (input: {[_: string]: any}): Vars {
   const output: Vars = {}
 
   for (const key in input) {

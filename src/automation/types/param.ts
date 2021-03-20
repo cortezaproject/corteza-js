@@ -1,16 +1,16 @@
 import { Apply } from '../../cast'
 
 export interface ParamMeta {
-  label: string
-  description: string
-  visual: { [_: string]: any }
+  label: string;
+  description: string;
+  visual: { [_: string]: any };
 }
 
 export class Param {
   public name = ''
-  public types: Array<String> = []
-  public required: boolean = false
-  public isArray: boolean = false
+  public types: Array<string> = []
+  public required = false
+  public isArray = false
   public meta: Partial<ParamMeta> = {}
 
   constructor (u?: Partial<Param>) {

@@ -77,7 +77,7 @@ export class PageBlockMetric extends PageBlock {
    */
   async fetch ({ m }: { m: Metric }, reporter: Reporter): Promise<object> {
     const w = await reporter(this.formatParams(m))
-    let datasets = w.map((r: any) => r.rp || r.count)
+    const datasets = w.map((r: any) => r.rp || r.count)
 
     let rtr: number
     if (m.operation === Operation.MAX) {
@@ -107,12 +107,11 @@ export class PageBlockMetric extends PageBlock {
       metrics.push(`${operation}(${metricField}) AS rp`)
     }
 
-
     return {
       moduleID,
       filter,
       metrics: metrics.join(','),
-      dimensions: dimensionFunctions.convert({ modifier: 'YEAR', field: 'created_at' })
+      dimensions: dimensionFunctions.convert({ modifier: 'YEAR', field: 'created_at' }),
     }
   }
 }

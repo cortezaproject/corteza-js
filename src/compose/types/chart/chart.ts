@@ -62,7 +62,7 @@ export default class Chart extends BaseChart {
         const b = data[i - 1] as TemporalDataPoint|undefined
 
         const n = a.y
-        let m: number|undefined = undefined
+        let m: number|undefined
         if (i > 0) {
           m = b?.y
         }
@@ -73,7 +73,7 @@ export default class Chart extends BaseChart {
       // Categorical
       for (let i = 0; i < data.length; i++) {
         const n = data[i] as number
-        let m: number|undefined = undefined
+        let m: number|undefined
         if (i > 0) {
           m = data[i - 1] as number
         }
@@ -230,7 +230,7 @@ export default class Chart extends BaseChart {
     const mm: Array<Metric> = []
 
     for (const r of (this.config.reports || []) as Array<Report>) {
-        mm.push(...(r.metrics || []) as Array<Metric>)
+      mm.push(...(r.metrics || []) as Array<Metric>)
     }
 
     const rr: Array<any> = []

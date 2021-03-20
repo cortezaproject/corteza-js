@@ -1,10 +1,10 @@
 import { Apply } from '../../cast'
-import { Param } from "./param";
+import { Param } from './param'
 
 export interface FunctionMeta {
-  short: string
-  description: string
-  visual: { [_: string]: any }
+  short: string;
+  description: string;
+  visual: { [_: string]: any };
 }
 
 interface FunctionCtr extends Partial<Omit<Function, 'parameters' | 'results'>> {

@@ -11,7 +11,7 @@ interface SystemContext {
 }
 
 interface UserListFilter {
-  [key: string]: string|boolean|number|{[key:string]:string}|undefined;
+  [key: string]: string|boolean|number|{[key: string]: string}|undefined;
   userID?: string;
   roleID?: string;
   query?: string;
@@ -22,21 +22,21 @@ interface UserListFilter {
   incDeleted?: boolean;
   incSuspended?: boolean;
   deleted?: boolean;
-  suspended?: boolean
-  labels?: {[key:string]:string};
+  suspended?: boolean;
+  labels?: {[key: string]: string};
   limit?: number;
-  pageCursor?: string
+  pageCursor?: string;
   sort?: string;
 }
 
 interface RoleListFilter {
-  [key: string]: string|boolean|number|{[key:string]:string}|undefined;
+  [key: string]: string|boolean|number|{[key: string]: string}|undefined;
   query?: string;
   deleted?: boolean;
   archived?: boolean;
-  labels?: {[key:string]:string};
+  labels?: {[key: string]: string};
   limit?: number;
-  pageCursor?: string
+  pageCursor?: string;
   sort?: string;
 }
 
@@ -444,7 +444,7 @@ export default class SystemHelper {
 
   /**
    * Allows access for the given role for the given System resource
-   * 
+   *
    * @example
    * // Allows users with `someRole` to access the newly created user
    * await Compose.allow({
@@ -453,7 +453,7 @@ export default class SystemHelper {
    *    operation: 'read',
    * })
    */
-  async allow (...pr: { role: PermissionRole, resource: PermissionResource, operation: string }[]) {
+  async allow (...pr: { role: PermissionRole; resource: PermissionResource; operation: string }[]) {
     const rr = pr.map(p => ({
       role: p.role,
       resource: p.resource,
@@ -465,7 +465,7 @@ export default class SystemHelper {
 
   /**
    * Denies access for the given role for the given System resource
-   * 
+   *
    * @example
    * // Denies users with `someRole` from accessing the newly created user
    * await Compose.deny({
@@ -474,7 +474,7 @@ export default class SystemHelper {
    *    operation: 'read',
    * })
    */
-  async deny (...pr: { role: PermissionRole, resource: PermissionResource, operation: string }[]) {
+  async deny (...pr: { role: PermissionRole; resource: PermissionResource; operation: string }[]) {
     const rr = pr.map(p => ({
       role: p.role,
       resource: p.resource,
@@ -486,7 +486,7 @@ export default class SystemHelper {
 
   /**
    * Inherits access for the given role for the given System resource
-   * 
+   *
    * @example
    * // Uses inherited permissions for the `sameRole` for the newly created user
    * await Compose.inherit({
@@ -495,7 +495,7 @@ export default class SystemHelper {
    *    operation: 'read',
    * })
    */
-  async inherit (...pr: { role: PermissionRole, resource: PermissionResource, operation: string }[]) {
+  async inherit (...pr: { role: PermissionRole; resource: PermissionResource; operation: string }[]) {
     const rr = pr.map(p => ({
       role: p.role,
       resource: p.resource,

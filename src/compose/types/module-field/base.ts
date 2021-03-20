@@ -18,10 +18,10 @@ export interface Expressions {
   sanitizers?: Array<string>;
 
   validators?: Array<Validator>;
-  disableDefaultValidators?: boolean
+  disableDefaultValidators?: boolean;
 
   formatters?: Array<string>;
-  disableDefaultFormatters?: boolean
+  disableDefaultFormatters?: boolean;
 }
 
 interface Validator {

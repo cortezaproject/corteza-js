@@ -65,7 +65,7 @@ export default class GaugeChart extends BaseChart {
       tooltips: {
         enabled: true,
         labelCallback: m.fixTooltips ? this.makeLabel : this.makeTooltip,
-      }
+      },
     }
   }
 
@@ -152,7 +152,7 @@ export default class GaugeChart extends BaseChart {
     const mm: Array<Metric> = []
 
     for (const r of (this.config.reports || []) as Array<Report>) {
-        mm.push(...(r.metrics || []) as Array<Metric>)
+      mm.push(...(r.metrics || []) as Array<Metric>)
     }
 
     const rr: Array<any> = []
