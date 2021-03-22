@@ -279,6 +279,15 @@ export class Record {
    */
   protected initValues (): void {
     const dst: Values = {}
+
+    this[fieldIndex].forEach(({ isMulti }, name) => {
+      if (isMulti) {
+        dst[name] = []
+      } else {
+        dst[name] = undefined
+      }
+    })
+
     // TypeScript complains about incompatibility between
     // indexed object and toJSON function
     // @ts-ignore
@@ -295,10 +304,6 @@ export class Record {
         } else {
           this.values[name] = defaultValue[0].value
         }
-      } else if (isMulti) {
-        this.values[name] = []
-      } else {
-        this.values[name] = undefined
       }
     })
   }
