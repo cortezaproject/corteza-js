@@ -41,11 +41,19 @@ export class PageBlockAutomation extends PageBlock {
   validate (): Array<string> {
     const ee = super.validate()
 
-    if (this.options.buttons.filter(({ script }) => script === undefined).length > 0) {
-      // We'll use term "action" here, because it most likely the way
-      // this automation blocks + buttons will evolve to.
-      ee.push('One or more buttons without defined action')
-    }
+    this.options.buttons.forEach(b => {
+      if (b.workflowID) {
+        // workflow defined
+        return
+      }
+
+      if (b.script) {
+        // script defined
+        return
+      }
+
+      ee.push('Automation button without configured script or workflow')
+    })
 
     return ee
   }
