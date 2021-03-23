@@ -289,6 +289,7 @@ export default class Compose {
     const {
       namespaceID,
       selfID,
+      moduleID,
       query,
       handle,
       labels,
@@ -307,6 +308,7 @@ export default class Compose {
     }
     cfg.params = {
       selfID,
+      moduleID,
       query,
       handle,
       labels,
