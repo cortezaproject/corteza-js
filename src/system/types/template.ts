@@ -38,7 +38,7 @@ export class Template {
     Apply(this, r, String, 'handle', 'language', 'type', 'template')
     Apply(this, r, Boolean, 'partial')
 
-    if (r && IsOf<Meta>(r?.meta, 'description', 'short')) {
+    if (r && IsOf(r, 'meta')) {
       this.meta = r.meta
     }
 
