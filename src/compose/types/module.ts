@@ -21,6 +21,7 @@ interface Meta {
  * System fields that are present in every object.
  */
 export const systemFields = Object.freeze([
+  { isSystem: true, name: 'recordID', label: 'Record ID', kind: 'String' },
   { isSystem: true, name: 'ownedBy', label: 'Owned by', kind: 'User' },
   { isSystem: true, name: 'createdBy', label: 'Created by', kind: 'User' },
   { isSystem: true, name: 'createdAt', label: 'Created at', kind: 'DateTime' },
