@@ -4,6 +4,9 @@ import { Apply, CortezaID, NoID } from '../../../cast'
 
 export const FieldNameValidator = /^\w{1,}$/
 
+const unsortableFieldKinds = ['User', 'Record', 'File']
+const unsortableSysFields = ['recordID', 'ownedBy', 'createdBy', 'updatedBy', 'deletedBy']
+
 export interface Capabilities {
   configurable: true;
   multi: boolean;
@@ -46,7 +49,7 @@ export class ModuleField {
   public isPrivate = false
   public isMulti = false
   public isSystem = false
-
+  public isSortable = true
   public options: object = {}
   public expressions: Expressions = {}
 
@@ -74,6 +77,11 @@ export class ModuleField {
     if (!this.cap.required) this.isRequired = false
     if (!this.cap.private) this.isPrivate = false
 
+    // Check if kind sortable
+    if (unsortableFieldKinds.includes(this.kind)) {
+      this.isSortable = false
+    }
+
     if (f.defaultValue && Array.isArray(f.defaultValue)) {
       /**
        * Converting default value into proper format
@@ -89,6 +97,9 @@ export class ModuleField {
     if (this.isSystem) {
       this.canUpdateRecordValue = true
       this.canReadRecordValue = true
+      if (unsortableSysFields.includes(this.name)) {
+        this.isSortable = false
+      }
     } else {
       Apply(this, f, Boolean, 'canUpdateRecordValue', 'canReadRecordValue')
     }
