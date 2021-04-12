@@ -116,6 +116,9 @@ export default class Chart extends BaseChart {
       animation: {
         duration: 500,
       },
+      legend: {
+        position: 'top',
+      },
     }
 
     if (this.config.colorScheme) {
@@ -126,7 +129,7 @@ export default class Chart extends BaseChart {
       }
     }
 
-    this.config.reports?.forEach(r => {
+    (this.config.reports || []).forEach(r => {
       if (!options.scales) {
         options.scales = { xAxes: [], yAxes: [] }
       }
@@ -165,6 +168,13 @@ export default class Chart extends BaseChart {
             }
           }
         })
+      }
+
+      for (const m of r.metrics || []) {
+        if (m.legendPosition) {
+          options.legend.position = m.legendPosition
+          break
+        }
       }
 
       options.scales.yAxes = this.makeYAxis(r)
