@@ -1,3 +1,4 @@
+import { capitalize } from 'lodash'
 export interface Typed {
   '@type': string;
   '@value': any;
@@ -20,7 +21,7 @@ function cast (v: unknown): Typed {
   return { '@value': unwrap(v), '@type': guessType(v) }
 }
 
-function guessType (v: unknown): string {
+function guessType (v: any): string {
   switch (typeof v) {
     case 'boolean':
       return 'Boolean'
@@ -28,6 +29,12 @@ function guessType (v: unknown): string {
       return 'String'
     case 'number':
       return Number(v) === v && v % 1 === 0 ? 'Float' : 'Integer'
+    case 'object':
+      if (v.resourceType) {
+        // converts foo:bar into FooBar
+        return v.resourceType.split(':').map(capitalize).join('')
+      }
+      return 'Any'
     default:
       return 'Any'
   }
