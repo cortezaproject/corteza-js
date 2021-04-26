@@ -2460,4 +2460,174 @@ export default class System {
     return '/actionlog/'
   }
 
+  // Messaging queues
+  async queuesList (a: KV): Promise<KV> {
+    const {
+      query,
+      limit,
+      pageCursor,
+      sort,
+      deleted,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.queuesListEndpoint(),
+    }
+    cfg.params = {
+      query,
+      limit,
+      pageCursor,
+      sort,
+      deleted,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  queuesListEndpoint (): string {
+    return '/queues/'
+  }
+
+  // Create messaging queue
+  async queuesCreate (a: KV): Promise<KV> {
+    const {
+      queue,
+      consumer,
+      meta,
+    } = (a as KV) || {}
+    if (!queue) {
+      throw Error('field queue is empty')
+    }
+    if (!consumer) {
+      throw Error('field consumer is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'put',
+      url: this.queuesCreateEndpoint(),
+    }
+    cfg.data = {
+      queue,
+      consumer,
+      meta,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  queuesCreateEndpoint (): string {
+    return '/queues'
+  }
+
+  // Messaging queue details
+  async queuesRead (a: KV): Promise<KV> {
+    const {
+      queueID,
+    } = (a as KV) || {}
+    if (!queueID) {
+      throw Error('field queueID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.queuesReadEndpoint({
+        queueID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  queuesReadEndpoint (a: KV): string {
+    const {
+      queueID,
+    } = a || {}
+    return `/queues/${queueID}`
+  }
+
+  // Update queue details
+  async queuesUpdate (a: KV): Promise<KV> {
+    const {
+      queueID,
+      queue,
+      consumer,
+      meta,
+    } = (a as KV) || {}
+    if (!queueID) {
+      throw Error('field queueID is empty')
+    }
+    if (!queue) {
+      throw Error('field queue is empty')
+    }
+    if (!consumer) {
+      throw Error('field consumer is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.queuesUpdateEndpoint({
+        queueID,
+      }),
+    }
+    cfg.data = {
+      queue,
+      consumer,
+      meta,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  queuesUpdateEndpoint (a: KV): string {
+    const {
+      queueID,
+    } = a || {}
+    return `/queues/${queueID}`
+  }
+
+  // Messaging queue delete
+  async queuesDelete (a: KV): Promise<KV> {
+    const {
+      queueID,
+    } = (a as KV) || {}
+    if (!queueID) {
+      throw Error('field queueID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'delete',
+      url: this.queuesDeleteEndpoint({
+        queueID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  queuesDeleteEndpoint (a: KV): string {
+    const {
+      queueID,
+    } = a || {}
+    return `/queues/${queueID}`
+  }
+
+  // Messaging queue undelete
+  async queuesUndelete (a: KV): Promise<KV> {
+    const {
+      queueID,
+    } = (a as KV) || {}
+    if (!queueID) {
+      throw Error('field queueID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.queuesUndeleteEndpoint({
+        queueID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  queuesUndeleteEndpoint (a: KV): string {
+    const {
+      queueID,
+    } = a || {}
+    return `/queues/${queueID}/undelete`
+  }
+
 }
