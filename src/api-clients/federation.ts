@@ -15,7 +15,7 @@ interface Headers {
 
 interface Ctor {
   baseURL?: string;
-  accessTokenFn: () => string | undefined
+  accessTokenFn: () => string | undefined;
   headers?: Headers;
 }
 
@@ -41,7 +41,7 @@ export default class Federation {
     this.baseURL = baseURL
     this.accessTokenFn = accessTokenFn
     this.headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     }
 
     this.setHeaders(headers)

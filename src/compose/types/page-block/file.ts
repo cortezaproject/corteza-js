@@ -1,10 +1,12 @@
 import { PageBlock, PageBlockInput, Registry } from './base'
+import { Apply } from '../../../cast'
 
 const kind = 'File'
 
 interface Options {
   mode: string;
   attachments: string[];
+  hideFileName: boolean;
 }
 
 const PageBlockFileDefaultMode = 'list'
@@ -22,6 +24,7 @@ const PageBlockFileModes = [
 const defaults: Readonly<Options> = Object.freeze({
   mode: PageBlockFileDefaultMode,
   attachments: [],
+  hideFileName: false,
 })
 
 export class PageBlockFile extends PageBlock {
@@ -40,6 +43,8 @@ export class PageBlockFile extends PageBlock {
     if (o.attachments) {
       this.options.attachments = o.attachments
     }
+
+    Apply(this.options, o, Boolean, 'hideFileName')
 
     if (o.mode) {
       if (PageBlockFileModes.includes(o.mode)) {
