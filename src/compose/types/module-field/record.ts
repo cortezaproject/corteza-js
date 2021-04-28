@@ -1,11 +1,11 @@
 // @todo option to allow multiple entries
 // @todo option to allow duplicates
-import { ModuleField, Registry } from './base'
+import { ModuleField, Registry, Options, defaultOptions } from './base'
 import { Apply, CortezaID, NoID } from '../../../cast'
 
 const kind = 'Record'
 
-interface Options {
+interface RecordOptions extends Options {
   moduleID: string;
   labelField: string;
   queryFields: Array<string>;
@@ -14,7 +14,8 @@ interface Options {
   prefilter?: string;
 }
 
-const defaults: Readonly<Options> = Object.freeze({
+const defaults = (): Readonly<RecordOptions> => Object.freeze({
+  ...defaultOptions(),
   moduleID: NoID,
   labelField: '',
   queryFields: [],
@@ -26,15 +27,16 @@ const defaults: Readonly<Options> = Object.freeze({
 export class ModuleFieldRecord extends ModuleField {
   readonly kind = kind
 
-  options: Options = { ...defaults }
+  options: RecordOptions = { ...defaults() }
 
   constructor (i?: Partial<ModuleFieldRecord>) {
     super(i)
     this.applyOptions(i?.options)
   }
 
-  applyOptions (o?: Partial<Options>): void {
+  applyOptions (o?: Partial<RecordOptions>): void {
     if (!o) return
+    super.applyOptions(o)
 
     Apply(this.options, o, CortezaID, 'moduleID')
     Apply(this.options, o, String, 'labelField', 'selectType', 'multiDelimiter', 'prefilter')

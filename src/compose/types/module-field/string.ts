@@ -1,15 +1,16 @@
-import { ModuleField, Registry } from './base'
+import { ModuleField, Registry, Options, defaultOptions } from './base'
 import { Apply } from '../../../cast'
 
 const kind = 'String'
 
-interface Options {
+interface StringOptions extends Options {
   multiLine: boolean;
   useRichTextEditor: boolean;
   multiDelimiter: string;
 }
 
-const defaults: Readonly<Options> = Object.freeze({
+const defaults = (): Readonly<StringOptions> => Object.freeze({
+  ...defaultOptions(),
   multiLine: false,
   useRichTextEditor: false,
   multiDelimiter: '\n',
@@ -18,15 +19,17 @@ const defaults: Readonly<Options> = Object.freeze({
 export class ModuleFieldString extends ModuleField {
   readonly kind = kind
 
-  options: Options = { ...defaults }
+  options: StringOptions = { ...defaults() }
 
   constructor (i?: Partial<ModuleFieldString>) {
     super(i)
+
     this.applyOptions(i?.options)
   }
 
-  applyOptions (o?: Partial<Options>): void {
+  applyOptions (o?: Partial<StringOptions>): void {
     if (!o) return
+    super.applyOptions(o)
 
     Apply(this.options, o, String, 'multiDelimiter')
     Apply(this.options, o, Boolean, 'multiLine', 'useRichTextEditor')

@@ -1,10 +1,10 @@
 import numeral from 'numeral'
-import { ModuleField, Registry } from './base'
+import { ModuleField, Registry, Options, defaultOptions } from './base'
 import { Apply } from '../../../cast'
 
 const kind = 'Number'
 
-interface Options {
+interface NumberOptions extends Options {
   format: string;
   prefix: string;
   suffix: string;
@@ -12,7 +12,8 @@ interface Options {
   multiDelimiter: string;
 }
 
-const defaults: Readonly<Options> = Object.freeze({
+const defaults = (): Readonly<NumberOptions> => Object.freeze({
+  ...defaultOptions(),
   format: '',
   prefix: '',
   suffix: '',
@@ -23,15 +24,16 @@ const defaults: Readonly<Options> = Object.freeze({
 export class ModuleFieldNumber extends ModuleField {
   readonly kind = kind
 
-  options: Options = { ...defaults }
+  options: NumberOptions = { ...defaults() }
 
   constructor (i?: Partial<ModuleFieldNumber>) {
     super(i)
     this.applyOptions(i?.options)
   }
 
-  applyOptions (o?: Partial<Options>): void {
+  applyOptions (o?: Partial<NumberOptions>): void {
     if (!o) return
+    super.applyOptions(o)
 
     Apply(this.options, o, String, 'format', 'prefix', 'suffix', 'multiDelimiter')
     Apply(this.options, o, Number, 'precision')

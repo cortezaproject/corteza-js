@@ -1,18 +1,19 @@
 // @todo option to allow multiple entries
 // @todo option to allow duplicates
-import { ModuleField, Registry } from './base'
+import { ModuleField, Registry, Options, defaultOptions } from './base'
 import { Apply } from '../../../cast'
 import { AreStrings } from '../../../guards'
 
 const kind = 'Select'
 
-interface Options {
+interface SelectOptions extends Options {
   options: Array<string | { value: string; text?: string }>;
   selectType: string;
   multiDelimiter: string;
 }
 
-const defaults: Readonly<Options> = Object.freeze({
+const defaults = (): Readonly<SelectOptions> => Object.freeze({
+  ...defaultOptions(),
   options: [],
   selectType: 'default',
   multiDelimiter: '\n',
@@ -21,15 +22,16 @@ const defaults: Readonly<Options> = Object.freeze({
 export class ModuleFieldSelect extends ModuleField {
   readonly kind = kind
 
-  options: Options = { ...defaults }
+  options: SelectOptions = { ...defaults() }
 
   constructor (i?: Partial<ModuleFieldSelect>) {
     super(i)
     this.applyOptions(i?.options)
   }
 
-  applyOptions (o?: Partial<Options>): void {
+  applyOptions (o?: Partial<SelectOptions>): void {
     if (!o) return
+    super.applyOptions(o)
 
     Apply(this.options, o, String, 'selectType', 'multiDelimiter')
 

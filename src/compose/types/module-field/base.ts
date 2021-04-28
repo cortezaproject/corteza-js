@@ -15,6 +15,28 @@ export interface Capabilities {
   private: boolean;
 }
 
+export interface Options {
+  description: {
+    view: string,
+    edit: string | undefined,
+  },
+  hint: {
+    view: string,
+    edit: string | undefined,
+  },
+}
+
+export const defaultOptions = (): Readonly<Options> => Object.freeze({
+  description: {
+    view: '',
+    edit: undefined,
+  },
+  hint: {
+    view: '',
+    edit: undefined,
+  },
+})
+
 export interface Expressions {
   value?: string;
 
@@ -50,7 +72,7 @@ export class ModuleField {
   public isMulti = false
   public isSystem = false
   public isSortable = true
-  public options: object = {}
+  public options: Options = { ...defaultOptions() }
   public expressions: Expressions = {}
 
   public canUpdateRecordValue = false
@@ -58,6 +80,12 @@ export class ModuleField {
 
   constructor (f?: Partial<ModuleField>) {
     this.apply(f)
+  }
+
+  applyOptions (o?: Partial<Options>): void {
+    if (!o) return
+
+    Apply(this.options, o, Object, 'description', 'hint')
   }
 
   clone (): ModuleField {
@@ -110,10 +138,6 @@ export class ModuleField {
 
     if (IsOf(f, 'expressions')) {
       this.expressions = f.expressions
-    }
-
-    if (IsOf(f, 'options')) {
-      this.options = merge({}, this.options, f.options)
     }
   }
 

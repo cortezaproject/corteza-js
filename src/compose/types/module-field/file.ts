@@ -1,4 +1,4 @@
-import { ModuleField, Registry } from './base'
+import { ModuleField, Registry, Options, defaultOptions } from './base'
 import { Apply, ApplyWhitelisted } from '../../../cast'
 
 const kind = 'File'
@@ -14,7 +14,7 @@ export const modes = [
   'gallery',
 ]
 
-interface Options {
+interface FileOptions extends Options {
   allowImages: boolean;
   allowDocuments: boolean;
   maxSize: number;
@@ -23,7 +23,8 @@ interface Options {
   hideFileName: boolean;
 }
 
-const defaults: Readonly<Options> = Object.freeze({
+const defaults = (): Readonly<FileOptions> => Object.freeze({
+  ...defaultOptions(),
   allowImages: true,
   allowDocuments: true,
   maxSize: 0,
@@ -35,15 +36,16 @@ const defaults: Readonly<Options> = Object.freeze({
 export class ModuleFieldFile extends ModuleField {
   readonly kind = kind
 
-  options: Options = { ...defaults }
+  options: FileOptions = { ...defaults() }
 
   constructor (i?: Partial<ModuleFieldFile>) {
     super(i)
     this.applyOptions(i?.options)
   }
 
-  applyOptions (o?: Partial<Options>): void {
+  applyOptions (o?: Partial<FileOptions>): void {
     if (!o) return
+    super.applyOptions(o)
 
     Apply(this.options, o, Number, 'maxSize')
     Apply(this.options, o, Boolean, 'allowImages', 'allowDocuments', 'inline', 'hideFileName')

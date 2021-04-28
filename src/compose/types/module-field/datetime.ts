@@ -2,12 +2,12 @@
 // @todo option to allow multiple entries
 // @todo option to allow duplicates
 import moment, { Moment } from 'moment'
-import { ModuleField, Registry } from './base'
+import { ModuleField, Registry, Options, defaultOptions } from './base'
 import { Apply } from '../../../cast'
 
 const kind = 'DateTime'
 
-interface Options {
+interface DateTimeOptions extends Options {
   format: string;
   onlyDate: boolean;
   onlyTime: boolean;
@@ -17,7 +17,8 @@ interface Options {
   multiDelimiter: string;
 }
 
-const defaults: Readonly<Options> = Object.freeze({
+const defaults = (): Readonly<DateTimeOptions> => Object.freeze({
+  ...defaultOptions(),
   format: '',
   multiDelimiter: '\n',
   onlyDate: false,
@@ -30,15 +31,16 @@ const defaults: Readonly<Options> = Object.freeze({
 export class ModuleFieldDateTime extends ModuleField {
   readonly kind = kind
 
-  options: Options = { ...defaults }
+  options: DateTimeOptions = { ...defaults() }
 
   constructor (i?: Partial<ModuleFieldDateTime>) {
     super(i)
     this.applyOptions(i?.options)
   }
 
-  applyOptions (o?: Partial<Options>): void {
+  applyOptions (o?: Partial<DateTimeOptions>): void {
     if (!o) return
+    super.applyOptions(o)
 
     Apply(this.options, o, String, 'format', 'multiDelimiter')
     Apply(this.options, o, Boolean, 'onlyDate', 'onlyTime', 'onlyPastValues', 'onlyFutureValues', 'outputRelative')
