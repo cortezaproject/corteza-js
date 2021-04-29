@@ -85,7 +85,7 @@ export class ModuleField {
     if (f.defaultValue && Array.isArray(f.defaultValue)) {
       /**
        * Converting default value into proper format
-       * so we can use it without convertion
+       * so we can use it without conversion
        */
       this.defaultValue = f.defaultValue
         // Remove nulls & undefineds

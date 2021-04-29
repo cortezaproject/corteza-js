@@ -92,7 +92,7 @@ export class Page {
    * Resource type
    */
   get resourceType (): string {
-    return 'compose:Page'
+    return 'compose:page'
   }
 
   get isRecordPage (): boolean {

@@ -298,6 +298,13 @@ export class BaseChart {
       },
     })
   }
+
+  /**
+   * Resource type
+   */
+  get resourceType (): string {
+    return 'compose:chart'
+  }
 }
 
 export { chartUtil } from './util'
