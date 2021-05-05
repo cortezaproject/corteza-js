@@ -2277,6 +2277,21 @@ export default class System {
     return `/template/${templateID}/undelete`
   }
 
+  // Render drivers
+  async templateRenderDrivers (): Promise<KV> {
+
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.templateRenderDriversEndpoint(),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  templateRenderDriversEndpoint (): string {
+    return '/template/render/drivers'
+  }
+
   // Render template
   async templateRender (a: KV): Promise<KV> {
     const {
