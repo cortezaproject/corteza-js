@@ -1,4 +1,4 @@
-import { extractID, genericPermissionUpdater, isFresh, PermissionRule, kv, ListResponse, PermissionRole, PermissionResource } from './shared'
+import { extractID, genericPermissionUpdater, isFresh, kv, ListResponse, PermissionRole, PermissionResource } from './shared'
 import { System as SystemAPI } from '../../api-clients'
 import { User, Role, Application } from '../../system/'
 import { IsCortezaID } from '../../cast'
@@ -88,7 +88,7 @@ export default class SystemHelper {
    * @property filter.perPage - max returned records per page
    * @property filter.page - page to return (1-based)
    */
-  async findUsers (filter?: string|UserListFilter): Promise<ListResponse<UserListFilter, User[]>> {
+  async findUsers (filter?: string|UserListFilter): Promise<ListResponse<User[], UserListFilter>> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
@@ -97,7 +97,7 @@ export default class SystemHelper {
       .userList(filter || {})
       .then(res => {
         res.set = (res.set as any[]).map(u => new User(u))
-        return res as unknown as ListResponse<UserListFilter, User[]>
+        return res as unknown as ListResponse<User[], UserListFilter>
       })
   }
 
@@ -223,7 +223,7 @@ export default class SystemHelper {
    *
    * @param filter
    */
-  async findRoles (filter?: string|RoleListFilter): Promise<ListResponse<RoleListFilter, Role[]>> {
+  async findRoles (filter?: string|RoleListFilter): Promise<ListResponse<Role[], RoleListFilter>> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
@@ -232,7 +232,7 @@ export default class SystemHelper {
       .roleList(filter || {})
       .then(res => {
         res.set = (res.set as any[]).map(r => new Role(r))
-        return res as unknown as ListResponse<RoleListFilter, Role[]>
+        return res as unknown as ListResponse<Role[], RoleListFilter>
       })
   }
 

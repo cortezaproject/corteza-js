@@ -176,7 +176,7 @@ export default class ComposeHelper {
    * @param filter
    * @param ns
    */
-  async findPages (filter: undefined|string|PageListFilter = {}, ns: Namespace|undefined = this.$namespace): Promise<ListResponse<PageListFilter, Page[]>> {
+  async findPages (filter: undefined|string|PageListFilter = {}, ns: Namespace|undefined = this.$namespace): Promise<ListResponse<Page[], PageListFilter>> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
@@ -186,7 +186,7 @@ export default class ComposeHelper {
       return this.ComposeAPI.pageList({ namespaceID, ...filter as object }).then(res => {
         // Casting all we got to to Page
         res.set = (res.set as any[]).map(m => new Page(m))
-        return res as unknown as ListResponse<PageListFilter, Page[]>
+        return res as unknown as ListResponse<Page[], PageListFilter>
       })
     })
   }
@@ -367,7 +367,7 @@ export default class ComposeHelper {
    * @property {number} filter.pageCursor - hashed string that retrieves a specific page
    * @param [module] - if not set, defaults to $module
    */
-  async findRecords (filter: string|RecordListFilter = '', module: Module|undefined = this.$module): Promise<ListResponse<RecordListFilter, Record[]>> {
+  async findRecords (filter: string|RecordListFilter = '', module: Module|undefined = this.$module): Promise<ListResponse<Record[], RecordListFilter>> {
     return this.resolveModule(module).then(module => {
       const { moduleID, namespaceID } = module
 
@@ -385,7 +385,7 @@ export default class ComposeHelper {
       return this.ComposeAPI.recordList(params).then(res => {
         // Casting all we got to to Record
         res.set = (res.set as any[]).map(record => new Record(module, record))
-        return res as unknown as ListResponse<RecordListFilter, Record[]>
+        return res as unknown as ListResponse<Record[], RecordListFilter>
       })
     })
   }
@@ -520,7 +520,7 @@ export default class ComposeHelper {
    * @param filter
    * @param ns
    */
-  async findModules (filter: string|ModuleListFilter = '', ns: Namespace|undefined = this.$namespace): Promise<ListResponse<ModuleListFilter, Module[]>> {
+  async findModules (filter: string|ModuleListFilter = '', ns: Namespace|undefined = this.$namespace): Promise<ListResponse<Module[], ModuleListFilter>> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
@@ -531,7 +531,7 @@ export default class ComposeHelper {
       return this.ComposeAPI.moduleList({ namespaceID, ...filter as object }).then(res => {
         // Casting all we got to to Module
         res.set = (res.set as any[]).map(m => new Module(m))
-        return res as unknown as ListResponse<ModuleListFilter, Module[]>
+        return res as unknown as ListResponse<Module[], ModuleListFilter>
       })
     })
   }
@@ -678,7 +678,7 @@ export default class ComposeHelper {
    * @private
    * @param filter
    */
-  async findNamespaces (filter: string|NamespaceListFilter = ''): Promise<ListResponse<NamespaceListFilter, Namespace[]>> {
+  async findNamespaces (filter: string|NamespaceListFilter = ''): Promise<ListResponse<Namespace[], NamespaceListFilter>> {
     if (typeof filter === 'string') {
       filter = { query: filter }
     }
@@ -686,7 +686,7 @@ export default class ComposeHelper {
     return this.ComposeAPI.namespaceList({ ...filter }).then(res => {
       // Casting all we got to to Namespace
       res.set = (res.set as any[]).map(m => new Namespace(m))
-      return res as unknown as ListResponse<NamespaceListFilter, Namespace[]>
+      return res as unknown as ListResponse<Namespace[], NamespaceListFilter>
     })
   }
 
@@ -981,7 +981,7 @@ export default class ComposeHelper {
         return this.resolveModule(m.module, m.moduleID)
       }
 
-      if (IsOf<ListResponse<ModuleListFilter, Module[]>>(module, 'set', 'filter')) {
+      if (IsOf<ListResponse<Module[], ModuleListFilter>>(module, 'set', 'filter')) {
         // We got a result set with modules
         module = module.set
       }
@@ -1053,9 +1053,9 @@ export default class ComposeHelper {
         return this.resolveNamespace(n.namespaceID)
       }
 
-      if ((ns as ListResponse<NamespaceListFilter, Namespace[]>).set && (ns as ListResponse<NamespaceListFilter, Namespace[]>).filter) {
+      if ((ns as ListResponse<Namespace[], NamespaceListFilter>).set && (ns as ListResponse<Namespace[], NamespaceListFilter>).filter) {
         // We got a result set with modules
-        ns = (ns as ListResponse<NamespaceListFilter, Namespace[]>).set
+        ns = (ns as ListResponse<Namespace[], NamespaceListFilter>).set
       }
 
       if (Array.isArray(ns)) {
