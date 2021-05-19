@@ -2303,21 +2303,6 @@ export default class System {
     return `/template/${templateID}/undelete`
   }
 
-  // Render drivers
-  async templateRenderDrivers (): Promise<KV> {
-
-    const cfg: AxiosRequestConfig = {
-      method: 'get',
-      url: this.templateRenderDriversEndpoint(),
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  templateRenderDriversEndpoint (): string {
-    return '/template/render/drivers'
-  }
-
   // Render template
   async templateRender (a: KV): Promise<KV> {
     const {
@@ -2359,6 +2344,225 @@ export default class System {
       ext,
     } = a || {}
     return `/template/${templateID}/render/${filename}.${ext}`
+  }
+
+  // List reports
+  async reportList (a: KV): Promise<KV> {
+    const {
+      handle,
+      deleted,
+      labels,
+      limit,
+      pageCursor,
+      sort,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.reportListEndpoint(),
+    }
+    cfg.params = {
+      handle,
+      deleted,
+      labels,
+      limit,
+      pageCursor,
+      sort,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  reportListEndpoint (): string {
+    return '/reports/'
+  }
+
+  // Create report
+  async reportCreate (a: KV): Promise<KV> {
+    const {
+      handle,
+      meta,
+      sources,
+      projections,
+      labels,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.reportCreateEndpoint(),
+    }
+    cfg.data = {
+      handle,
+      meta,
+      sources,
+      projections,
+      labels,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  reportCreateEndpoint (): string {
+    return '/reports/'
+  }
+
+  // Update report
+  async reportUpdate (a: KV): Promise<KV> {
+    const {
+      reportID,
+      handle,
+      meta,
+      sources,
+      projections,
+      labels,
+    } = (a as KV) || {}
+    if (!reportID) {
+      throw Error('field reportID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'put',
+      url: this.reportUpdateEndpoint({
+        reportID,
+      }),
+    }
+    cfg.data = {
+      handle,
+      meta,
+      sources,
+      projections,
+      labels,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  reportUpdateEndpoint (a: KV): string {
+    const {
+      reportID,
+    } = a || {}
+    return `/reports/${reportID}`
+  }
+
+  // Read report details
+  async reportRead (a: KV): Promise<KV> {
+    const {
+      reportID,
+    } = (a as KV) || {}
+    if (!reportID) {
+      throw Error('field reportID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.reportReadEndpoint({
+        reportID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  reportReadEndpoint (a: KV): string {
+    const {
+      reportID,
+    } = a || {}
+    return `/reports/${reportID}`
+  }
+
+  // Remove report
+  async reportDelete (a: KV): Promise<KV> {
+    const {
+      reportID,
+    } = (a as KV) || {}
+    if (!reportID) {
+      throw Error('field reportID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'delete',
+      url: this.reportDeleteEndpoint({
+        reportID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  reportDeleteEndpoint (a: KV): string {
+    const {
+      reportID,
+    } = a || {}
+    return `/reports/${reportID}`
+  }
+
+  // Undelete report
+  async reportUndelete (a: KV): Promise<KV> {
+    const {
+      reportID,
+    } = (a as KV) || {}
+    if (!reportID) {
+      throw Error('field reportID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.reportUndeleteEndpoint({
+        reportID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  reportUndeleteEndpoint (a: KV): string {
+    const {
+      reportID,
+    } = a || {}
+    return `/reports/${reportID}/undelete`
+  }
+
+  // Run report (fresh)
+  async reportRunFresh (a: KV): Promise<KV> {
+    const {
+      sources,
+      steps,
+      datasets,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.reportRunFreshEndpoint(),
+    }
+    cfg.data = {
+      sources,
+      steps,
+      datasets,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  reportRunFreshEndpoint (): string {
+    return '/reports/run'
+  }
+
+  // Run report
+  async reportRun (a: KV): Promise<KV> {
+    const {
+      reportID,
+      datasets,
+    } = (a as KV) || {}
+    if (!reportID) {
+      throw Error('field reportID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.reportRunEndpoint({
+        reportID,
+      }),
+    }
+    cfg.data = {
+      datasets,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  reportRunEndpoint (a: KV): string {
+    const {
+      reportID,
+    } = a || {}
+    return `/reports/${reportID}/run`
   }
 
   // List system statistics
