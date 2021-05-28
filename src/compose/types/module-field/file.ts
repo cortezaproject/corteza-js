@@ -21,6 +21,7 @@ interface FileOptions extends Options {
   mode: string;
   inline: boolean;
   hideFileName: boolean;
+  mimetypes?: string;
 }
 
 const defaults = (): Readonly<FileOptions> => Object.freeze({
@@ -31,6 +32,7 @@ const defaults = (): Readonly<FileOptions> => Object.freeze({
   mode: '\n',
   inline: true,
   hideFileName: false,
+  mimetypes: '',
 })
 
 export class ModuleFieldFile extends ModuleField {
@@ -49,6 +51,7 @@ export class ModuleFieldFile extends ModuleField {
 
     Apply(this.options, o, Number, 'maxSize')
     Apply(this.options, o, Boolean, 'allowImages', 'allowDocuments', 'inline', 'hideFileName')
+    Apply(this.options, o, String, 'mimetypes')
     ApplyWhitelisted(this.options, o, modes, 'mode')
   }
 }
