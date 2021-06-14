@@ -2303,6 +2303,21 @@ export default class System {
     return `/template/${templateID}/undelete`
   }
 
+  // Render drivers
+  async templateRenderDrivers (): Promise<KV> {
+
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.templateRenderDriversEndpoint(),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  templateRenderDriversEndpoint (): string {
+    return '/template/render/drivers'
+  }
+
   // Render template
   async templateRender (a: KV): Promise<KV> {
     const {
@@ -2519,7 +2534,7 @@ export default class System {
     const {
       sources,
       steps,
-      datasets,
+      frames,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
       method: 'post',
@@ -2528,7 +2543,7 @@ export default class System {
     cfg.data = {
       sources,
       steps,
-      datasets,
+      frames,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -2541,7 +2556,7 @@ export default class System {
   async reportRun (a: KV): Promise<KV> {
     const {
       reportID,
-      datasets,
+      frames,
     } = (a as KV) || {}
     if (!reportID) {
       throw Error('field reportID is empty')
@@ -2553,7 +2568,7 @@ export default class System {
       }),
     }
     cfg.data = {
-      datasets,
+      frames,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }

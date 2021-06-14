@@ -593,6 +593,7 @@ export default class Automation {
     const {
       sessionID,
       workflowID,
+      createdBy,
       completed,
       status,
       eventType,
@@ -608,6 +609,7 @@ export default class Automation {
     cfg.params = {
       sessionID,
       workflowID,
+      createdBy,
       completed,
       status,
       eventType,

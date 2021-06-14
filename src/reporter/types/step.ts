@@ -1,3 +1,5 @@
+import { RowDefinition } from './filter'
+
 export interface Step {
   group?: StepGroup;
   load?: StepLoad;
@@ -6,16 +8,17 @@ export interface Step {
 }
 
 interface GroupKey {
-  column: string;
   name: string;
   expr: string;
+  kind: string;
 }
 
 export interface StepGroup {
   name: string;
-  dimension: string;
+  source: string;
   groups?: Array<GroupKey>;
   columns?: Array<{ [key: string]: { [key: string]: string } }>;
+  rows?: RowDefinition;
 }
 
 export interface StepLoad {
@@ -43,17 +46,6 @@ export interface StepTransform {
   dimension?: string;
   columns?: Array<TransformColumn>;
   rows?: RowDefinition;
-}
-
-export interface RowDefinition {
-  and?: Array<RowDefinition>;
-  or?: Array<RowDefinition>;
-  cells?: Map<string, CellDefinition>;
-}
-
-interface CellDefinition {
-  op: string;
-  value: string;
 }
 
 export function StepFactory (step: Partial<Step>): Step {
