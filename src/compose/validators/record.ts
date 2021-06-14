@@ -25,7 +25,6 @@ function genericFieldValidator (field: ModuleField): ValidatorFn<Record> {
 
     if (field.isRequired) {
       if (value === undefined || IsEmpty(value)) {
-        // @todo return something typified...
         return emptyErr
       }
     }
