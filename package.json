@@ -17,6 +17,9 @@
     "test:unit:cc": "nyc mocha",
     "codegen:corteza-api-client": "node -r esm tools/codegen/corteza-api-client.js"
   },
+  "gitHooks": {
+    "pre-commit": "yarn lint"
+  },
   "dependencies": {
     "axios": "^0.21.1",
     "chart.js": "2.9.3",
@@ -67,7 +70,8 @@
     "source-map-support": "^0.5.16",
     "ts-node": "^8.6.2",
     "ts-node-dev": "^1.0.0",
-    "typescript": "^3.7.2"
+    "typescript": "^3.7.2",
+    "yorkie": "^2.0.0"
   },
   "resolutions": {
     "**/**/moment": "2.25.3"
