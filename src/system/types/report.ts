@@ -98,19 +98,6 @@ export class Report {
     Apply(this, r, CortezaID, 'createdBy', 'updatedBy', 'deletedBy')
   }
 
-  // reportDefinitions (): { model: Array<reporter.Step>; dataset: Array<reporter.DatasetDefinition> } {
-  //   const model: Array<reporter.Step> = []
-  //   const dataset: Array<reporter.DatasetDefinition> = []
-
-  //   for (const p of this.projections) {
-  //     const r = p.reportDefinitions()
-  //     model.push(...r.model)
-  //     dataset.push(...r.dataset)
-  //   }
-
-  //   return { model, dataset }
-  // }
-
   /**
    * Returns resource ID
    */

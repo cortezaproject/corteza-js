@@ -7,17 +7,20 @@ export interface Step {
   transform?: StepTransform;
 }
 
-interface GroupKey {
+interface GroupColumn {
   name: string;
   expr: string;
+  aggregate: string;
+  // Kind specifies what kind the result will be.
+  // This is lame and will change, but for now, bare with me.
   kind: string;
 }
 
 export interface StepGroup {
   name: string;
   source: string;
-  groups?: Array<GroupKey>;
-  columns?: Array<{ [key: string]: { [key: string]: string } }>;
+  groups?: Array<GroupColumn>;
+  columns?: Array<GroupColumn>;
   rows?: RowDefinition;
 }
 
@@ -30,8 +33,10 @@ export interface StepLoad {
 
 export interface StepJoin {
   name: string;
-  local: string;
-  foreign: string;
+  localSource: string;
+  localColumn: string;
+  foreignSource: string;
+  foreignColumn: string;
   rows?: RowDefinition;
 }
 
