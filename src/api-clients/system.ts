@@ -2634,4 +2634,360 @@ export default class System {
     return `/queues/${queueID}/undelete`
   }
 
+  // List routes
+  async routeList (a: KV): Promise<KV> {
+    const {
+      routeID,
+      query,
+      deleted,
+      disabled,
+      labels,
+      limit,
+      pageCursor,
+      sort,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.routeListEndpoint(),
+    }
+    cfg.params = {
+      routeID,
+      query,
+      deleted,
+      disabled,
+      labels,
+      limit,
+      pageCursor,
+      sort,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  routeListEndpoint (): string {
+    return '/apigw/route/'
+  }
+
+  // Create route
+  async routeCreate (a: KV): Promise<KV> {
+    const {
+      endpoint,
+      method,
+      debug,
+      enabled,
+      group,
+    } = (a as KV) || {}
+    if (!endpoint) {
+      throw Error('field endpoint is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.routeCreateEndpoint(),
+    }
+    cfg.data = {
+      endpoint,
+      method,
+      debug,
+      enabled,
+      group,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  routeCreateEndpoint (): string {
+    return '/apigw/route'
+  }
+
+  // Update route details
+  async routeUpdate (a: KV): Promise<KV> {
+    const {
+      routeID,
+      endpoint,
+      method,
+      debug,
+      enabled,
+      group,
+    } = (a as KV) || {}
+    if (!routeID) {
+      throw Error('field routeID is empty')
+    }
+    if (!endpoint) {
+      throw Error('field endpoint is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'put',
+      url: this.routeUpdateEndpoint({
+        routeID,
+      }),
+    }
+    cfg.data = {
+      endpoint,
+      method,
+      debug,
+      enabled,
+      group,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  routeUpdateEndpoint (a: KV): string {
+    const {
+      routeID,
+    } = a || {}
+    return `/apigw/route/${routeID}`
+  }
+
+  // Read route details
+  async routeRead (a: KV): Promise<KV> {
+    const {
+      routeID,
+    } = (a as KV) || {}
+    if (!routeID) {
+      throw Error('field routeID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.routeReadEndpoint({
+        routeID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  routeReadEndpoint (a: KV): string {
+    const {
+      routeID,
+    } = a || {}
+    return `/apigw/route/${routeID}`
+  }
+
+  // Remove route
+  async routeDelete (a: KV): Promise<KV> {
+    const {
+      routeID,
+    } = (a as KV) || {}
+    if (!routeID) {
+      throw Error('field routeID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'delete',
+      url: this.routeDeleteEndpoint({
+        routeID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  routeDeleteEndpoint (a: KV): string {
+    const {
+      routeID,
+    } = a || {}
+    return `/apigw/route/${routeID}`
+  }
+
+  // Undelete route
+  async routeUndelete (a: KV): Promise<KV> {
+    const {
+      routeID,
+    } = (a as KV) || {}
+    if (!routeID) {
+      throw Error('field routeID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.routeUndeleteEndpoint({
+        routeID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  routeUndeleteEndpoint (a: KV): string {
+    const {
+      routeID,
+    } = a || {}
+    return `/apigw/route/${routeID}/undelete`
+  }
+
+  // List functions
+  async functionList (a: KV): Promise<KV> {
+    const {
+      functionID,
+      routeID,
+      query,
+      deleted,
+      disabled,
+      limit,
+      pageCursor,
+      sort,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.functionListEndpoint(),
+    }
+    cfg.params = {
+      functionID,
+      routeID,
+      query,
+      deleted,
+      disabled,
+      limit,
+      pageCursor,
+      sort,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  functionListEndpoint (): string {
+    return '/apigw/function/'
+  }
+
+  // Create function
+  async functionCreate (a: KV): Promise<KV> {
+    const {
+      routeID,
+      weight,
+      kind,
+      ref,
+      params,
+    } = (a as KV) || {}
+    if (!routeID) {
+      throw Error('field routeID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'put',
+      url: this.functionCreateEndpoint(),
+    }
+    cfg.data = {
+      routeID,
+      weight,
+      kind,
+      ref,
+      params,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  functionCreateEndpoint (): string {
+    return '/apigw/function'
+  }
+
+  // Update route details
+  async functionUpdate (a: KV): Promise<KV> {
+    const {
+      functionID,
+      routeID,
+      weight,
+      kind,
+      ref,
+      params,
+    } = (a as KV) || {}
+    if (!functionID) {
+      throw Error('field functionID is empty')
+    }
+    if (!routeID) {
+      throw Error('field routeID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.functionUpdateEndpoint({
+        functionID,
+      }),
+    }
+    cfg.data = {
+      routeID,
+      weight,
+      kind,
+      ref,
+      params,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  functionUpdateEndpoint (a: KV): string {
+    const {
+      functionID,
+    } = a || {}
+    return `/apigw/function/${functionID}`
+  }
+
+  // Read function details
+  async functionRead (a: KV): Promise<KV> {
+    const {
+      functionID,
+    } = (a as KV) || {}
+    if (!functionID) {
+      throw Error('field functionID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.functionReadEndpoint({
+        functionID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  functionReadEndpoint (a: KV): string {
+    const {
+      functionID,
+    } = a || {}
+    return `/apigw/function/${functionID}`
+  }
+
+  // Remove function
+  async functionDelete (a: KV): Promise<KV> {
+    const {
+      functionID,
+    } = (a as KV) || {}
+    if (!functionID) {
+      throw Error('field functionID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'delete',
+      url: this.functionDeleteEndpoint({
+        functionID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  functionDeleteEndpoint (a: KV): string {
+    const {
+      functionID,
+    } = a || {}
+    return `/apigw/function/${functionID}`
+  }
+
+  // Undelete function
+  async functionUndelete (a: KV): Promise<KV> {
+    const {
+      functionID,
+    } = (a as KV) || {}
+    if (!functionID) {
+      throw Error('field functionID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.functionUndeleteEndpoint({
+        functionID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  functionUndeleteEndpoint (a: KV): string {
+    const {
+      functionID,
+    } = a || {}
+    return `/apigw/function/${functionID}/undelete`
+  }
+
 }
