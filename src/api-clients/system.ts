@@ -1137,9 +1137,6 @@ export default class System {
     if (!userID) {
       throw Error('field userID is empty')
     }
-    if (!password) {
-      throw Error('field password is empty')
-    }
     const cfg: AxiosRequestConfig = {
       method: 'post',
       url: this.userSetPasswordEndpoint({
@@ -2657,6 +2654,395 @@ export default class System {
       queueID,
     } = a || {}
     return `/queues/${queueID}/undelete`
+  }
+
+  // List routes
+  async apigwRouteList (a: KV): Promise<KV> {
+    const {
+      routeID,
+      query,
+      deleted,
+      disabled,
+      labels,
+      limit,
+      pageCursor,
+      sort,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.apigwRouteListEndpoint(),
+    }
+    cfg.params = {
+      routeID,
+      query,
+      deleted,
+      disabled,
+      labels,
+      limit,
+      pageCursor,
+      sort,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwRouteListEndpoint (): string {
+    return '/apigw/route/'
+  }
+
+  // Create route
+  async apigwRouteCreate (a: KV): Promise<KV> {
+    const {
+      endpoint,
+      method,
+      enabled,
+      group,
+      meta,
+    } = (a as KV) || {}
+    if (!endpoint) {
+      throw Error('field endpoint is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.apigwRouteCreateEndpoint(),
+    }
+    cfg.data = {
+      endpoint,
+      method,
+      enabled,
+      group,
+      meta,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwRouteCreateEndpoint (): string {
+    return '/apigw/route'
+  }
+
+  // Update route details
+  async apigwRouteUpdate (a: KV): Promise<KV> {
+    const {
+      routeID,
+      endpoint,
+      method,
+      enabled,
+      group,
+      meta,
+    } = (a as KV) || {}
+    if (!routeID) {
+      throw Error('field routeID is empty')
+    }
+    if (!endpoint) {
+      throw Error('field endpoint is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'put',
+      url: this.apigwRouteUpdateEndpoint({
+        routeID,
+      }),
+    }
+    cfg.data = {
+      endpoint,
+      method,
+      enabled,
+      group,
+      meta,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwRouteUpdateEndpoint (a: KV): string {
+    const {
+      routeID,
+    } = a || {}
+    return `/apigw/route/${routeID}`
+  }
+
+  // Read route details
+  async apigwRouteRead (a: KV): Promise<KV> {
+    const {
+      routeID,
+    } = (a as KV) || {}
+    if (!routeID) {
+      throw Error('field routeID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.apigwRouteReadEndpoint({
+        routeID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwRouteReadEndpoint (a: KV): string {
+    const {
+      routeID,
+    } = a || {}
+    return `/apigw/route/${routeID}`
+  }
+
+  // Remove route
+  async apigwRouteDelete (a: KV): Promise<KV> {
+    const {
+      routeID,
+    } = (a as KV) || {}
+    if (!routeID) {
+      throw Error('field routeID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'delete',
+      url: this.apigwRouteDeleteEndpoint({
+        routeID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwRouteDeleteEndpoint (a: KV): string {
+    const {
+      routeID,
+    } = a || {}
+    return `/apigw/route/${routeID}`
+  }
+
+  // Undelete route
+  async apigwRouteUndelete (a: KV): Promise<KV> {
+    const {
+      routeID,
+    } = (a as KV) || {}
+    if (!routeID) {
+      throw Error('field routeID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.apigwRouteUndeleteEndpoint({
+        routeID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwRouteUndeleteEndpoint (a: KV): string {
+    const {
+      routeID,
+    } = a || {}
+    return `/apigw/route/${routeID}/undelete`
+  }
+
+  // List filters
+  async apigwFilterList (a: KV): Promise<KV> {
+    const {
+      routeID,
+      query,
+      deleted,
+      disabled,
+      limit,
+      pageCursor,
+      sort,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.apigwFilterListEndpoint(),
+    }
+    cfg.params = {
+      routeID,
+      query,
+      deleted,
+      disabled,
+      limit,
+      pageCursor,
+      sort,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwFilterListEndpoint (): string {
+    return '/apigw/filter/'
+  }
+
+  // Create filter
+  async apigwFilterCreate (a: KV): Promise<KV> {
+    const {
+      routeID,
+      weight,
+      kind,
+      ref,
+      params,
+    } = (a as KV) || {}
+    if (!routeID) {
+      throw Error('field routeID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'put',
+      url: this.apigwFilterCreateEndpoint(),
+    }
+    cfg.data = {
+      routeID,
+      weight,
+      kind,
+      ref,
+      params,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwFilterCreateEndpoint (): string {
+    return '/apigw/filter'
+  }
+
+  // Update filter details
+  async apigwFilterUpdate (a: KV): Promise<KV> {
+    const {
+      filterID,
+      routeID,
+      weight,
+      kind,
+      ref,
+      params,
+    } = (a as KV) || {}
+    if (!filterID) {
+      throw Error('field filterID is empty')
+    }
+    if (!routeID) {
+      throw Error('field routeID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.apigwFilterUpdateEndpoint({
+        filterID,
+      }),
+    }
+    cfg.data = {
+      routeID,
+      weight,
+      kind,
+      ref,
+      params,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwFilterUpdateEndpoint (a: KV): string {
+    const {
+      filterID,
+    } = a || {}
+    return `/apigw/filter/${filterID}`
+  }
+
+  // Read filter details
+  async apigwFilterRead (a: KV): Promise<KV> {
+    const {
+      filterID,
+    } = (a as KV) || {}
+    if (!filterID) {
+      throw Error('field filterID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.apigwFilterReadEndpoint({
+        filterID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwFilterReadEndpoint (a: KV): string {
+    const {
+      filterID,
+    } = a || {}
+    return `/apigw/filter/${filterID}`
+  }
+
+  // Remove filter
+  async apigwFilterDelete (a: KV): Promise<KV> {
+    const {
+      filterID,
+    } = (a as KV) || {}
+    if (!filterID) {
+      throw Error('field filterID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'delete',
+      url: this.apigwFilterDeleteEndpoint({
+        filterID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwFilterDeleteEndpoint (a: KV): string {
+    const {
+      filterID,
+    } = a || {}
+    return `/apigw/filter/${filterID}`
+  }
+
+  // Undelete filter
+  async apigwFilterUndelete (a: KV): Promise<KV> {
+    const {
+      filterID,
+    } = (a as KV) || {}
+    if (!filterID) {
+      throw Error('field filterID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.apigwFilterUndeleteEndpoint({
+        filterID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwFilterUndeleteEndpoint (a: KV): string {
+    const {
+      filterID,
+    } = a || {}
+    return `/apigw/filter/${filterID}/undelete`
+  }
+
+  // Filter definitions
+  async apigwFilterDefFilter (a: KV): Promise<KV> {
+    const {
+      kind,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.apigwFilterDefFilterEndpoint(),
+    }
+    cfg.params = {
+      kind,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwFilterDefFilterEndpoint (): string {
+    return '/apigw/filter/def'
+  }
+
+  // Proxy auth definitions
+  async apigwFilterDefProxyAuth (): Promise<KV> {
+
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.apigwFilterDefProxyAuthEndpoint(),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwFilterDefProxyAuthEndpoint (): string {
+    return '/apigw/filter/proxy_auth/def'
   }
 
 }
