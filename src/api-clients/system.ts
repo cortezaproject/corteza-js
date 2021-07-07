@@ -1271,6 +1271,31 @@ export default class System {
     return `/users/${userID}/trigger`
   }
 
+  // Remove all auth sessions of user
+  async userSessionsRemove (a: KV): Promise<KV> {
+    const {
+      userID,
+    } = (a as KV) || {}
+    if (!userID) {
+      throw Error('field userID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'delete',
+      url: this.userSessionsRemoveEndpoint({
+        userID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  userSessionsRemoveEndpoint (a: KV): string {
+    const {
+      userID,
+    } = a || {}
+    return `/users/${userID}/sessions`
+  }
+
   // List applications
   async applicationList (a: KV): Promise<KV> {
     const {
@@ -2631,7 +2656,7 @@ export default class System {
   }
 
   // List routes
-  async routeList (a: KV): Promise<KV> {
+  async apigwRouteList (a: KV): Promise<KV> {
     const {
       routeID,
       query,
@@ -2644,7 +2669,7 @@ export default class System {
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
       method: 'get',
-      url: this.routeListEndpoint(),
+      url: this.apigwRouteListEndpoint(),
     }
     cfg.params = {
       routeID,
@@ -2660,12 +2685,12 @@ export default class System {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  routeListEndpoint (): string {
+  apigwRouteListEndpoint (): string {
     return '/apigw/route/'
   }
 
   // Create route
-  async routeCreate (a: KV): Promise<KV> {
+  async apigwRouteCreate (a: KV): Promise<KV> {
     const {
       endpoint,
       method,
@@ -2678,7 +2703,7 @@ export default class System {
     }
     const cfg: AxiosRequestConfig = {
       method: 'post',
-      url: this.routeCreateEndpoint(),
+      url: this.apigwRouteCreateEndpoint(),
     }
     cfg.data = {
       endpoint,
@@ -2690,12 +2715,12 @@ export default class System {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  routeCreateEndpoint (): string {
+  apigwRouteCreateEndpoint (): string {
     return '/apigw/route'
   }
 
   // Update route details
-  async routeUpdate (a: KV): Promise<KV> {
+  async apigwRouteUpdate (a: KV): Promise<KV> {
     const {
       routeID,
       endpoint,
@@ -2712,7 +2737,7 @@ export default class System {
     }
     const cfg: AxiosRequestConfig = {
       method: 'put',
-      url: this.routeUpdateEndpoint({
+      url: this.apigwRouteUpdateEndpoint({
         routeID,
       }),
     }
@@ -2726,7 +2751,7 @@ export default class System {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  routeUpdateEndpoint (a: KV): string {
+  apigwRouteUpdateEndpoint (a: KV): string {
     const {
       routeID,
     } = a || {}
@@ -2734,7 +2759,7 @@ export default class System {
   }
 
   // Read route details
-  async routeRead (a: KV): Promise<KV> {
+  async apigwRouteRead (a: KV): Promise<KV> {
     const {
       routeID,
     } = (a as KV) || {}
@@ -2743,7 +2768,7 @@ export default class System {
     }
     const cfg: AxiosRequestConfig = {
       method: 'get',
-      url: this.routeReadEndpoint({
+      url: this.apigwRouteReadEndpoint({
         routeID,
       }),
     }
@@ -2751,7 +2776,7 @@ export default class System {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  routeReadEndpoint (a: KV): string {
+  apigwRouteReadEndpoint (a: KV): string {
     const {
       routeID,
     } = a || {}
@@ -2759,7 +2784,7 @@ export default class System {
   }
 
   // Remove route
-  async routeDelete (a: KV): Promise<KV> {
+  async apigwRouteDelete (a: KV): Promise<KV> {
     const {
       routeID,
     } = (a as KV) || {}
@@ -2768,7 +2793,7 @@ export default class System {
     }
     const cfg: AxiosRequestConfig = {
       method: 'delete',
-      url: this.routeDeleteEndpoint({
+      url: this.apigwRouteDeleteEndpoint({
         routeID,
       }),
     }
@@ -2776,7 +2801,7 @@ export default class System {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  routeDeleteEndpoint (a: KV): string {
+  apigwRouteDeleteEndpoint (a: KV): string {
     const {
       routeID,
     } = a || {}
@@ -2784,7 +2809,7 @@ export default class System {
   }
 
   // Undelete route
-  async routeUndelete (a: KV): Promise<KV> {
+  async apigwRouteUndelete (a: KV): Promise<KV> {
     const {
       routeID,
     } = (a as KV) || {}
@@ -2793,7 +2818,7 @@ export default class System {
     }
     const cfg: AxiosRequestConfig = {
       method: 'post',
-      url: this.routeUndeleteEndpoint({
+      url: this.apigwRouteUndeleteEndpoint({
         routeID,
       }),
     }
@@ -2801,7 +2826,7 @@ export default class System {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  routeUndeleteEndpoint (a: KV): string {
+  apigwRouteUndeleteEndpoint (a: KV): string {
     const {
       routeID,
     } = a || {}
@@ -2809,9 +2834,8 @@ export default class System {
   }
 
   // List functions
-  async functionList (a: KV): Promise<KV> {
+  async apigwFunctionList (a: KV): Promise<KV> {
     const {
-      functionID,
       routeID,
       query,
       deleted,
@@ -2822,10 +2846,9 @@ export default class System {
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
       method: 'get',
-      url: this.functionListEndpoint(),
+      url: this.apigwFunctionListEndpoint(),
     }
     cfg.params = {
-      functionID,
       routeID,
       query,
       deleted,
@@ -2838,12 +2861,12 @@ export default class System {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  functionListEndpoint (): string {
+  apigwFunctionListEndpoint (): string {
     return '/apigw/function/'
   }
 
   // Create function
-  async functionCreate (a: KV): Promise<KV> {
+  async apigwFunctionCreate (a: KV): Promise<KV> {
     const {
       routeID,
       weight,
@@ -2856,7 +2879,7 @@ export default class System {
     }
     const cfg: AxiosRequestConfig = {
       method: 'put',
-      url: this.functionCreateEndpoint(),
+      url: this.apigwFunctionCreateEndpoint(),
     }
     cfg.data = {
       routeID,
@@ -2868,12 +2891,12 @@ export default class System {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  functionCreateEndpoint (): string {
+  apigwFunctionCreateEndpoint (): string {
     return '/apigw/function'
   }
 
   // Update route details
-  async functionUpdate (a: KV): Promise<KV> {
+  async apigwFunctionUpdate (a: KV): Promise<KV> {
     const {
       functionID,
       routeID,
@@ -2890,7 +2913,7 @@ export default class System {
     }
     const cfg: AxiosRequestConfig = {
       method: 'post',
-      url: this.functionUpdateEndpoint({
+      url: this.apigwFunctionUpdateEndpoint({
         functionID,
       }),
     }
@@ -2904,7 +2927,7 @@ export default class System {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  functionUpdateEndpoint (a: KV): string {
+  apigwFunctionUpdateEndpoint (a: KV): string {
     const {
       functionID,
     } = a || {}
@@ -2912,7 +2935,7 @@ export default class System {
   }
 
   // Read function details
-  async functionRead (a: KV): Promise<KV> {
+  async apigwFunctionRead (a: KV): Promise<KV> {
     const {
       functionID,
     } = (a as KV) || {}
@@ -2921,7 +2944,7 @@ export default class System {
     }
     const cfg: AxiosRequestConfig = {
       method: 'get',
-      url: this.functionReadEndpoint({
+      url: this.apigwFunctionReadEndpoint({
         functionID,
       }),
     }
@@ -2929,7 +2952,7 @@ export default class System {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  functionReadEndpoint (a: KV): string {
+  apigwFunctionReadEndpoint (a: KV): string {
     const {
       functionID,
     } = a || {}
@@ -2937,7 +2960,7 @@ export default class System {
   }
 
   // Remove function
-  async functionDelete (a: KV): Promise<KV> {
+  async apigwFunctionDelete (a: KV): Promise<KV> {
     const {
       functionID,
     } = (a as KV) || {}
@@ -2946,7 +2969,7 @@ export default class System {
     }
     const cfg: AxiosRequestConfig = {
       method: 'delete',
-      url: this.functionDeleteEndpoint({
+      url: this.apigwFunctionDeleteEndpoint({
         functionID,
       }),
     }
@@ -2954,7 +2977,7 @@ export default class System {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  functionDeleteEndpoint (a: KV): string {
+  apigwFunctionDeleteEndpoint (a: KV): string {
     const {
       functionID,
     } = a || {}
@@ -2962,7 +2985,7 @@ export default class System {
   }
 
   // Undelete function
-  async functionUndelete (a: KV): Promise<KV> {
+  async apigwFunctionUndelete (a: KV): Promise<KV> {
     const {
       functionID,
     } = (a as KV) || {}
@@ -2971,7 +2994,7 @@ export default class System {
     }
     const cfg: AxiosRequestConfig = {
       method: 'post',
-      url: this.functionUndeleteEndpoint({
+      url: this.apigwFunctionUndeleteEndpoint({
         functionID,
       }),
     }
@@ -2979,11 +3002,31 @@ export default class System {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  functionUndeleteEndpoint (a: KV): string {
+  apigwFunctionUndeleteEndpoint (a: KV): string {
     const {
       functionID,
     } = a || {}
     return `/apigw/function/${functionID}/undelete`
+  }
+
+  // Function definitions
+  async apigwFunctionDefinitions (a: KV): Promise<KV> {
+    const {
+      kind,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.apigwFunctionDefinitionsEndpoint(),
+    }
+    cfg.params = {
+      kind,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwFunctionDefinitionsEndpoint (): string {
+    return '/apigw/function/def'
   }
 
 }
