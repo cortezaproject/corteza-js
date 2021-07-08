@@ -492,6 +492,7 @@ export default class System {
       name,
       handle,
       members,
+      meta,
       labels,
     } = (a as KV) || {}
     if (!name) {
@@ -508,6 +509,7 @@ export default class System {
       name,
       handle,
       members,
+      meta,
       labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
@@ -524,6 +526,7 @@ export default class System {
       name,
       handle,
       members,
+      meta,
       labels,
     } = (a as KV) || {}
     if (!roleID) {
@@ -539,6 +542,7 @@ export default class System {
       name,
       handle,
       members,
+      meta,
       labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))

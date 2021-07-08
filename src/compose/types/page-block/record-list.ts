@@ -54,6 +54,7 @@ const defaults: Readonly<Options> = Object.freeze({
   hideRecordCloneButton: true,
   hideRecordEditButton: false,
   hideRecordViewButton: true,
+  hideRecordPermissionsButton: true,
   allowExport: false,
   perPage: 20,
 
