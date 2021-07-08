@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img width="300px" src=".github/assets/corteza_logo.svg" />
+  <img width="300px" src="https://github.com/cortezaproject/corteza-js/raw/2021.9.x/.github/assets/corteza_logo.svg" />
   <br />
   <p>Corteza JS</p>
 
@@ -25,7 +25,7 @@ The most common use cases for the `corteza-js` package include type definitions 
 ## What is Corteza?
 
 <div align="center">
-  <img style="max-height: 350px;" src=".github/assets/corteza_dashboard.png" />
+  <img style="max-height: 350px;" src="https://github.com/cortezaproject/corteza-js/raw/2021.9.x/.github/assets/corteza_dashboard.png" />
 </div>
 
 Corteza is the only **100% free**, **open-source**, **standardized** and **enterprise-grade** Low-code platform.
