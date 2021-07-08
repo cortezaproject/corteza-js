@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "chart.js": "2.9.3",
+    "chart.js": "2.9.4",
     "hex-rgb": "^4.1.0",
     "lodash": "^4.17.15",
     "minimalist": "^1.0.0",
