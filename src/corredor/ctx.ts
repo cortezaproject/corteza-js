@@ -80,15 +80,21 @@ export class Ctx {
   }
 
   /**
-   * Returns promise with the current user (if jwt argument was given)
+   * Returns promise with the current user (if authToken argument was given)
+   *
+   * This is a temporary solution that decodes the userID from the access token (JWT)
+   * and fetches the user info
    *
    * @returns {Promise<User>}
    */
-  // get $authUser (): Promise<User> {
-  //   return this.SystemAPI
-  //     .authCheck()
-  //     .then(r => (r as { user: User }).user)
-  // }
+  get $authUser (): Promise<User> {
+    const [, payload] = this.args.authToken.split('.')
+    // eslint-disable-next-line node/no-deprecated-api
+    const buf = new Buffer(payload, 'base64')
+    const { sub: userID } = JSON.parse(buf.toString('ascii'))
+
+    return this.SystemAPI.userRead({ userID }).then(r => new User(r))
+  }
 
   /**
    * Configures and returns system API client
