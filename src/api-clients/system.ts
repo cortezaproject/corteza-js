@@ -1275,6 +1275,31 @@ export default class System {
     return `/users/${userID}/trigger`
   }
 
+  // Remove all auth sessions of user
+  async userSessionsRemove (a: KV): Promise<KV> {
+    const {
+      userID,
+    } = (a as KV) || {}
+    if (!userID) {
+      throw Error('field userID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'delete',
+      url: this.userSessionsRemoveEndpoint({
+        userID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  userSessionsRemoveEndpoint (a: KV): string {
+    const {
+      userID,
+    } = a || {}
+    return `/users/${userID}/sessions`
+  }
+
   // List applications
   async applicationList (a: KV): Promise<KV> {
     const {
