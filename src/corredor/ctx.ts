@@ -101,7 +101,7 @@ export class Ctx {
 
       this.systemAPI = new apiClients.System({
         baseURL: this.config.cServers.system.apiBaseURL,
-        accessTokenFn: this.args.accessTokenFn,
+        accessTokenFn: (): string => this.args.authToken,
       })
     }
 
@@ -119,7 +119,7 @@ export class Ctx {
 
       this.composeAPI = new apiClients.Compose({
         baseURL: this.config.cServers.compose.apiBaseURL,
-        accessTokenFn: this.args.accessTokenFn,
+        accessTokenFn: (): string => this.args.authToken,
       })
     }
 
