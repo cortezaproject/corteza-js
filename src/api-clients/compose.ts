@@ -900,7 +900,6 @@ export default class Compose {
       namespaceID,
       moduleID,
       query,
-      filter,
       labels,
       deleted,
       limit,
@@ -923,7 +922,6 @@ export default class Compose {
     }
     cfg.params = {
       query,
-      filter,
       labels,
       deleted,
       limit,
