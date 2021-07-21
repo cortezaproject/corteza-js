@@ -79,6 +79,10 @@ export class Record {
   public updatedBy = NoID;
   public deletedBy = NoID;
 
+  public canUpdateRecord = false;
+  public canDeleteRecord = false;
+  public canGrant = false;
+
   private [fieldIndex]: Map<string, FieldIndex>
   private [propModule]?: Module
   private [cleanValues]: Values = {}
@@ -156,6 +160,12 @@ export class Record {
     Apply(this, r, CortezaID, 'recordID', 'moduleID', 'namespaceID')
     Apply(this, r, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt')
     Apply(this, r, CortezaID, 'ownedBy', 'createdBy', 'updatedBy', 'deletedBy')
+
+    Apply(this, r, Boolean,
+      'canUpdateRecord',
+      'canDeleteRecord',
+      'canGrant',
+    )
 
     // This is a brand new record; set default values
     if (!r.recordID || r.recordID === NoID) {
