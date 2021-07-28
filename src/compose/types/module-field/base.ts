@@ -55,6 +55,7 @@ interface Validator {
 }
 
 interface DefaultValue {
+  name?: string;
   value: string;
 }
 
@@ -114,12 +115,11 @@ export class ModuleField {
       /**
        * Converting default value into proper format
        * so we can use it without conversion
+       * false boolean values are represented only by the name, in all other cases the value is also present
        */
       this.defaultValue = f.defaultValue
-        // Remove nulls & undefineds
-        .filter(({ value }) => value !== undefined && value !== null)
-        // Trim def. value object to bare minimum, we only need "value"
-        .map(({ value }) => ({ value }))
+        .filter(({ name, value }) => name !== undefined || (value !== undefined && value !== null))
+
     }
 
     if (this.isSystem) {
