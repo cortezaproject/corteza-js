@@ -2,7 +2,7 @@ import { reporter } from '../..'
 import { Apply } from '../../cast'
 import { Element, ElementFactory } from './element'
 
-const defaultXYWH: () => [number, number, number, number] = () => [0, 0, 5, 5]
+const defaultXYWH: () => [number, number, number, number] = () => [0, 0, 20, 15]
 
 export class Projection {
   public title = ''
