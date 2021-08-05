@@ -2529,6 +2529,29 @@ export default class System {
     return `/reports/${reportID}/undelete`
   }
 
+  // Describe report (fresh)
+  async reportDescribe (a: KV): Promise<KV> {
+    const {
+      sources,
+      steps,
+      describe,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.reportDescribeEndpoint(),
+    }
+    cfg.data = {
+      sources,
+      steps,
+      describe,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  reportDescribeEndpoint (): string {
+    return '/reports/describe'
+  }
+
   // Run report (fresh)
   async reportRunFresh (a: KV): Promise<KV> {
     const {
