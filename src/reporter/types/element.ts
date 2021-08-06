@@ -10,7 +10,7 @@ export interface Element {
   variant?: string;
   options?: unknown;
 
-  reportDefinitions?: (prefix: string, model: Array<Step>) => { model: Array<Step>; frames: Array<FrameDefinition> };
+  reportDefinitions?: (datamodel?: Array<Step>, definition?: Partial<FrameDefinition>) => { dataframes: Array<FrameDefinition> };
 }
 
 interface SourceDefinition {
@@ -34,6 +34,7 @@ export class ElementText implements Element {
 
 interface ChartOptions {
   source?: string|SourceDefinition;
+  sort?: string;
 
   chartType?: string;
   labelColumn: string;
@@ -51,6 +52,7 @@ export class ElementChart implements Element {
   public kind = ''
   public options: ChartOptions = {
     source: '',
+    sort: '',
 
     chartType: 'bar',
     labelColumn: '',
@@ -72,20 +74,22 @@ export class ElementChart implements Element {
     this.options.dataColumns = o.dataColumns || []
   }
 
-  reportDefinitions (name: string, model: Array<Step>): { model: Array<Step>; frames: Array<FrameDefinition> } {
+  reportDefinitions (datamodel: Array<Step> = [], definition: FrameDefinition = {}): { dataframes: Array<FrameDefinition> } {
     if (typeof this.options.source === 'object') {
       // @todo allow implicit sources
       throw new Error('chart source must be provided as a reference')
     }
 
+    let sort = definition.sort ? definition.sort : this.options.sort || ''
+
     const f: FrameDefinition = {
-      name: this.name || name,
+      name: this.name,
       source: this.options.source,
+      sort: sort || undefined,
     }
 
     return {
-      model: [],
-      frames: [f],
+      dataframes: [f],
     }
   }
 
@@ -104,6 +108,7 @@ interface TableColumn {
 interface TableOptions {
   source?: string|SourceDefinition;
   columns?: Array<TableColumn>;
+  sort?: string;
 
   // // things to transform the data
   // // @todo provide an array of these so we can control their order and stuff?
@@ -135,6 +140,7 @@ export class ElementTable implements Element {
   public options: TableOptions = {
     source: '',
     columns: [],
+    sort: '',
 
     striped: false,
     bordered: false,
@@ -159,7 +165,7 @@ export class ElementTable implements Element {
   applyOptions (o?: Partial<TableOptions>): void {
     if (!o) return
 
-    Apply(this.options, o, String, 'headVariant', 'tableVariant', 'source')
+    Apply(this.options, o, String, 'headVariant', 'tableVariant', 'source', 'sort')
 
     Apply(this.options, o, Boolean,
       'striped',
@@ -176,35 +182,39 @@ export class ElementTable implements Element {
     this.options.columns = o.columns || []
   }
 
-  reportDefinitions (name: string, model: Array<Step> = []): { model: Array<Step>; frames: Array<FrameDefinition> } {
+  reportDefinitions (datamodel: Array<Step> = [], definition: FrameDefinition = {}): { dataframes: Array<FrameDefinition> } {
     if (typeof this.options.source === 'object') {
       // @todo allow implicit sources
       throw new Error('table source must be provided as a reference')
     }
 
+    let sort = definition.sort ? definition.sort : this.options.sort || ''
+
     // when the source is joined, we need to send multiple frame definitions
-    const s = model.filter(({ join }) => !!join).find(({ join }) => join && join.name === this.options.source)
+    const s = datamodel.filter(({ join }) => !!join).find(({ join }) => join && join.name === this.options.source)
     if (!s) {
       return {
-        model: [],
-        frames: [{
-          name: this.name || name,
+        dataframes: [{
+          name: this.name,
           source: this.options.source,
+          sort: sort || undefined,
         }],
       }
     }
 
     return {
-      model: [],
-      frames: [{
-        name: this.name || name,
-        source: this.options.source,
-        ref: s.join?.localSource,
-      }, {
-        name: this.name || name,
-        source: this.options.source,
-        ref: s.join?.foreignSource,
-      }],
+      dataframes: [
+        {
+          name: this.name,
+          source: this.options.source,
+          ref: s.join?.localSource,
+        },
+        {
+          name: this.name,
+          source: this.options.source,
+          ref: s.join?.foreignSource,
+        }
+      ],
     }
   }
 
