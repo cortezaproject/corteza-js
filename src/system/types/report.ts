@@ -2,7 +2,7 @@ import { reporter } from '../..'
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
 import { IsOf } from '../../guards'
 import { Projection } from '../../reporter'
-import { StepFactory } from '../../reporter/types/step'
+import { Step } from '../../reporter/types/step'
 
 interface PartialReport extends Partial<Omit<Report, 'steps' | 'projections' | 'createdAt' | 'createdBy' | 'updatedAt' | 'updatedBy' | 'deletedAt' | 'deletedBy'>> {
   steps?: Array<ReportStepGroup>;
@@ -27,8 +27,8 @@ interface ReportStepGroup {
 }
 
 interface ReportDataSource {
-  name?: string;
-  groups: Array<ReportStepGroup>;
+  meta?: Object;
+  step: Step;
 }
 
 // @todo rework fresh reporter thing and the backend thing
@@ -61,26 +61,8 @@ export class Report {
     }
 
     if (r?.sources) {
-      this.sources = []
+      this.sources = r.sources || []
 
-      for (const s of r.sources || []) {
-        const gg: Array<ReportStepGroup> = []
-
-        for (const g of s.groups) {
-          const ss: Array<reporter.Step> = []
-          for (const s of g.steps) {
-            ss.push(StepFactory(s))
-          }
-          gg.push({
-            name: g.name,
-            steps: ss,
-          })
-        }
-        this.sources.push({
-          name: s.name,
-          groups: gg,
-        })
-      }
     }
 
     if (r?.projections) {
