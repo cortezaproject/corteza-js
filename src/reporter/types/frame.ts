@@ -12,5 +12,5 @@ export class FrameDefinition {
   // columns?: FrameColumnSet;
 
   paging?: { limit: number };
-  // sorting: filter.SortExprSet;
+  sort?: string;
 }
