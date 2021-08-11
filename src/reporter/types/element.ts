@@ -1,14 +1,21 @@
 import { Apply } from '../../cast'
+import { IsOf } from '../../guards'
 import { FrameDefinition } from './frame'
 import { Step } from './step'
 import { RowDefinition } from './filter'
 
+
+interface ElementMeta {
+  size?: number;
+}
 export interface Element {
   name: string;
   description?: string;
   kind: string;
   variant?: string;
   options?: unknown;
+
+  meta: ElementMeta;
 
   reportDefinitions?: (datamodel?: Array<Step>, definition?: Partial<FrameDefinition>) => { dataframes: Array<FrameDefinition> };
 }
@@ -23,10 +30,18 @@ export class ElementText implements Element {
   public name = ''
   public description = ''
   public kind = ''
+  public meta = {
+    size: undefined,
+  }
+
   value = 'Sample text...'
 
   constructor (p: ElementText) {
     Apply(this, p, String, 'name', 'description', 'kind', 'value')
+
+    if (p && IsOf(p, 'meta')) {
+      this.meta = p.meta
+    }
 
     this.kind = 'Text'
   }
@@ -50,6 +65,10 @@ export class ElementChart implements Element {
   public name = ''
   public description = ''
   public kind = ''
+  public meta = {
+    size: undefined,
+  }
+
   public options: ChartOptions = {
     source: '',
     sort: '',
@@ -63,13 +82,17 @@ export class ElementChart implements Element {
     Apply(this, p, String, 'name', 'description', 'kind')
     this.applyOptions(p?.options as Partial<ChartOptions>)
 
+    if (p && IsOf(p, 'meta')) {
+      this.meta = p.meta
+    }
+
     this.kind = 'Chart'
   }
 
   applyOptions (o?: Partial<ChartOptions>): void {
     if (!o) return
 
-    Apply(this.options, o, String, 'chartType', 'labelColumn', 'source')
+    Apply(this.options, o, String, 'chartType', 'labelColumn', 'source', 'sort')
 
     this.options.dataColumns = o.dataColumns || []
   }
@@ -137,6 +160,10 @@ export class ElementTable implements Element {
   public description = ''
   public kind = ''
   public variant = ''
+  public meta = {
+    size: undefined,
+  }
+
   public options: TableOptions = {
     source: '',
     columns: [],
@@ -158,6 +185,10 @@ export class ElementTable implements Element {
   constructor (p: Partial<ElementTable>) {
     Apply(this, p, String, 'name', 'description', 'kind', 'variant')
     this.applyOptions(p?.options as Partial<TableOptions>)
+
+    if (p && IsOf(p, 'meta')) {
+      this.meta = p.meta
+    }
 
     this.kind = 'Table'
   }
