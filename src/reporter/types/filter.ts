@@ -1,10 +1,8 @@
-export interface RowDefinition {
-  and?: Array<RowDefinition>;
-  or?: Array<RowDefinition>;
-  cells?: Map<string, CellDefinition>;
+export interface FilterDefinition {
+  ref: string;
+  args: Array<KV>
 }
 
-interface CellDefinition {
-  op: string;
-  value: string;
+interface KV {
+  [header: string]: unknown;
 }

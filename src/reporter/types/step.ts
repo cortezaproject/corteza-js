@@ -1,11 +1,4 @@
-import { RowDefinition } from './filter'
-
-export interface Step {
-  group?: StepGroup;
-  load?: StepLoad;
-  join?: StepJoin;
-  transform?: StepTransform;
-}
+import { FilterDefinition } from './filter'
 
 interface GroupColumn {
   name: string;
@@ -21,14 +14,13 @@ export interface StepGroup {
   source: string;
   groups?: Array<GroupColumn>;
   columns?: Array<GroupColumn>;
-  rows?: RowDefinition;
 }
 
 export interface StepLoad {
   name: string;
   source?: string;
   definition?: { [key: string]: unknown};
-  rows?: RowDefinition;
+  filter?: FilterDefinition;
 }
 
 export interface StepJoin {
@@ -37,7 +29,6 @@ export interface StepJoin {
   localColumn: string;
   foreignSource: string;
   foreignColumn: string;
-  rows?: RowDefinition;
 }
 
 interface TransformColumn {
@@ -50,7 +41,13 @@ export interface StepTransform {
   name?: string;
   dimension?: string;
   columns?: Array<TransformColumn>;
-  rows?: RowDefinition;
+}
+
+export interface Step {
+  group?: StepGroup;
+  load?: StepLoad;
+  join?: StepJoin;
+  transform?: StepTransform;
 }
 
 export function StepFactory (step: Partial<Step>): Step {
