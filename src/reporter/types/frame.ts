@@ -1,16 +1,12 @@
-import { RowDefinition } from './filter'
-
-// export class Frame {
-
-// }
+import { FilterDefinition } from './filter'
 
 export class FrameDefinition {
   name?: string;
   source?: string;
   ref?: string;
-  rows?: RowDefinition;
-  // columns?: FrameColumnSet;
 
-  paging?: { limit: number };
   sort?: string;
+  filter?: FilterDefinition;
+  paging?: { limit: number };
+  //columns?: FrameColumnSet;
 }

@@ -2,12 +2,19 @@ import { Apply } from '../../cast'
 import { IsOf } from '../../guards'
 import { FrameDefinition } from './frame'
 import { Step } from './step'
-import { RowDefinition } from './filter'
+import { FilterDefinition } from './filter'
 
 
-interface ElementMeta {
+interface Meta {
   size?: number;
 }
+
+interface DatasourceConfiguration {
+  name: string;
+  sort?: string;
+  filter?: FilterDefinition;
+}
+
 export interface Element {
   name: string;
   description?: string;
@@ -15,15 +22,9 @@ export interface Element {
   variant?: string;
   options?: unknown;
 
-  meta: ElementMeta;
+  meta: Meta;
 
   reportDefinitions?: (datamodel?: Array<Step>, definition?: Partial<FrameDefinition>) => { dataframes: Array<FrameDefinition> };
-}
-
-interface SourceDefinition {
-  name: string;
-  definition: { [key: string]: string };
-  rows?: RowDefinition;
 }
 
 export class ElementText implements Element {
@@ -48,17 +49,13 @@ export class ElementText implements Element {
 }
 
 interface ChartOptions {
-  source?: string|SourceDefinition;
-  sort?: string;
+  source?: string;
+  datasources: Array<DatasourceConfiguration>;
 
-  chartType?: string;
   labelColumn: string;
   dataColumns: Array<{ name: string; label?: string }>;
 
-  // // things to transform the data
-  // // @todo provide an array of these so we can control their order and stuff?
-  // transform?: Partial<StepTransform>;
-  // group?: Partial<StepGroup>;
+  chartType?: string;
 }
 
 export class ElementChart implements Element {
@@ -71,11 +68,12 @@ export class ElementChart implements Element {
 
   public options: ChartOptions = {
     source: '',
-    sort: '',
+    datasources: [],
 
-    chartType: 'bar',
     labelColumn: '',
     dataColumns: [],
+
+    chartType: 'bar',
   }
 
   constructor (p: ElementChart) {
@@ -92,7 +90,9 @@ export class ElementChart implements Element {
   applyOptions (o?: Partial<ChartOptions>): void {
     if (!o) return
 
-    Apply(this.options, o, String, 'chartType', 'labelColumn', 'source', 'sort')
+    this.options.datasources = o.datasources || []
+
+    Apply(this.options, o, String, 'chartType', 'labelColumn', 'source')
 
     this.options.dataColumns = o.dataColumns || []
   }
@@ -103,17 +103,19 @@ export class ElementChart implements Element {
       throw new Error('chart source must be provided as a reference')
     }
 
-    let sort = definition.sort ? definition.sort : this.options.sort || ''
+    const dataframes: Array<FrameDefinition> = []
 
-    const f: FrameDefinition = {
-      name: this.name,
-      source: this.options.source,
-      sort: sort || undefined,
-    }
+    this.options.datasources.map(({ name, filter, sort }) => {
+      dataframes.push({
+        name: this.name,
+        source: this.options.source,
+        ref: name,
+        sort: (definition.sort ? definition.sort : sort) || undefined,
+        filter,
+      })
+    })
 
-    return {
-      dataframes: [f],
-    }
+    return { dataframes }
   }
 
   get elementKey (): string {
@@ -123,24 +125,22 @@ export class ElementChart implements Element {
 
 // // // // // // // // // // // // // // // // // // // // // // // // //
 
+
 interface TableColumn {
   name: string;
   label?: string;
 }
 
+interface DatasourceColumns {
+  name: string;
+  columns: Array<TableColumn>;
+}
+
 interface TableOptions {
-  source?: string|SourceDefinition;
-  columns?: Array<TableColumn>;
-  sort?: string;
+  source?: string;
+  datasources: Array<DatasourceConfiguration>;
 
-  // // things to transform the data
-  // // @todo provide an array of these so we can control their order and stuff?
-  // transform?: Partial<StepTransform>;
-  // group?: Partial<StepGroup>;
-
-  // // relationships define how the two tables are joined.
-  // // the original table (local table) defines this.
-  // relationships?: Array<{ column: string; refTable: string; refColumn: string }>;
+  columns?: Array<DatasourceColumns>;
 
   striped: boolean;
   bordered: boolean;
@@ -166,8 +166,9 @@ export class ElementTable implements Element {
 
   public options: TableOptions = {
     source: '',
+    datasources: [],
+
     columns: [],
-    sort: '',
 
     striped: false,
     bordered: false,
@@ -196,7 +197,9 @@ export class ElementTable implements Element {
   applyOptions (o?: Partial<TableOptions>): void {
     if (!o) return
 
-    Apply(this.options, o, String, 'headVariant', 'tableVariant', 'source', 'sort')
+    this.options.datasources = o.datasources || []
+
+    Apply(this.options, o, String, 'headVariant', 'tableVariant', 'source')
 
     Apply(this.options, o, Boolean,
       'striped',
@@ -219,34 +222,19 @@ export class ElementTable implements Element {
       throw new Error('table source must be provided as a reference')
     }
 
-    let sort = definition.sort ? definition.sort : this.options.sort || ''
+    const dataframes: Array<FrameDefinition> = []
 
-    // when the source is joined, we need to send multiple frame definitions
-    const s = datamodel.filter(({ join }) => !!join).find(({ join }) => join && join.name === this.options.source)
-    if (!s) {
-      return {
-        dataframes: [{
-          name: this.name,
-          source: this.options.source,
-          sort: sort || undefined,
-        }],
-      }
-    }
+    this.options.datasources.map(({ name, filter, sort }) => {
+      dataframes.push({
+        name: this.name,
+        source: this.options.source,
+        ref: name,
+        sort: (definition.sort ? definition.sort : sort) || undefined,
+        filter,
+      })
+    })
 
-    return {
-      dataframes: [
-        {
-          name: this.name,
-          source: this.options.source,
-          ref: s.join?.localSource,
-        },
-        {
-          name: this.name,
-          source: this.options.source,
-          ref: s.join?.foreignSource,
-        }
-      ],
-    }
+    return { dataframes }
   }
 
   get elementKey (): string {
