@@ -7,9 +7,8 @@ interface Options {
   filter: string;
   titleField: string;
   contentField: string;
-  referenceIDField: string;
+  referenceField: string;
   sortDirection: string;
-  referenceType: string;
 }
 
 const defaults: Readonly<Options> = Object.freeze({
@@ -17,9 +16,8 @@ const defaults: Readonly<Options> = Object.freeze({
   filter: '',
   titleField: '',
   contentField: '',
-  referenceIDField: '',
   sortDirection: '',
-  referenceType: '',
+  referenceField: '',
 })
 
 export class PageBlockComment extends PageBlock {
@@ -35,7 +33,7 @@ export class PageBlockComment extends PageBlock {
   applyOptions (o?: Partial<Options>): void {
     if (!o) return
     Apply(this.options, o, CortezaID, 'moduleID')
-    Apply(this.options, o, String, 'titleField', 'contentField', 'referenceIDField', 'referenceType', 'filter', 'sortDirection')
+    Apply(this.options, o, String, 'titleField', 'contentField', 'referenceField', 'filter', 'sortDirection')
   }
 }
 
