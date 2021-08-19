@@ -56,6 +56,7 @@ interface ChartOptions {
   dataColumns: Array<{ name: string; label?: string }>;
 
   chartType?: string;
+  colorScheme?: string;
 }
 
 export class ElementChart implements Element {
@@ -74,6 +75,7 @@ export class ElementChart implements Element {
     dataColumns: [],
 
     chartType: 'bar',
+    colorScheme: '',
   }
 
   constructor (p: ElementChart) {
@@ -92,7 +94,7 @@ export class ElementChart implements Element {
 
     this.options.datasources = o.datasources || []
 
-    Apply(this.options, o, String, 'chartType', 'labelColumn', 'source')
+    Apply(this.options, o, String, 'chartType', 'labelColumn', 'source', 'colorScheme')
 
     this.options.dataColumns = o.dataColumns || []
   }
