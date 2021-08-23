@@ -3287,6 +3287,194 @@ export default class System {
     return '/apigw/filter/proxy_auth/def'
   }
 
+  // List resources translations
+  async localeListResource (a: KV): Promise<KV> {
+    const {
+      lang,
+      resource,
+      resourceType,
+      ownerID,
+      deleted,
+      limit,
+      pageCursor,
+      sort,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.localeListResourceEndpoint(),
+    }
+    cfg.params = {
+      lang,
+      resource,
+      resourceType,
+      ownerID,
+      deleted,
+      limit,
+      pageCursor,
+      sort,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  localeListResourceEndpoint (): string {
+    return '/locale/resource'
+  }
+
+  // Create resource translation
+  async localeCreateResource (a: KV): Promise<KV> {
+    const {
+      lang,
+      resource,
+      key,
+      place,
+      message,
+      ownerID,
+    } = (a as KV) || {}
+    if (!lang) {
+      throw Error('field lang is empty')
+    }
+    if (!resource) {
+      throw Error('field resource is empty')
+    }
+    if (!key) {
+      throw Error('field key is empty')
+    }
+    if (!message) {
+      throw Error('field message is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.localeCreateResourceEndpoint(),
+    }
+    cfg.data = {
+      lang,
+      resource,
+      key,
+      place,
+      message,
+      ownerID,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  localeCreateResourceEndpoint (): string {
+    return '/locale/resource'
+  }
+
+  // Update resource translation
+  async localeUpdateResource (a: KV): Promise<KV> {
+    const {
+      translationID,
+      lang,
+      resource,
+      key,
+      place,
+      message,
+      ownerID,
+    } = (a as KV) || {}
+    if (!translationID) {
+      throw Error('field translationID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'put',
+      url: this.localeUpdateResourceEndpoint({
+        translationID,
+      }),
+    }
+    cfg.data = {
+      lang,
+      resource,
+      key,
+      place,
+      message,
+      ownerID,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  localeUpdateResourceEndpoint (a: KV): string {
+    const {
+      translationID,
+    } = a || {}
+    return `/locale/resource/${translationID}`
+  }
+
+  // Read resource translation details
+  async localeReadResource (a: KV): Promise<KV> {
+    const {
+      translationID,
+    } = (a as KV) || {}
+    if (!translationID) {
+      throw Error('field translationID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.localeReadResourceEndpoint({
+        translationID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  localeReadResourceEndpoint (a: KV): string {
+    const {
+      translationID,
+    } = a || {}
+    return `/locale/resource/${translationID}`
+  }
+
+  // Remove resource translation
+  async localeDeleteResource (a: KV): Promise<KV> {
+    const {
+      translationID,
+    } = (a as KV) || {}
+    if (!translationID) {
+      throw Error('field translationID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'delete',
+      url: this.localeDeleteResourceEndpoint({
+        translationID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  localeDeleteResourceEndpoint (a: KV): string {
+    const {
+      translationID,
+    } = a || {}
+    return `/locale/resource/${translationID}`
+  }
+
+  // Undelete resource translation
+  async localeUndeleteResource (a: KV): Promise<KV> {
+    const {
+      translationID,
+    } = (a as KV) || {}
+    if (!translationID) {
+      throw Error('field translationID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.localeUndeleteResourceEndpoint({
+        translationID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  localeUndeleteResourceEndpoint (a: KV): string {
+    const {
+      translationID,
+    } = a || {}
+    return `/locale/resource/${translationID}/undelete`
+  }
+
   // List all available languages
   async localeList (): Promise<KV> {
 

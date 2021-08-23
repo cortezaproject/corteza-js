@@ -253,6 +253,99 @@ export default class Compose {
     return '/namespace/upload'
   }
 
+  // Clone compose namespace
+  async namespaceClone (a: KV): Promise<KV> {
+    const {
+      namespaceID,
+      name,
+      slug,
+    } = (a as KV) || {}
+    if (!namespaceID) {
+      throw Error('field namespaceID is empty')
+    }
+    if (!name) {
+      throw Error('field name is empty')
+    }
+    if (!slug) {
+      throw Error('field slug is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.namespaceCloneEndpoint({
+        namespaceID,
+      }),
+    }
+    cfg.data = {
+      name,
+      slug,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  namespaceCloneEndpoint (a: KV): string {
+    const {
+      namespaceID,
+    } = a || {}
+    return `/namespace/${namespaceID}/clone`
+  }
+
+  // Export compose namespace
+  async namespaceExport (a: KV): Promise<KV> {
+    const {
+      namespaceID,
+      filename,
+      ext,
+    } = (a as KV) || {}
+    if (!namespaceID) {
+      throw Error('field namespaceID is empty')
+    }
+    if (!filename) {
+      throw Error('field filename is empty')
+    }
+    if (!ext) {
+      throw Error('field ext is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.namespaceExportEndpoint({
+        namespaceID, filename, ext,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  namespaceExportEndpoint (a: KV): string {
+    const {
+      namespaceID,
+      filename,
+      ext,
+    } = a || {}
+    return `/namespace/${namespaceID}/export/${filename}.zip`
+  }
+
+  // Import namespace
+  async namespaceImport (a: KV): Promise<KV> {
+    const {
+      upload,
+    } = (a as KV) || {}
+    if (!upload) {
+      throw Error('field upload is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'post',
+      url: this.namespaceImportEndpoint(),
+    }
+    cfg.data = {
+      upload,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  namespaceImportEndpoint (): string {
+    return '/namespace/import'
+  }
+
   // Fire compose:namespace trigger
   async namespaceTriggerScript (a: KV): Promise<KV> {
     const {
@@ -282,6 +375,62 @@ export default class Compose {
       namespaceID,
     } = a || {}
     return `/namespace/${namespaceID}/trigger`
+  }
+
+  // List translation
+  async namespaceListTranslations (a: KV): Promise<KV> {
+    const {
+      namespaceID,
+    } = (a as KV) || {}
+    if (!namespaceID) {
+      throw Error('field namespaceID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.namespaceListTranslationsEndpoint({
+        namespaceID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  namespaceListTranslationsEndpoint (a: KV): string {
+    const {
+      namespaceID,
+    } = a || {}
+    return `/namespace/${namespaceID}/translation`
+  }
+
+  // Update translation
+  async namespaceUpdateTranslations (a: KV): Promise<KV> {
+    const {
+      namespaceID,
+      translations,
+    } = (a as KV) || {}
+    if (!namespaceID) {
+      throw Error('field namespaceID is empty')
+    }
+    if (!translations) {
+      throw Error('field translations is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'patch',
+      url: this.namespaceUpdateTranslationsEndpoint({
+        namespaceID,
+      }),
+    }
+    cfg.data = {
+      translations,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  namespaceUpdateTranslationsEndpoint (a: KV): string {
+    const {
+      namespaceID,
+    } = a || {}
+    return `/namespace/${namespaceID}/translation`
   }
 
   // List available pages
@@ -619,6 +768,72 @@ export default class Compose {
     return `/namespace/${namespaceID}/page/${pageID}/trigger`
   }
 
+  // List page translation
+  async pageListTranslations (a: KV): Promise<KV> {
+    const {
+      namespaceID,
+      pageID,
+    } = (a as KV) || {}
+    if (!namespaceID) {
+      throw Error('field namespaceID is empty')
+    }
+    if (!pageID) {
+      throw Error('field pageID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.pageListTranslationsEndpoint({
+        namespaceID, pageID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  pageListTranslationsEndpoint (a: KV): string {
+    const {
+      namespaceID,
+      pageID,
+    } = a || {}
+    return `/namespace/${namespaceID}/page/${pageID}/translation`
+  }
+
+  // Update page translation
+  async pageUpdateTranslations (a: KV): Promise<KV> {
+    const {
+      namespaceID,
+      pageID,
+      translations,
+    } = (a as KV) || {}
+    if (!namespaceID) {
+      throw Error('field namespaceID is empty')
+    }
+    if (!pageID) {
+      throw Error('field pageID is empty')
+    }
+    if (!translations) {
+      throw Error('field translations is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'patch',
+      url: this.pageUpdateTranslationsEndpoint({
+        namespaceID, pageID,
+      }),
+    }
+    cfg.data = {
+      translations,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  pageUpdateTranslationsEndpoint (a: KV): string {
+    const {
+      namespaceID,
+      pageID,
+    } = a || {}
+    return `/namespace/${namespaceID}/page/${pageID}/translation`
+  }
+
   // List modules
   async moduleList (a: KV): Promise<KV> {
     const {
@@ -851,6 +1066,72 @@ export default class Compose {
       moduleID,
     } = a || {}
     return `/namespace/${namespaceID}/module/${moduleID}/trigger`
+  }
+
+  // List moudle translation
+  async moduleListTranslations (a: KV): Promise<KV> {
+    const {
+      namespaceID,
+      moduleID,
+    } = (a as KV) || {}
+    if (!namespaceID) {
+      throw Error('field namespaceID is empty')
+    }
+    if (!moduleID) {
+      throw Error('field moduleID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.moduleListTranslationsEndpoint({
+        namespaceID, moduleID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  moduleListTranslationsEndpoint (a: KV): string {
+    const {
+      namespaceID,
+      moduleID,
+    } = a || {}
+    return `/namespace/${namespaceID}/module/${moduleID}/translation`
+  }
+
+  // Update module translation
+  async moduleUpdateTranslations (a: KV): Promise<KV> {
+    const {
+      namespaceID,
+      moduleID,
+      translations,
+    } = (a as KV) || {}
+    if (!namespaceID) {
+      throw Error('field namespaceID is empty')
+    }
+    if (!moduleID) {
+      throw Error('field moduleID is empty')
+    }
+    if (!translations) {
+      throw Error('field translations is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'patch',
+      url: this.moduleUpdateTranslationsEndpoint({
+        namespaceID, moduleID,
+      }),
+    }
+    cfg.data = {
+      translations,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  moduleUpdateTranslationsEndpoint (a: KV): string {
+    const {
+      namespaceID,
+      moduleID,
+    } = a || {}
+    return `/namespace/${namespaceID}/module/${moduleID}/translation`
   }
 
   // Generates report from module records
