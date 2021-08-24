@@ -43,7 +43,6 @@ interface RecordListFilter {
   namespaceID?: string;
   moduleID?: string;
   query?: string;
-  filter?: string;
   labels?: {[key: string]: string};
   limit?: number;
   pageCursor?: string;
@@ -361,7 +360,7 @@ export default class ComposeHelper {
    * })
    *
    * @param filter - filter object (or filtering conditions when string)
-   * @property {string} filter.filter - filtering conditions
+   * @property {string} filter.query - filtering conditions
    * @property {string} filter.sort - sorting rules
    * @property {number} filter.limit - number of max returned records
    * @property {number} filter.pageCursor - hashed string that retrieves a specific page
@@ -374,10 +373,10 @@ export default class ComposeHelper {
       let params = {
         moduleID,
         namespaceID,
-      } as { moduleID: string; namespaceID: string; filter: string}
+      } as { moduleID: string; namespaceID: string; query: string}
 
       if (typeof filter === 'string') {
-        params.filter = filter
+        params.query = filter
       } else if (typeof filter === 'object') {
         params = { ...params, ...filter }
       }

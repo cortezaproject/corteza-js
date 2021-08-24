@@ -127,11 +127,11 @@ export async function RecordFeed ($ComposeAPI: ComposeAPI, module: Module, names
   const params = {
     namespaceID: namespace.namespaceID,
     moduleID: module.moduleID,
-    filter: `date(${feed.startField}) >= '${range.start.toISOString()}' AND date(${feed.endField || feed.startField}) < '${range.end.toISOString()}'`,
+    query: `date(${feed.startField}) >= '${range.start.toISOString()}' AND date(${feed.endField || feed.startField}) < '${range.end.toISOString()}'`,
   }
 
   if (feed.options.prefilter) {
-    params.filter += ` AND (${feed.options.prefilter})`
+    params.query += ` AND (${feed.options.prefilter})`
   }
 
   const events: Array<Event> = []
