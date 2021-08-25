@@ -1,6 +1,7 @@
 import numeral from 'numeral'
 import { ModuleField, Registry, Options, defaultOptions } from './base'
 import { Apply } from '../../../cast'
+import { fmt } from '../../../index'
 
 const kind = 'Number'
 
@@ -53,10 +54,11 @@ export class ModuleFieldNumber extends ModuleField {
       default:
         n = 0
     }
-
     let out = `${n}`
     if (o.format && o.format.length > 0) {
       out = numeral(n).format(o.format)
+    } else {
+      out = fmt.number(n)
     }
 
     return '' + o.prefix + out + o.suffix
