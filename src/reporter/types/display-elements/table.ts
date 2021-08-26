@@ -1,24 +1,18 @@
 import { DisplayElement, DisplayElementInput, Registry } from './base'
-import { FrameDefinition } from '../frame'
+import { FrameDefinition, FrameColumn } from '../frame'
 import { Apply } from '../../../cast'
 
 const kind = 'Table'
 
-interface TableColumn {
-  name: string;
-  label?: string;
-}
-
-interface DatasourceColumns {
-  name: string;
-  columns: Array<TableColumn>;
+interface TableColumns {
+  [key: string]: Array<FrameColumn>;
 }
 
 interface Options {
   source?: string;
   datasources: Array<FrameDefinition>;
 
-  columns?: Array<DatasourceColumns>;
+  columns?: TableColumns;
 
   striped: boolean;
   bordered: boolean;
@@ -37,7 +31,7 @@ const defaults: Readonly<Options> = Object.freeze({
   source: '',
   datasources: [],
 
-  columns: [],
+  columns: {},
 
   striped: false,
   bordered: false,
