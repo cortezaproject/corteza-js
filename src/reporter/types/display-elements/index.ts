@@ -1,5 +1,5 @@
 import { DisplayElement, Registry } from './base'
-export { DisplayElementChart } from './chart'
+export { DisplayElementChart, ChartOptionsMaker } from './chart'
 export { DisplayElementTable } from './table'
 export { DisplayElementText } from './text'
 
