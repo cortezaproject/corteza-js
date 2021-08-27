@@ -7,6 +7,7 @@ import { User } from '../../../system'
 const kind = 'User'
 
 interface UserOptions extends Options {
+  roles: Array<string>;
   presetWithAuthenticated: boolean;
   selectType: string;
   multiDelimiter: string;
@@ -14,6 +15,7 @@ interface UserOptions extends Options {
 
 const defaults = (): Readonly<UserOptions> => Object.freeze({
   ...defaultOptions(),
+  roles: [],
   presetWithAuthenticated: false,
   selectType: 'default',
   multiDelimiter: '\n',
@@ -35,6 +37,15 @@ export class ModuleFieldUser extends ModuleField {
 
     Apply(this.options, o, Boolean, 'presetWithAuthenticated')
     Apply(this.options, o, String, 'selectType', 'multiDelimiter')
+    Apply(this.options, o, (o) => {
+      if (!o) {
+        return []
+      }
+      if (!Array.isArray(o)) {
+        return [o]
+      }
+      return o
+    }, 'roles')
   }
 
   formatter ({ userID, name, username, email }: Partial<User> = {}): string {
