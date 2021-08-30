@@ -95,15 +95,21 @@ export class DisplayElementTable extends DisplayElement {
         name: this.name,
         source: this.options.source,
         ref: name,
-        sort: (definition.sort ? definition.sort : sort) || undefined,
-        paging: undefined,
         filter,
+        sort,
+        paging,
       }
-      if (definition.paging || paging) {
-        df.paging = { ...(paging || {}), ...(definition.paging || {}) }
-        if (df.paging.limit) {
-          df.paging.limit = parseInt((df.paging.limit as any))
+
+      if (name === definition.ref) {
+        df.sort = (definition.sort ? definition.sort : sort) || undefined
+
+        if (definition.paging || paging) {
+          df.paging = { ...(paging || {}), ...(definition.paging || {}) }
         }
+      }
+
+      if (df.paging?.limit) {
+        df.paging.limit = parseInt((df.paging.limit as any))
       }
 
       dataframes.push(df)
