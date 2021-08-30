@@ -90,14 +90,23 @@ export class DisplayElementTable extends DisplayElement {
 
     const dataframes: Array<FrameDefinition> = []
 
-    this.options.datasources.map(({ name, filter, sort }) => {
-      dataframes.push({
+    this.options.datasources.map(({ name, filter, sort, paging }) => {
+      const df: FrameDefinition = {
         name: this.name,
         source: this.options.source,
         ref: name,
         sort: (definition.sort ? definition.sort : sort) || undefined,
+        paging: undefined,
         filter,
-      })
+      }
+      if (definition.paging || paging) {
+        df.paging = { ...(paging || {}), ...(definition.paging || {}) }
+        if (df.paging.limit) {
+          df.paging.limit = parseInt((df.paging.limit as any))
+        }
+      }
+
+      dataframes.push(df)
     })
 
     return { dataframes }

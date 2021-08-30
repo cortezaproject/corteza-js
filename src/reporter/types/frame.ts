@@ -8,6 +8,7 @@ export interface FrameColumn {
   unique?: boolean;
 }
 
+export interface FramePaging { limit?: number; cursor?: string }
 export class FrameDefinition {
   name?: string;
   source?: string;
@@ -15,7 +16,7 @@ export class FrameDefinition {
 
   sort?: string;
   filter?: FilterDefinition;
-  paging?: { limit: number };
+  paging?: FramePaging
 
   refValue?: string;
   relColumn?: string;
