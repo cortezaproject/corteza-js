@@ -12,7 +12,8 @@ interface GroupColumn {
 export interface StepGroup {
   name: string;
   source: string;
-  groups?: Array<GroupColumn>;
+  filter?: FilterDefinition;
+  keys?: Array<GroupColumn>;
   columns?: Array<GroupColumn>;
 }
 
