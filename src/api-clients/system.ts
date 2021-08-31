@@ -2770,7 +2770,7 @@ export default class System {
       throw Error('field consumer is empty')
     }
     const cfg: AxiosRequestConfig = {
-      method: 'put',
+      method: 'post',
       url: this.queuesCreateEndpoint(),
     }
     cfg.data = {
@@ -2828,7 +2828,7 @@ export default class System {
       throw Error('field consumer is empty')
     }
     const cfg: AxiosRequestConfig = {
-      method: 'post',
+      method: 'put',
       url: this.queuesUpdateEndpoint({
         queueID,
       }),
@@ -3285,6 +3285,51 @@ export default class System {
 
   apigwFilterDefProxyAuthEndpoint (): string {
     return '/apigw/filter/proxy_auth/def'
+  }
+
+  // List all available languages
+  async localeList (): Promise<KV> {
+
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.localeListEndpoint(),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  localeListEndpoint (): string {
+    return '/locale/'
+  }
+
+  // List all available translation in a language for a specific webapp
+  async localeGet (a: KV): Promise<KV> {
+    const {
+      lang,
+      application,
+    } = (a as KV) || {}
+    if (!lang) {
+      throw Error('field lang is empty')
+    }
+    if (!application) {
+      throw Error('field application is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      method: 'get',
+      url: this.localeGetEndpoint({
+        lang, application,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  localeGetEndpoint (a: KV): string {
+    const {
+      lang,
+      application,
+    } = a || {}
+    return `/locale/${lang}/${application}`
   }
 
 }
