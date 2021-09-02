@@ -1,5 +1,5 @@
 import { ChartOptions, ChartOptionsRegistry } from './base'
-import { FrameDefinition, FrameColumn } from '../../frame'
+import { FrameDefinition } from '../../frame'
 import { Apply } from '../../../../cast'
 
 export class BasicChartOptions extends ChartOptions {
