@@ -1,8 +1,7 @@
-import { reporter } from '../..'
+import { Step } from '../../reporter'
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
 import { IsOf } from '../../guards'
 import { Projection } from '../../reporter'
-import { Step } from '../../reporter/types/step'
 
 interface PartialReport extends Partial<Omit<Report, 'steps' | 'projections' | 'createdAt' | 'createdBy' | 'updatedAt' | 'updatedBy' | 'deletedAt' | 'deletedBy'>> {
   steps?: Array<ReportStepGroup>;
@@ -23,7 +22,7 @@ interface Meta {
 
 interface ReportStepGroup {
   name?: string;
-  steps: Array<reporter.Step>;
+  steps: Array<Step>;
 }
 
 interface ReportDataSource {
@@ -60,9 +59,12 @@ export class Report {
       this.meta = r.meta
     }
 
-    if (r?.sources) {
-      this.sources = r.sources || []
 
+    this.sources = []
+
+    for (const s of r?.sources || []) {
+      s.step = s.step as Step
+      this.sources.push(s as ReportDataSource)
     }
 
     if (r?.projections) {

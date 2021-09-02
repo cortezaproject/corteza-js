@@ -9,19 +9,12 @@ interface GroupColumn {
   kind: string;
 }
 
-export interface StepGroup {
-  name: string;
-  source: string;
-  filter?: FilterDefinition;
-  keys?: Array<GroupColumn>;
-  columns?: Array<GroupColumn>;
-}
-
 export interface StepLoad {
   name: string;
   source?: string;
   definition?: { [key: string]: unknown};
   filter?: FilterDefinition;
+  sort?: string;
 }
 
 export interface StepJoin {
@@ -30,6 +23,15 @@ export interface StepJoin {
   localColumn: string;
   foreignSource: string;
   foreignColumn: string;
+}
+
+export interface StepGroup {
+  name: string;
+  source: string;
+  filter?: FilterDefinition;
+  keys?: Array<GroupColumn>;
+  columns?: Array<GroupColumn>;
+  sort?: string;
 }
 
 interface TransformColumn {

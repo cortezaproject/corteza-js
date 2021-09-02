@@ -1,4 +1,3 @@
-import { reporter } from '../..'
 import { Apply } from '../../cast'
 import { AreObjectsOf } from '../../guards'
 import { DisplayElement, DisplayElementMaker } from './display-elements'
@@ -10,8 +9,6 @@ export class Projection {
   public description = ''
   public layout = 'horizontal'
   public elements: Array<DisplayElement> = []
-
-  public sources: Array<reporter.Step> = []
 
   xywh: number[] = defaultXYWH()
 
@@ -37,12 +34,6 @@ export class Projection {
       if (AreObjectsOf<DisplayElement>(p.elements, 'kind')) {
         this.elements = p.elements.map((e: { kind: string }) => DisplayElementMaker(e))
       }
-    }
-
-    this.sources = []
-
-    for (const s of p.sources || []) {
-      this.sources.push(s as reporter.Step)
     }
   }
 }
