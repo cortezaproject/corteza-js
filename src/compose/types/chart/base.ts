@@ -176,8 +176,8 @@ export class BaseChart {
 
     // helper to choose between eight the provided value, default value or a generic 'undefined'
     const pickValue = (val: unknown, { default: dDft }: Dimension): unknown => {
-      if (val) return val
-      if (dDft) return dDft
+      if (val !== undefined && val !== null) return val
+      if (dDft !== undefined && dDft !== null) return dDft
       return 'undefined'
     }
 
