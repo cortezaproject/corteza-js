@@ -4,7 +4,7 @@
 import moment, { Moment } from 'moment'
 import { ModuleField, Registry, Options, defaultOptions } from './base'
 import { Apply } from '../../../cast'
-import { fmt } from '../../../index'
+import * as fmt from '../../../formatting'
 
 const kind = 'DateTime'
 
@@ -60,14 +60,11 @@ export class ModuleFieldDateTime extends ModuleField {
     } else if (o.format.length > 0) {
       return m.format(o.format)
     } else if (o.onlyTime) {
-      return fmt.time(m, {
-        hour: 'numeric',
-        minute: 'numeric',
-      })
+      return fmt.time(m)
     } else if (o.onlyDate) {
       return fmt.date(m)
     } else {
-      return fmt.dateTime(m)
+      return fmt.fullDateTime(m)
     }
   }
 

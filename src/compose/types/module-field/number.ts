@@ -1,7 +1,7 @@
 import numeral from 'numeral'
 import { ModuleField, Registry, Options, defaultOptions } from './base'
 import { Apply } from '../../../cast'
-import { fmt } from '../../../index'
+import * as fmt from '../../../formatting'
 
 const kind = 'Number'
 

@@ -1,2 +1,2 @@
-export { dateTime, date, time } from './dateTime'
-export { number } from './number'
+export * from './datetime'
+export * from './number'
