@@ -9,7 +9,8 @@ interface PartialUser extends Partial<Omit<User, 'createdAt' | 'updatedAt' | 'de
 }
 
 interface UserMeta {
-  securityPolicy: SecurityPolicy;
+  preferredLanguage?: string;
+  securityPolicy?: SecurityPolicy;
 }
 
 interface SecurityPolicy {
@@ -30,6 +31,7 @@ export class User {
   public emailConfirmed = false
   public labels: object = {}
   public meta: UserMeta = {
+    preferredLanguage: 'en',
     securityPolicy: {
       mfa: {
         enforcedEmailOTP: false,
