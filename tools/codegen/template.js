@@ -25,6 +25,10 @@ interface CortezaResponse {
   response?: unknown;
 }
 
+interface ExtraConfig {
+  headers?: Headers;
+}
+
 function stdResolve (response: AxiosResponse<CortezaResponse>): KV|Promise<never> {
   if (response.data.error) {
     return Promise.reject(response.data.error)
@@ -34,15 +38,18 @@ function stdResolve (response: AxiosResponse<CortezaResponse>): KV|Promise<never
 }
 
 export default class {{className}} {
-  protected baseURL?: string
-  protected accessTokenFn?: () => string | undefined
-  protected headers: Headers = {}
+  protected baseURL?: string;
+  protected accessTokenFn?: () => (string | undefined);
+  protected headers: Headers = {};
 
   constructor ({ baseURL, headers, accessTokenFn }: Ctor) {
     this.baseURL = baseURL
     this.accessTokenFn = accessTokenFn
     this.headers = {
-      'Content-Type': 'application/json'
+      /**
+       * All we send is JSON 
+       */
+      'Content-Type': 'application/json',
     }
 
     this.setHeaders(headers)
@@ -56,6 +63,16 @@ export default class {{className}} {
   setHeaders (headers?: Headers): {{className}} {
     if (typeof headers === 'object') {
       this.headers = headers
+    }
+
+    return this
+  }
+
+  setHeader (name: string, value: string | undefined): {{className}} {
+    if (value === undefined) {
+      delete this.headers[name]
+    } else {
+      this.headers[name] = value
     }
 
     return this
@@ -78,7 +95,7 @@ export default class {{className}} {
 {{#endpoints}}
   // {{title}}{{#description}}
   // {{description}}{{/description}}
-  async {{fname}} ({{#if fargs}}a: KV{{/if}}): Promise<KV> {
+  async {{fname}} ({{#if fargs}}a: KV, {{/if}}extra: AxiosRequestConfig = {}): Promise<KV> {
     {{#if fargs}}const { 
       {{#fargs}}
       {{.}},
@@ -90,6 +107,7 @@ export default class {{className}} {
     }
     {{/required}}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: '{{method}}',
       url: this.{{fname}}Endpoint({{#if pathParams}}{ 
         {{#pathParams}}{{.}}, {{/pathParams}} 

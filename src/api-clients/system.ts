@@ -24,6 +24,10 @@ interface CortezaResponse {
   response?: unknown;
 }
 
+interface ExtraConfig {
+  headers?: Headers;
+}
+
 function stdResolve (response: AxiosResponse<CortezaResponse>): KV|Promise<never> {
   if (response.data.error) {
     return Promise.reject(response.data.error)
@@ -33,15 +37,18 @@ function stdResolve (response: AxiosResponse<CortezaResponse>): KV|Promise<never
 }
 
 export default class System {
-  protected baseURL?: string
-  protected accessTokenFn?: () => string | undefined
-  protected headers: Headers = {}
+  protected baseURL?: string;
+  protected accessTokenFn?: () => (string | undefined);
+  protected headers: Headers = {};
 
   constructor ({ baseURL, headers, accessTokenFn }: Ctor) {
     this.baseURL = baseURL
     this.accessTokenFn = accessTokenFn
     this.headers = {
-      'Content-Type': 'application/json'
+      /**
+       * All we send is JSON
+       */
+      'Content-Type': 'application/json',
     }
 
     this.setHeaders(headers)
@@ -55,6 +62,16 @@ export default class System {
   setHeaders (headers?: Headers): System {
     if (typeof headers === 'object') {
       this.headers = headers
+    }
+
+    return this
+  }
+
+  setHeader (name: string, value: string | undefined): System {
+    if (value === undefined) {
+      delete this.headers[name]
+    } else {
+      this.headers[name] = value
     }
 
     return this
@@ -75,7 +92,7 @@ export default class System {
   }
 
   // Impersonate a user
-  async authImpersonate (a: KV): Promise<KV> {
+  async authImpersonate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       userID,
     } = (a as KV) || {}
@@ -83,6 +100,7 @@ export default class System {
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.authImpersonateEndpoint(),
     }
@@ -97,7 +115,7 @@ export default class System {
   }
 
   // List clients
-  async authClientList (a: KV): Promise<KV> {
+  async authClientList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       handle,
       deleted,
@@ -107,6 +125,7 @@ export default class System {
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.authClientListEndpoint(),
     }
@@ -127,7 +146,7 @@ export default class System {
   }
 
   // Create client
-  async authClientCreate (a: KV): Promise<KV> {
+  async authClientCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       handle,
       meta,
@@ -142,6 +161,7 @@ export default class System {
       labels,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.authClientCreateEndpoint(),
     }
@@ -166,7 +186,7 @@ export default class System {
   }
 
   // Update user details
-  async authClientUpdate (a: KV): Promise<KV> {
+  async authClientUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       clientID,
       handle,
@@ -185,6 +205,7 @@ export default class System {
       throw Error('field clientID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'put',
       url: this.authClientUpdateEndpoint({
         clientID,
@@ -214,7 +235,7 @@ export default class System {
   }
 
   // Read client details
-  async authClientRead (a: KV): Promise<KV> {
+  async authClientRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       clientID,
     } = (a as KV) || {}
@@ -222,6 +243,7 @@ export default class System {
       throw Error('field clientID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.authClientReadEndpoint({
         clientID,
@@ -239,7 +261,7 @@ export default class System {
   }
 
   // Remove client
-  async authClientDelete (a: KV): Promise<KV> {
+  async authClientDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       clientID,
     } = (a as KV) || {}
@@ -247,6 +269,7 @@ export default class System {
       throw Error('field clientID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.authClientDeleteEndpoint({
         clientID,
@@ -264,7 +287,7 @@ export default class System {
   }
 
   // Undelete client
-  async authClientUndelete (a: KV): Promise<KV> {
+  async authClientUndelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       clientID,
     } = (a as KV) || {}
@@ -272,6 +295,7 @@ export default class System {
       throw Error('field clientID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.authClientUndeleteEndpoint({
         clientID,
@@ -289,7 +313,7 @@ export default class System {
   }
 
   // Regenerate client&#x27;s secret
-  async authClientRegenerateSecret (a: KV): Promise<KV> {
+  async authClientRegenerateSecret (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       clientID,
     } = (a as KV) || {}
@@ -297,6 +321,7 @@ export default class System {
       throw Error('field clientID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.authClientRegenerateSecretEndpoint({
         clientID,
@@ -314,7 +339,7 @@ export default class System {
   }
 
   // Exposes client&#x27;s secret
-  async authClientExposeSecret (a: KV): Promise<KV> {
+  async authClientExposeSecret (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       clientID,
     } = (a as KV) || {}
@@ -322,6 +347,7 @@ export default class System {
       throw Error('field clientID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.authClientExposeSecretEndpoint({
         clientID,
@@ -339,11 +365,12 @@ export default class System {
   }
 
   // List settings
-  async settingsList (a: KV): Promise<KV> {
+  async settingsList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       prefix,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.settingsListEndpoint(),
     }
@@ -359,7 +386,7 @@ export default class System {
   }
 
   // Update settings
-  async settingsUpdate (a: KV): Promise<KV> {
+  async settingsUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       values,
     } = (a as KV) || {}
@@ -367,6 +394,7 @@ export default class System {
       throw Error('field values is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'patch',
       url: this.settingsUpdateEndpoint(),
     }
@@ -381,7 +409,7 @@ export default class System {
   }
 
   // Get a value for a key
-  async settingsGet (a: KV): Promise<KV> {
+  async settingsGet (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       key,
       ownerID,
@@ -390,6 +418,7 @@ export default class System {
       throw Error('field key is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.settingsGetEndpoint({
         key,
@@ -410,7 +439,7 @@ export default class System {
   }
 
   // Set value for specific setting
-  async settingsSet (a: KV): Promise<KV> {
+  async settingsSet (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       key,
       upload,
@@ -420,6 +449,7 @@ export default class System {
       throw Error('field key is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.settingsSetEndpoint({
         key,
@@ -440,9 +470,10 @@ export default class System {
   }
 
   // Current compose settings
-  async settingsCurrent (): Promise<KV> {
+  async settingsCurrent (extra: AxiosRequestConfig = {}): Promise<KV> {
 
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.settingsCurrentEndpoint(),
     }
@@ -455,7 +486,7 @@ export default class System {
   }
 
   // List roles
-  async roleList (a: KV): Promise<KV> {
+  async roleList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       query,
       deleted,
@@ -466,6 +497,7 @@ export default class System {
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.roleListEndpoint(),
     }
@@ -487,7 +519,7 @@ export default class System {
   }
 
   // Update role details
-  async roleCreate (a: KV): Promise<KV> {
+  async roleCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       name,
       handle,
@@ -502,6 +534,7 @@ export default class System {
       throw Error('field handle is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.roleCreateEndpoint(),
     }
@@ -520,7 +553,7 @@ export default class System {
   }
 
   // Update role details
-  async roleUpdate (a: KV): Promise<KV> {
+  async roleUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
       name,
@@ -533,6 +566,7 @@ export default class System {
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'put',
       url: this.roleUpdateEndpoint({
         roleID,
@@ -556,7 +590,7 @@ export default class System {
   }
 
   // Read role details and memberships
-  async roleRead (a: KV): Promise<KV> {
+  async roleRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
     } = (a as KV) || {}
@@ -564,6 +598,7 @@ export default class System {
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.roleReadEndpoint({
         roleID,
@@ -581,7 +616,7 @@ export default class System {
   }
 
   // Remove role
-  async roleDelete (a: KV): Promise<KV> {
+  async roleDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
     } = (a as KV) || {}
@@ -589,6 +624,7 @@ export default class System {
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.roleDeleteEndpoint({
         roleID,
@@ -606,7 +642,7 @@ export default class System {
   }
 
   // Archive role
-  async roleArchive (a: KV): Promise<KV> {
+  async roleArchive (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
     } = (a as KV) || {}
@@ -614,6 +650,7 @@ export default class System {
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.roleArchiveEndpoint({
         roleID,
@@ -631,7 +668,7 @@ export default class System {
   }
 
   // Unarchive role
-  async roleUnarchive (a: KV): Promise<KV> {
+  async roleUnarchive (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
     } = (a as KV) || {}
@@ -639,6 +676,7 @@ export default class System {
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.roleUnarchiveEndpoint({
         roleID,
@@ -656,7 +694,7 @@ export default class System {
   }
 
   // Undelete role
-  async roleUndelete (a: KV): Promise<KV> {
+  async roleUndelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
     } = (a as KV) || {}
@@ -664,6 +702,7 @@ export default class System {
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.roleUndeleteEndpoint({
         roleID,
@@ -681,7 +720,7 @@ export default class System {
   }
 
   // Move role to different organisation
-  async roleMove (a: KV): Promise<KV> {
+  async roleMove (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
       organisationID,
@@ -693,6 +732,7 @@ export default class System {
       throw Error('field organisationID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.roleMoveEndpoint({
         roleID,
@@ -712,7 +752,7 @@ export default class System {
   }
 
   // Merge one role into another
-  async roleMerge (a: KV): Promise<KV> {
+  async roleMerge (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
       destination,
@@ -724,6 +764,7 @@ export default class System {
       throw Error('field destination is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.roleMergeEndpoint({
         roleID,
@@ -743,7 +784,7 @@ export default class System {
   }
 
   // Returns all role members
-  async roleMemberList (a: KV): Promise<KV> {
+  async roleMemberList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
     } = (a as KV) || {}
@@ -751,6 +792,7 @@ export default class System {
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.roleMemberListEndpoint({
         roleID,
@@ -768,7 +810,7 @@ export default class System {
   }
 
   // Add member to a role
-  async roleMemberAdd (a: KV): Promise<KV> {
+  async roleMemberAdd (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
       userID,
@@ -780,6 +822,7 @@ export default class System {
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.roleMemberAddEndpoint({
         roleID, userID,
@@ -798,7 +841,7 @@ export default class System {
   }
 
   // Remove member from a role
-  async roleMemberRemove (a: KV): Promise<KV> {
+  async roleMemberRemove (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
       userID,
@@ -810,6 +853,7 @@ export default class System {
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.roleMemberRemoveEndpoint({
         roleID, userID,
@@ -828,7 +872,7 @@ export default class System {
   }
 
   // Fire system:role trigger
-  async roleTriggerScript (a: KV): Promise<KV> {
+  async roleTriggerScript (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
       script,
@@ -840,6 +884,7 @@ export default class System {
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.roleTriggerScriptEndpoint({
         roleID,
@@ -859,7 +904,7 @@ export default class System {
   }
 
   // Search users (Directory)
-  async userList (a: KV): Promise<KV> {
+  async userList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       userID,
       roleID,
@@ -878,6 +923,7 @@ export default class System {
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.userListEndpoint(),
     }
@@ -907,7 +953,7 @@ export default class System {
   }
 
   // Create user
-  async userCreate (a: KV): Promise<KV> {
+  async userCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       email,
       name,
@@ -919,6 +965,7 @@ export default class System {
       throw Error('field email is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.userCreateEndpoint(),
     }
@@ -937,7 +984,7 @@ export default class System {
   }
 
   // Update user details
-  async userUpdate (a: KV): Promise<KV> {
+  async userUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       userID,
       email,
@@ -956,6 +1003,7 @@ export default class System {
       throw Error('field name is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'put',
       url: this.userUpdateEndpoint({
         userID,
@@ -979,7 +1027,7 @@ export default class System {
   }
 
   // Patch user (experimental)
-  async userPartialUpdate (a: KV): Promise<KV> {
+  async userPartialUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       userID,
     } = (a as KV) || {}
@@ -987,6 +1035,7 @@ export default class System {
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'patch',
       url: this.userPartialUpdateEndpoint({
         userID,
@@ -1004,7 +1053,7 @@ export default class System {
   }
 
   // Read user details
-  async userRead (a: KV): Promise<KV> {
+  async userRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       userID,
     } = (a as KV) || {}
@@ -1012,6 +1061,7 @@ export default class System {
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.userReadEndpoint({
         userID,
@@ -1029,7 +1079,7 @@ export default class System {
   }
 
   // Remove user
-  async userDelete (a: KV): Promise<KV> {
+  async userDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       userID,
     } = (a as KV) || {}
@@ -1037,6 +1087,7 @@ export default class System {
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.userDeleteEndpoint({
         userID,
@@ -1054,7 +1105,7 @@ export default class System {
   }
 
   // Suspend user
-  async userSuspend (a: KV): Promise<KV> {
+  async userSuspend (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       userID,
     } = (a as KV) || {}
@@ -1062,6 +1113,7 @@ export default class System {
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.userSuspendEndpoint({
         userID,
@@ -1079,7 +1131,7 @@ export default class System {
   }
 
   // Unsuspend user
-  async userUnsuspend (a: KV): Promise<KV> {
+  async userUnsuspend (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       userID,
     } = (a as KV) || {}
@@ -1087,6 +1139,7 @@ export default class System {
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.userUnsuspendEndpoint({
         userID,
@@ -1104,7 +1157,7 @@ export default class System {
   }
 
   // Undelete user
-  async userUndelete (a: KV): Promise<KV> {
+  async userUndelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       userID,
     } = (a as KV) || {}
@@ -1112,6 +1165,7 @@ export default class System {
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.userUndeleteEndpoint({
         userID,
@@ -1129,7 +1183,7 @@ export default class System {
   }
 
   // Set&#x27;s or changes user&#x27;s password
-  async userSetPassword (a: KV): Promise<KV> {
+  async userSetPassword (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       userID,
       password,
@@ -1138,6 +1192,7 @@ export default class System {
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.userSetPasswordEndpoint({
         userID,
@@ -1157,7 +1212,7 @@ export default class System {
   }
 
   // Add member to a role
-  async userMembershipList (a: KV): Promise<KV> {
+  async userMembershipList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       userID,
     } = (a as KV) || {}
@@ -1165,6 +1220,7 @@ export default class System {
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.userMembershipListEndpoint({
         userID,
@@ -1182,7 +1238,7 @@ export default class System {
   }
 
   // Add role to a user
-  async userMembershipAdd (a: KV): Promise<KV> {
+  async userMembershipAdd (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
       userID,
@@ -1194,6 +1250,7 @@ export default class System {
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.userMembershipAddEndpoint({
         roleID, userID,
@@ -1212,7 +1269,7 @@ export default class System {
   }
 
   // Remove role from a user
-  async userMembershipRemove (a: KV): Promise<KV> {
+  async userMembershipRemove (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
       userID,
@@ -1224,6 +1281,7 @@ export default class System {
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.userMembershipRemoveEndpoint({
         roleID, userID,
@@ -1242,7 +1300,7 @@ export default class System {
   }
 
   // Fire system:user trigger
-  async userTriggerScript (a: KV): Promise<KV> {
+  async userTriggerScript (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       userID,
       script,
@@ -1254,6 +1312,7 @@ export default class System {
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.userTriggerScriptEndpoint({
         userID,
@@ -1273,7 +1332,7 @@ export default class System {
   }
 
   // Remove all auth sessions of user
-  async userSessionsRemove (a: KV): Promise<KV> {
+  async userSessionsRemove (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       userID,
     } = (a as KV) || {}
@@ -1281,6 +1340,7 @@ export default class System {
       throw Error('field userID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.userSessionsRemoveEndpoint({
         userID,
@@ -1298,7 +1358,7 @@ export default class System {
   }
 
   // List applications
-  async applicationList (a: KV): Promise<KV> {
+  async applicationList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       name,
       query,
@@ -1311,6 +1371,7 @@ export default class System {
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.applicationListEndpoint(),
     }
@@ -1334,7 +1395,7 @@ export default class System {
   }
 
   // Create application
-  async applicationCreate (a: KV): Promise<KV> {
+  async applicationCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       name,
       enabled,
@@ -1347,6 +1408,7 @@ export default class System {
       throw Error('field name is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.applicationCreateEndpoint(),
     }
@@ -1366,7 +1428,7 @@ export default class System {
   }
 
   // Update user details
-  async applicationUpdate (a: KV): Promise<KV> {
+  async applicationUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       applicationID,
       name,
@@ -1383,6 +1445,7 @@ export default class System {
       throw Error('field name is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'put',
       url: this.applicationUpdateEndpoint({
         applicationID,
@@ -1407,7 +1470,7 @@ export default class System {
   }
 
   // Upload application assets
-  async applicationUpload (a: KV): Promise<KV> {
+  async applicationUpload (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       upload,
     } = (a as KV) || {}
@@ -1415,6 +1478,7 @@ export default class System {
       throw Error('field upload is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.applicationUploadEndpoint(),
     }
@@ -1429,7 +1493,7 @@ export default class System {
   }
 
   // Flag application
-  async applicationFlagCreate (a: KV): Promise<KV> {
+  async applicationFlagCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       applicationID,
       flag,
@@ -1442,6 +1506,7 @@ export default class System {
       throw Error('field flag is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.applicationFlagCreateEndpoint({
         applicationID, flag, ownedBy,
@@ -1461,7 +1526,7 @@ export default class System {
   }
 
   // Unflag application
-  async applicationFlagDelete (a: KV): Promise<KV> {
+  async applicationFlagDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       applicationID,
       flag,
@@ -1474,6 +1539,7 @@ export default class System {
       throw Error('field flag is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.applicationFlagDeleteEndpoint({
         applicationID, flag, ownedBy,
@@ -1493,7 +1559,7 @@ export default class System {
   }
 
   // Read application details
-  async applicationRead (a: KV): Promise<KV> {
+  async applicationRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       applicationID,
       incFlags,
@@ -1502,6 +1568,7 @@ export default class System {
       throw Error('field applicationID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.applicationReadEndpoint({
         applicationID,
@@ -1522,7 +1589,7 @@ export default class System {
   }
 
   // Remove application
-  async applicationDelete (a: KV): Promise<KV> {
+  async applicationDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       applicationID,
     } = (a as KV) || {}
@@ -1530,6 +1597,7 @@ export default class System {
       throw Error('field applicationID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.applicationDeleteEndpoint({
         applicationID,
@@ -1547,7 +1615,7 @@ export default class System {
   }
 
   // Undelete application
-  async applicationUndelete (a: KV): Promise<KV> {
+  async applicationUndelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       applicationID,
     } = (a as KV) || {}
@@ -1555,6 +1623,7 @@ export default class System {
       throw Error('field applicationID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.applicationUndeleteEndpoint({
         applicationID,
@@ -1572,7 +1641,7 @@ export default class System {
   }
 
   // Fire system:application trigger
-  async applicationTriggerScript (a: KV): Promise<KV> {
+  async applicationTriggerScript (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       applicationID,
       script,
@@ -1584,6 +1653,7 @@ export default class System {
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.applicationTriggerScriptEndpoint({
         applicationID,
@@ -1603,7 +1673,7 @@ export default class System {
   }
 
   // Reorder applications
-  async applicationReorder (a: KV): Promise<KV> {
+  async applicationReorder (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       applicationIDs,
     } = (a as KV) || {}
@@ -1611,6 +1681,7 @@ export default class System {
       throw Error('field applicationIDs is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.applicationReorderEndpoint(),
     }
@@ -1625,9 +1696,10 @@ export default class System {
   }
 
   // Retrieve defined permissions
-  async permissionsList (): Promise<KV> {
+  async permissionsList (extra: AxiosRequestConfig = {}): Promise<KV> {
 
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.permissionsListEndpoint(),
     }
@@ -1640,11 +1712,12 @@ export default class System {
   }
 
   // Effective rules for current user
-  async permissionsEffective (a: KV): Promise<KV> {
+  async permissionsEffective (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       resource,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.permissionsEffectiveEndpoint(),
     }
@@ -1660,7 +1733,7 @@ export default class System {
   }
 
   // Retrieve role permissions
-  async permissionsRead (a: KV): Promise<KV> {
+  async permissionsRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
     } = (a as KV) || {}
@@ -1668,6 +1741,7 @@ export default class System {
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.permissionsReadEndpoint({
         roleID,
@@ -1685,7 +1759,7 @@ export default class System {
   }
 
   // Remove all defined role permissions
-  async permissionsDelete (a: KV): Promise<KV> {
+  async permissionsDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
     } = (a as KV) || {}
@@ -1693,6 +1767,7 @@ export default class System {
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.permissionsDeleteEndpoint({
         roleID,
@@ -1710,7 +1785,7 @@ export default class System {
   }
 
   // Update permission settings
-  async permissionsUpdate (a: KV): Promise<KV> {
+  async permissionsUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
       rules,
@@ -1722,6 +1797,7 @@ export default class System {
       throw Error('field rules is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'patch',
       url: this.permissionsUpdateEndpoint({
         roleID,
@@ -1741,7 +1817,7 @@ export default class System {
   }
 
   // List/read reminders
-  async reminderList (a: KV): Promise<KV> {
+  async reminderList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       reminderID,
       resource,
@@ -1756,6 +1832,7 @@ export default class System {
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.reminderListEndpoint(),
     }
@@ -1781,7 +1858,7 @@ export default class System {
   }
 
   // Add new reminder
-  async reminderCreate (a: KV): Promise<KV> {
+  async reminderCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       resource,
       assignedTo,
@@ -1798,6 +1875,7 @@ export default class System {
       throw Error('field payload is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.reminderCreateEndpoint(),
     }
@@ -1815,7 +1893,7 @@ export default class System {
   }
 
   // Update reminder
-  async reminderUpdate (a: KV): Promise<KV> {
+  async reminderUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       reminderID,
       resource,
@@ -1836,6 +1914,7 @@ export default class System {
       throw Error('field payload is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'put',
       url: this.reminderUpdateEndpoint({
         reminderID,
@@ -1858,7 +1937,7 @@ export default class System {
   }
 
   // Read reminder by ID
-  async reminderRead (a: KV): Promise<KV> {
+  async reminderRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       reminderID,
     } = (a as KV) || {}
@@ -1866,6 +1945,7 @@ export default class System {
       throw Error('field reminderID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.reminderReadEndpoint({
         reminderID,
@@ -1883,7 +1963,7 @@ export default class System {
   }
 
   // Delete reminder
-  async reminderDelete (a: KV): Promise<KV> {
+  async reminderDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       reminderID,
     } = (a as KV) || {}
@@ -1891,6 +1971,7 @@ export default class System {
       throw Error('field reminderID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.reminderDeleteEndpoint({
         reminderID,
@@ -1908,7 +1989,7 @@ export default class System {
   }
 
   // Dismiss reminder
-  async reminderDismiss (a: KV): Promise<KV> {
+  async reminderDismiss (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       reminderID,
     } = (a as KV) || {}
@@ -1916,6 +1997,7 @@ export default class System {
       throw Error('field reminderID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'patch',
       url: this.reminderDismissEndpoint({
         reminderID,
@@ -1933,7 +2015,7 @@ export default class System {
   }
 
   // Snooze reminder
-  async reminderSnooze (a: KV): Promise<KV> {
+  async reminderSnooze (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       reminderID,
       remindAt,
@@ -1945,6 +2027,7 @@ export default class System {
       throw Error('field remindAt is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'patch',
       url: this.reminderSnoozeEndpoint({
         reminderID,
@@ -1964,7 +2047,7 @@ export default class System {
   }
 
   // Attachment details
-  async attachmentRead (a: KV): Promise<KV> {
+  async attachmentRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       kind,
       attachmentID,
@@ -1978,6 +2061,7 @@ export default class System {
       throw Error('field attachmentID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.attachmentReadEndpoint({
         kind, attachmentID,
@@ -2000,7 +2084,7 @@ export default class System {
   }
 
   // Delete attachment
-  async attachmentDelete (a: KV): Promise<KV> {
+  async attachmentDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       kind,
       attachmentID,
@@ -2014,6 +2098,7 @@ export default class System {
       throw Error('field attachmentID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.attachmentDeleteEndpoint({
         kind, attachmentID,
@@ -2036,7 +2121,7 @@ export default class System {
   }
 
   // Serves attached file
-  async attachmentOriginal (a: KV): Promise<KV> {
+  async attachmentOriginal (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       kind,
       attachmentID,
@@ -2055,6 +2140,7 @@ export default class System {
       throw Error('field name is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.attachmentOriginalEndpoint({
         kind, attachmentID, name,
@@ -2079,7 +2165,7 @@ export default class System {
   }
 
   // Serves preview of an attached file
-  async attachmentPreview (a: KV): Promise<KV> {
+  async attachmentPreview (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       kind,
       attachmentID,
@@ -2097,6 +2183,7 @@ export default class System {
       throw Error('field ext is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.attachmentPreviewEndpoint({
         kind, attachmentID, ext,
@@ -2120,7 +2207,7 @@ export default class System {
   }
 
   // List templates
-  async templateList (a: KV): Promise<KV> {
+  async templateList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       handle,
       type,
@@ -2133,6 +2220,7 @@ export default class System {
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.templateListEndpoint(),
     }
@@ -2156,7 +2244,7 @@ export default class System {
   }
 
   // Create template
-  async templateCreate (a: KV): Promise<KV> {
+  async templateCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       handle,
       language,
@@ -2168,6 +2256,7 @@ export default class System {
       labels,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.templateCreateEndpoint(),
     }
@@ -2189,7 +2278,7 @@ export default class System {
   }
 
   // Read template
-  async templateRead (a: KV): Promise<KV> {
+  async templateRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       templateID,
     } = (a as KV) || {}
@@ -2197,6 +2286,7 @@ export default class System {
       throw Error('field templateID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.templateReadEndpoint({
         templateID,
@@ -2214,7 +2304,7 @@ export default class System {
   }
 
   // Update template
-  async templateUpdate (a: KV): Promise<KV> {
+  async templateUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       templateID,
       handle,
@@ -2230,6 +2320,7 @@ export default class System {
       throw Error('field templateID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'put',
       url: this.templateUpdateEndpoint({
         templateID,
@@ -2256,7 +2347,7 @@ export default class System {
   }
 
   // Delete template
-  async templateDelete (a: KV): Promise<KV> {
+  async templateDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       templateID,
     } = (a as KV) || {}
@@ -2264,6 +2355,7 @@ export default class System {
       throw Error('field templateID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.templateDeleteEndpoint({
         templateID,
@@ -2281,7 +2373,7 @@ export default class System {
   }
 
   // Undelete template
-  async templateUndelete (a: KV): Promise<KV> {
+  async templateUndelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       templateID,
     } = (a as KV) || {}
@@ -2289,6 +2381,7 @@ export default class System {
       throw Error('field templateID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.templateUndeleteEndpoint({
         templateID,
@@ -2306,9 +2399,10 @@ export default class System {
   }
 
   // Render drivers
-  async templateRenderDrivers (): Promise<KV> {
+  async templateRenderDrivers (extra: AxiosRequestConfig = {}): Promise<KV> {
 
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.templateRenderDriversEndpoint(),
     }
@@ -2321,7 +2415,7 @@ export default class System {
   }
 
   // Render template
-  async templateRender (a: KV): Promise<KV> {
+  async templateRender (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       templateID,
       filename,
@@ -2342,6 +2436,7 @@ export default class System {
       throw Error('field variables is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.templateRenderEndpoint({
         templateID, filename, ext,
@@ -2364,7 +2459,7 @@ export default class System {
   }
 
   // List reports
-  async reportList (a: KV): Promise<KV> {
+  async reportList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       handle,
       deleted,
@@ -2374,6 +2469,7 @@ export default class System {
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.reportListEndpoint(),
     }
@@ -2394,7 +2490,7 @@ export default class System {
   }
 
   // Create report
-  async reportCreate (a: KV): Promise<KV> {
+  async reportCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       handle,
       meta,
@@ -2403,6 +2499,7 @@ export default class System {
       labels,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.reportCreateEndpoint(),
     }
@@ -2421,7 +2518,7 @@ export default class System {
   }
 
   // Update report
-  async reportUpdate (a: KV): Promise<KV> {
+  async reportUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       reportID,
       handle,
@@ -2434,6 +2531,7 @@ export default class System {
       throw Error('field reportID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'put',
       url: this.reportUpdateEndpoint({
         reportID,
@@ -2457,7 +2555,7 @@ export default class System {
   }
 
   // Read report details
-  async reportRead (a: KV): Promise<KV> {
+  async reportRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       reportID,
     } = (a as KV) || {}
@@ -2465,6 +2563,7 @@ export default class System {
       throw Error('field reportID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.reportReadEndpoint({
         reportID,
@@ -2482,7 +2581,7 @@ export default class System {
   }
 
   // Remove report
-  async reportDelete (a: KV): Promise<KV> {
+  async reportDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       reportID,
     } = (a as KV) || {}
@@ -2490,6 +2589,7 @@ export default class System {
       throw Error('field reportID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.reportDeleteEndpoint({
         reportID,
@@ -2507,7 +2607,7 @@ export default class System {
   }
 
   // Undelete report
-  async reportUndelete (a: KV): Promise<KV> {
+  async reportUndelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       reportID,
     } = (a as KV) || {}
@@ -2515,6 +2615,7 @@ export default class System {
       throw Error('field reportID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.reportUndeleteEndpoint({
         reportID,
@@ -2532,13 +2633,14 @@ export default class System {
   }
 
   // Describe report
-  async reportDescribe (a: KV): Promise<KV> {
+  async reportDescribe (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       sources,
       steps,
       describe,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.reportDescribeEndpoint(),
     }
@@ -2555,7 +2657,7 @@ export default class System {
   }
 
   // Run report
-  async reportRun (a: KV): Promise<KV> {
+  async reportRun (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       reportID,
       frames,
@@ -2564,6 +2666,7 @@ export default class System {
       throw Error('field reportID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.reportRunEndpoint({
         reportID,
@@ -2583,9 +2686,10 @@ export default class System {
   }
 
   // List system statistics
-  async statsList (): Promise<KV> {
+  async statsList (extra: AxiosRequestConfig = {}): Promise<KV> {
 
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.statsListEndpoint(),
     }
@@ -2598,7 +2702,7 @@ export default class System {
   }
 
   // List all available automation scripts for system resources
-  async automationList (a: KV): Promise<KV> {
+  async automationList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       resourceTypePrefixes,
       resourceTypes,
@@ -2608,6 +2712,7 @@ export default class System {
       excludeServerScripts,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.automationListEndpoint(),
     }
@@ -2628,13 +2733,14 @@ export default class System {
   }
 
   // Serves client scripts bundle
-  async automationBundle (a: KV): Promise<KV> {
+  async automationBundle (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       bundle,
       type,
       ext,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.automationBundleEndpoint({
         bundle, type, ext,
@@ -2654,7 +2760,7 @@ export default class System {
   }
 
   // Triggers execution of a specific script on a system service level
-  async automationTriggerScript (a: KV): Promise<KV> {
+  async automationTriggerScript (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       script,
     } = (a as KV) || {}
@@ -2662,6 +2768,7 @@ export default class System {
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.automationTriggerScriptEndpoint(),
     }
@@ -2676,7 +2783,7 @@ export default class System {
   }
 
   // Action log events
-  async actionlogList (a: KV): Promise<KV> {
+  async actionlogList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       from,
       to,
@@ -2687,6 +2794,7 @@ export default class System {
       limit,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.actionlogListEndpoint(),
     }
@@ -2708,7 +2816,7 @@ export default class System {
   }
 
   // Messaging queues
-  async queuesList (a: KV): Promise<KV> {
+  async queuesList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       query,
       limit,
@@ -2717,6 +2825,7 @@ export default class System {
       deleted,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.queuesListEndpoint(),
     }
@@ -2736,7 +2845,7 @@ export default class System {
   }
 
   // Create messaging queue
-  async queuesCreate (a: KV): Promise<KV> {
+  async queuesCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       queue,
       consumer,
@@ -2749,6 +2858,7 @@ export default class System {
       throw Error('field consumer is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.queuesCreateEndpoint(),
     }
@@ -2765,7 +2875,7 @@ export default class System {
   }
 
   // Messaging queue details
-  async queuesRead (a: KV): Promise<KV> {
+  async queuesRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       queueID,
     } = (a as KV) || {}
@@ -2773,6 +2883,7 @@ export default class System {
       throw Error('field queueID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.queuesReadEndpoint({
         queueID,
@@ -2790,7 +2901,7 @@ export default class System {
   }
 
   // Update queue details
-  async queuesUpdate (a: KV): Promise<KV> {
+  async queuesUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       queueID,
       queue,
@@ -2807,6 +2918,7 @@ export default class System {
       throw Error('field consumer is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'put',
       url: this.queuesUpdateEndpoint({
         queueID,
@@ -2828,7 +2940,7 @@ export default class System {
   }
 
   // Messaging queue delete
-  async queuesDelete (a: KV): Promise<KV> {
+  async queuesDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       queueID,
     } = (a as KV) || {}
@@ -2836,6 +2948,7 @@ export default class System {
       throw Error('field queueID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.queuesDeleteEndpoint({
         queueID,
@@ -2853,7 +2966,7 @@ export default class System {
   }
 
   // Messaging queue undelete
-  async queuesUndelete (a: KV): Promise<KV> {
+  async queuesUndelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       queueID,
     } = (a as KV) || {}
@@ -2861,6 +2974,7 @@ export default class System {
       throw Error('field queueID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.queuesUndeleteEndpoint({
         queueID,
@@ -2878,7 +2992,7 @@ export default class System {
   }
 
   // List routes
-  async apigwRouteList (a: KV): Promise<KV> {
+  async apigwRouteList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       routeID,
       query,
@@ -2890,6 +3004,7 @@ export default class System {
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.apigwRouteListEndpoint(),
     }
@@ -2912,7 +3027,7 @@ export default class System {
   }
 
   // Create route
-  async apigwRouteCreate (a: KV): Promise<KV> {
+  async apigwRouteCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       endpoint,
       method,
@@ -2924,6 +3039,7 @@ export default class System {
       throw Error('field endpoint is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.apigwRouteCreateEndpoint(),
     }
@@ -2942,7 +3058,7 @@ export default class System {
   }
 
   // Update route details
-  async apigwRouteUpdate (a: KV): Promise<KV> {
+  async apigwRouteUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       routeID,
       endpoint,
@@ -2958,6 +3074,7 @@ export default class System {
       throw Error('field endpoint is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'put',
       url: this.apigwRouteUpdateEndpoint({
         routeID,
@@ -2981,7 +3098,7 @@ export default class System {
   }
 
   // Read route details
-  async apigwRouteRead (a: KV): Promise<KV> {
+  async apigwRouteRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       routeID,
     } = (a as KV) || {}
@@ -2989,6 +3106,7 @@ export default class System {
       throw Error('field routeID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.apigwRouteReadEndpoint({
         routeID,
@@ -3006,7 +3124,7 @@ export default class System {
   }
 
   // Remove route
-  async apigwRouteDelete (a: KV): Promise<KV> {
+  async apigwRouteDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       routeID,
     } = (a as KV) || {}
@@ -3014,6 +3132,7 @@ export default class System {
       throw Error('field routeID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.apigwRouteDeleteEndpoint({
         routeID,
@@ -3031,7 +3150,7 @@ export default class System {
   }
 
   // Undelete route
-  async apigwRouteUndelete (a: KV): Promise<KV> {
+  async apigwRouteUndelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       routeID,
     } = (a as KV) || {}
@@ -3039,6 +3158,7 @@ export default class System {
       throw Error('field routeID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.apigwRouteUndeleteEndpoint({
         routeID,
@@ -3056,23 +3176,25 @@ export default class System {
   }
 
   // List filters
-  async apigwFilterList (a: KV): Promise<KV> {
+  async apigwFilterList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       routeID,
-      query,
       deleted,
       disabled,
       limit,
       pageCursor,
       sort,
     } = (a as KV) || {}
+    if (!routeID) {
+      throw Error('field routeID is empty')
+    }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.apigwFilterListEndpoint(),
     }
     cfg.params = {
       routeID,
-      query,
       deleted,
       disabled,
       limit,
@@ -3088,7 +3210,7 @@ export default class System {
   }
 
   // Create filter
-  async apigwFilterCreate (a: KV): Promise<KV> {
+  async apigwFilterCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       routeID,
       weight,
@@ -3100,6 +3222,7 @@ export default class System {
       throw Error('field routeID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'put',
       url: this.apigwFilterCreateEndpoint(),
     }
@@ -3118,7 +3241,7 @@ export default class System {
   }
 
   // Update filter details
-  async apigwFilterUpdate (a: KV): Promise<KV> {
+  async apigwFilterUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       filterID,
       routeID,
@@ -3134,6 +3257,7 @@ export default class System {
       throw Error('field routeID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.apigwFilterUpdateEndpoint({
         filterID,
@@ -3157,7 +3281,7 @@ export default class System {
   }
 
   // Read filter details
-  async apigwFilterRead (a: KV): Promise<KV> {
+  async apigwFilterRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       filterID,
     } = (a as KV) || {}
@@ -3165,6 +3289,7 @@ export default class System {
       throw Error('field filterID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.apigwFilterReadEndpoint({
         filterID,
@@ -3182,7 +3307,7 @@ export default class System {
   }
 
   // Remove filter
-  async apigwFilterDelete (a: KV): Promise<KV> {
+  async apigwFilterDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       filterID,
     } = (a as KV) || {}
@@ -3190,6 +3315,7 @@ export default class System {
       throw Error('field filterID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.apigwFilterDeleteEndpoint({
         filterID,
@@ -3207,7 +3333,7 @@ export default class System {
   }
 
   // Undelete filter
-  async apigwFilterUndelete (a: KV): Promise<KV> {
+  async apigwFilterUndelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       filterID,
     } = (a as KV) || {}
@@ -3215,6 +3341,7 @@ export default class System {
       throw Error('field filterID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.apigwFilterUndeleteEndpoint({
         filterID,
@@ -3232,11 +3359,12 @@ export default class System {
   }
 
   // Filter definitions
-  async apigwFilterDefFilter (a: KV): Promise<KV> {
+  async apigwFilterDefFilter (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       kind,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.apigwFilterDefFilterEndpoint(),
     }
@@ -3252,9 +3380,10 @@ export default class System {
   }
 
   // Proxy auth definitions
-  async apigwFilterDefProxyAuth (): Promise<KV> {
+  async apigwFilterDefProxyAuth (extra: AxiosRequestConfig = {}): Promise<KV> {
 
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.apigwFilterDefProxyAuthEndpoint(),
     }
@@ -3267,7 +3396,7 @@ export default class System {
   }
 
   // List resources translations
-  async localeListResource (a: KV): Promise<KV> {
+  async localeListResource (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       lang,
       resource,
@@ -3279,6 +3408,7 @@ export default class System {
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.localeListResourceEndpoint(),
     }
@@ -3301,7 +3431,7 @@ export default class System {
   }
 
   // Create resource translation
-  async localeCreateResource (a: KV): Promise<KV> {
+  async localeCreateResource (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       lang,
       resource,
@@ -3323,6 +3453,7 @@ export default class System {
       throw Error('field message is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.localeCreateResourceEndpoint(),
     }
@@ -3342,7 +3473,7 @@ export default class System {
   }
 
   // Update resource translation
-  async localeUpdateResource (a: KV): Promise<KV> {
+  async localeUpdateResource (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       translationID,
       lang,
@@ -3356,6 +3487,7 @@ export default class System {
       throw Error('field translationID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'put',
       url: this.localeUpdateResourceEndpoint({
         translationID,
@@ -3380,7 +3512,7 @@ export default class System {
   }
 
   // Read resource translation details
-  async localeReadResource (a: KV): Promise<KV> {
+  async localeReadResource (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       translationID,
     } = (a as KV) || {}
@@ -3388,6 +3520,7 @@ export default class System {
       throw Error('field translationID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.localeReadResourceEndpoint({
         translationID,
@@ -3405,7 +3538,7 @@ export default class System {
   }
 
   // Remove resource translation
-  async localeDeleteResource (a: KV): Promise<KV> {
+  async localeDeleteResource (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       translationID,
     } = (a as KV) || {}
@@ -3413,6 +3546,7 @@ export default class System {
       throw Error('field translationID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.localeDeleteResourceEndpoint({
         translationID,
@@ -3430,7 +3564,7 @@ export default class System {
   }
 
   // Undelete resource translation
-  async localeUndeleteResource (a: KV): Promise<KV> {
+  async localeUndeleteResource (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       translationID,
     } = (a as KV) || {}
@@ -3438,6 +3572,7 @@ export default class System {
       throw Error('field translationID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.localeUndeleteResourceEndpoint({
         translationID,
@@ -3455,9 +3590,10 @@ export default class System {
   }
 
   // List all available languages
-  async localeList (): Promise<KV> {
+  async localeList (extra: AxiosRequestConfig = {}): Promise<KV> {
 
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.localeListEndpoint(),
     }
@@ -3470,7 +3606,7 @@ export default class System {
   }
 
   // List all available translation in a language for a specific webapp
-  async localeGet (a: KV): Promise<KV> {
+  async localeGet (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       lang,
       application,
@@ -3482,6 +3618,7 @@ export default class System {
       throw Error('field application is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.localeGetEndpoint({
         lang, application,

@@ -24,6 +24,10 @@ interface CortezaResponse {
   response?: unknown;
 }
 
+interface ExtraConfig {
+  headers?: Headers;
+}
+
 function stdResolve (response: AxiosResponse<CortezaResponse>): KV|Promise<never> {
   if (response.data.error) {
     return Promise.reject(response.data.error)
@@ -33,15 +37,18 @@ function stdResolve (response: AxiosResponse<CortezaResponse>): KV|Promise<never
 }
 
 export default class Automation {
-  protected baseURL?: string
-  protected accessTokenFn?: () => string | undefined
-  protected headers: Headers = {}
+  protected baseURL?: string;
+  protected accessTokenFn?: () => (string | undefined);
+  protected headers: Headers = {};
 
   constructor ({ baseURL, headers, accessTokenFn }: Ctor) {
     this.baseURL = baseURL
     this.accessTokenFn = accessTokenFn
     this.headers = {
-      'Content-Type': 'application/json'
+      /**
+       * All we send is JSON
+       */
+      'Content-Type': 'application/json',
     }
 
     this.setHeaders(headers)
@@ -55,6 +62,16 @@ export default class Automation {
   setHeaders (headers?: Headers): Automation {
     if (typeof headers === 'object') {
       this.headers = headers
+    }
+
+    return this
+  }
+
+  setHeader (name: string, value: string | undefined): Automation {
+    if (value === undefined) {
+      delete this.headers[name]
+    } else {
+      this.headers[name] = value
     }
 
     return this
@@ -75,7 +92,7 @@ export default class Automation {
   }
 
   // List workflows
-  async workflowList (a: KV): Promise<KV> {
+  async workflowList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       workflowID,
       query,
@@ -87,6 +104,7 @@ export default class Automation {
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.workflowListEndpoint(),
     }
@@ -109,7 +127,7 @@ export default class Automation {
   }
 
   // Create workflow
-  async workflowCreate (a: KV): Promise<KV> {
+  async workflowCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       handle,
       labels,
@@ -133,6 +151,7 @@ export default class Automation {
       throw Error('field ownedBy is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.workflowCreateEndpoint(),
     }
@@ -157,7 +176,7 @@ export default class Automation {
   }
 
   // Update triger details
-  async workflowUpdate (a: KV): Promise<KV> {
+  async workflowUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       workflowID,
       handle,
@@ -185,6 +204,7 @@ export default class Automation {
       throw Error('field ownedBy is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'put',
       url: this.workflowUpdateEndpoint({
         workflowID,
@@ -214,7 +234,7 @@ export default class Automation {
   }
 
   // Read workflow details
-  async workflowRead (a: KV): Promise<KV> {
+  async workflowRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       workflowID,
     } = (a as KV) || {}
@@ -222,6 +242,7 @@ export default class Automation {
       throw Error('field workflowID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.workflowReadEndpoint({
         workflowID,
@@ -239,7 +260,7 @@ export default class Automation {
   }
 
   // Remove workflow
-  async workflowDelete (a: KV): Promise<KV> {
+  async workflowDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       workflowID,
     } = (a as KV) || {}
@@ -247,6 +268,7 @@ export default class Automation {
       throw Error('field workflowID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.workflowDeleteEndpoint({
         workflowID,
@@ -264,7 +286,7 @@ export default class Automation {
   }
 
   // Undelete workflow
-  async workflowUndelete (a: KV): Promise<KV> {
+  async workflowUndelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       workflowID,
     } = (a as KV) || {}
@@ -272,6 +294,7 @@ export default class Automation {
       throw Error('field workflowID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.workflowUndeleteEndpoint({
         workflowID,
@@ -289,7 +312,7 @@ export default class Automation {
   }
 
   // Test workflow details
-  async workflowTest (a: KV): Promise<KV> {
+  async workflowTest (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       workflowID,
       scope,
@@ -302,6 +325,7 @@ export default class Automation {
       throw Error('field runAs is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.workflowTestEndpoint({
         workflowID,
@@ -322,7 +346,7 @@ export default class Automation {
   }
 
   // Executes workflow on a specific step (must be orphan step and connected to &#x27;onManual&#x27; trigger)
-  async workflowExec (a: KV): Promise<KV> {
+  async workflowExec (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       workflowID,
       stepID,
@@ -338,6 +362,7 @@ export default class Automation {
       throw Error('field stepID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.workflowExecEndpoint({
         workflowID,
@@ -361,7 +386,7 @@ export default class Automation {
   }
 
   // List triggers
-  async triggerList (a: KV): Promise<KV> {
+  async triggerList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       triggerID,
       workflowID,
@@ -376,6 +401,7 @@ export default class Automation {
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.triggerListEndpoint(),
     }
@@ -401,7 +427,7 @@ export default class Automation {
   }
 
   // Create trigger
-  async triggerCreate (a: KV): Promise<KV> {
+  async triggerCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       eventType,
       resourceType,
@@ -430,6 +456,7 @@ export default class Automation {
       throw Error('field ownedBy is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.triggerCreateEndpoint(),
     }
@@ -453,7 +480,7 @@ export default class Automation {
   }
 
   // Update trigger details
-  async triggerUpdate (a: KV): Promise<KV> {
+  async triggerUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       triggerID,
       eventType,
@@ -486,6 +513,7 @@ export default class Automation {
       throw Error('field ownedBy is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'put',
       url: this.triggerUpdateEndpoint({
         triggerID,
@@ -514,7 +542,7 @@ export default class Automation {
   }
 
   // Read trigger details
-  async triggerRead (a: KV): Promise<KV> {
+  async triggerRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       triggerID,
     } = (a as KV) || {}
@@ -522,6 +550,7 @@ export default class Automation {
       throw Error('field triggerID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.triggerReadEndpoint({
         triggerID,
@@ -539,7 +568,7 @@ export default class Automation {
   }
 
   // Remove trigger
-  async triggerDelete (a: KV): Promise<KV> {
+  async triggerDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       triggerID,
     } = (a as KV) || {}
@@ -547,6 +576,7 @@ export default class Automation {
       throw Error('field triggerID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.triggerDeleteEndpoint({
         triggerID,
@@ -564,7 +594,7 @@ export default class Automation {
   }
 
   // Undelete trigger
-  async triggerUndelete (a: KV): Promise<KV> {
+  async triggerUndelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       triggerID,
     } = (a as KV) || {}
@@ -572,6 +602,7 @@ export default class Automation {
       throw Error('field triggerID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.triggerUndeleteEndpoint({
         triggerID,
@@ -589,7 +620,7 @@ export default class Automation {
   }
 
   // List sessions
-  async sessionList (a: KV): Promise<KV> {
+  async sessionList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       sessionID,
       workflowID,
@@ -603,6 +634,7 @@ export default class Automation {
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.sessionListEndpoint(),
     }
@@ -627,7 +659,7 @@ export default class Automation {
   }
 
   // Read session details
-  async sessionRead (a: KV): Promise<KV> {
+  async sessionRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       sessionID,
     } = (a as KV) || {}
@@ -635,6 +667,7 @@ export default class Automation {
       throw Error('field sessionID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.sessionReadEndpoint({
         sessionID,
@@ -652,7 +685,7 @@ export default class Automation {
   }
 
   // Read session trace info
-  async sessionTrace (a: KV): Promise<KV> {
+  async sessionTrace (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       sessionID,
     } = (a as KV) || {}
@@ -660,6 +693,7 @@ export default class Automation {
       throw Error('field sessionID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.sessionTraceEndpoint({
         sessionID,
@@ -677,7 +711,7 @@ export default class Automation {
   }
 
   // Remove session
-  async sessionDelete (a: KV): Promise<KV> {
+  async sessionDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       sessionID,
     } = (a as KV) || {}
@@ -685,6 +719,7 @@ export default class Automation {
       throw Error('field sessionID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.sessionDeleteEndpoint({
         sessionID,
@@ -702,9 +737,10 @@ export default class Automation {
   }
 
   // Returns pending prompts from all sessions
-  async sessionListPrompts (): Promise<KV> {
+  async sessionListPrompts (extra: AxiosRequestConfig = {}): Promise<KV> {
 
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.sessionListPromptsEndpoint(),
     }
@@ -717,7 +753,7 @@ export default class Automation {
   }
 
   // Resume session
-  async sessionResumeState (a: KV): Promise<KV> {
+  async sessionResumeState (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       sessionID,
       stateID,
@@ -730,6 +766,7 @@ export default class Automation {
       throw Error('field stateID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.sessionResumeStateEndpoint({
         sessionID, stateID,
@@ -750,7 +787,7 @@ export default class Automation {
   }
 
   // Cancel session&#x27;s state
-  async sessionDeleteState (a: KV): Promise<KV> {
+  async sessionDeleteState (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       sessionID,
       stateID,
@@ -762,6 +799,7 @@ export default class Automation {
       throw Error('field stateID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.sessionDeleteStateEndpoint({
         sessionID, stateID,
@@ -780,9 +818,10 @@ export default class Automation {
   }
 
   // Available workflow functions
-  async functionList (): Promise<KV> {
+  async functionList (extra: AxiosRequestConfig = {}): Promise<KV> {
 
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.functionListEndpoint(),
     }
@@ -795,9 +834,10 @@ export default class Automation {
   }
 
   // Available workflow types
-  async typeList (): Promise<KV> {
+  async typeList (extra: AxiosRequestConfig = {}): Promise<KV> {
 
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.typeListEndpoint(),
     }
@@ -810,9 +850,10 @@ export default class Automation {
   }
 
   // Available workflow types
-  async eventTypesList (): Promise<KV> {
+  async eventTypesList (extra: AxiosRequestConfig = {}): Promise<KV> {
 
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.eventTypesListEndpoint(),
     }
@@ -825,9 +866,10 @@ export default class Automation {
   }
 
   // Retrieve defined permissions
-  async permissionsList (): Promise<KV> {
+  async permissionsList (extra: AxiosRequestConfig = {}): Promise<KV> {
 
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.permissionsListEndpoint(),
     }
@@ -840,11 +882,12 @@ export default class Automation {
   }
 
   // Effective rules for current user
-  async permissionsEffective (a: KV): Promise<KV> {
+  async permissionsEffective (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       resource,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.permissionsEffectiveEndpoint(),
     }
@@ -860,7 +903,7 @@ export default class Automation {
   }
 
   // Retrieve role permissions
-  async permissionsRead (a: KV): Promise<KV> {
+  async permissionsRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
     } = (a as KV) || {}
@@ -868,6 +911,7 @@ export default class Automation {
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.permissionsReadEndpoint({
         roleID,
@@ -885,7 +929,7 @@ export default class Automation {
   }
 
   // Remove all defined role permissions
-  async permissionsDelete (a: KV): Promise<KV> {
+  async permissionsDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
     } = (a as KV) || {}
@@ -893,6 +937,7 @@ export default class Automation {
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.permissionsDeleteEndpoint({
         roleID,
@@ -910,7 +955,7 @@ export default class Automation {
   }
 
   // Update permission settings
-  async permissionsUpdate (a: KV): Promise<KV> {
+  async permissionsUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
       rules,
@@ -922,6 +967,7 @@ export default class Automation {
       throw Error('field rules is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'patch',
       url: this.permissionsUpdateEndpoint({
         roleID,

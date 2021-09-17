@@ -24,6 +24,10 @@ interface CortezaResponse {
   response?: unknown;
 }
 
+interface ExtraConfig {
+  headers?: Headers;
+}
+
 function stdResolve (response: AxiosResponse<CortezaResponse>): KV|Promise<never> {
   if (response.data.error) {
     return Promise.reject(response.data.error)
@@ -33,15 +37,18 @@ function stdResolve (response: AxiosResponse<CortezaResponse>): KV|Promise<never
 }
 
 export default class Compose {
-  protected baseURL?: string
-  protected accessTokenFn?: () => string | undefined
-  protected headers: Headers = {}
+  protected baseURL?: string;
+  protected accessTokenFn?: () => (string | undefined);
+  protected headers: Headers = {};
 
   constructor ({ baseURL, headers, accessTokenFn }: Ctor) {
     this.baseURL = baseURL
     this.accessTokenFn = accessTokenFn
     this.headers = {
-      'Content-Type': 'application/json'
+      /**
+       * All we send is JSON
+       */
+      'Content-Type': 'application/json',
     }
 
     this.setHeaders(headers)
@@ -55,6 +62,16 @@ export default class Compose {
   setHeaders (headers?: Headers): Compose {
     if (typeof headers === 'object') {
       this.headers = headers
+    }
+
+    return this
+  }
+
+  setHeader (name: string, value: string | undefined): Compose {
+    if (value === undefined) {
+      delete this.headers[name]
+    } else {
+      this.headers[name] = value
     }
 
     return this
@@ -75,7 +92,7 @@ export default class Compose {
   }
 
   // List namespaces
-  async namespaceList (a: KV): Promise<KV> {
+  async namespaceList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       query,
       slug,
@@ -85,6 +102,7 @@ export default class Compose {
       sort,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.namespaceListEndpoint(),
     }
@@ -105,7 +123,7 @@ export default class Compose {
   }
 
   // Create namespace
-  async namespaceCreate (a: KV): Promise<KV> {
+  async namespaceCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       name,
       labels,
@@ -120,6 +138,7 @@ export default class Compose {
       throw Error('field meta is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.namespaceCreateEndpoint(),
     }
@@ -138,7 +157,7 @@ export default class Compose {
   }
 
   // Read namespace
-  async namespaceRead (a: KV): Promise<KV> {
+  async namespaceRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
     } = (a as KV) || {}
@@ -146,6 +165,7 @@ export default class Compose {
       throw Error('field namespaceID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.namespaceReadEndpoint({
         namespaceID,
@@ -163,7 +183,7 @@ export default class Compose {
   }
 
   // Update namespace
-  async namespaceUpdate (a: KV): Promise<KV> {
+  async namespaceUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       name,
@@ -183,6 +203,7 @@ export default class Compose {
       throw Error('field meta is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.namespaceUpdateEndpoint({
         namespaceID,
@@ -207,7 +228,7 @@ export default class Compose {
   }
 
   // Delete namespace
-  async namespaceDelete (a: KV): Promise<KV> {
+  async namespaceDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
     } = (a as KV) || {}
@@ -215,6 +236,7 @@ export default class Compose {
       throw Error('field namespaceID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.namespaceDeleteEndpoint({
         namespaceID,
@@ -232,7 +254,7 @@ export default class Compose {
   }
 
   // Upload namespace assets
-  async namespaceUpload (a: KV): Promise<KV> {
+  async namespaceUpload (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       upload,
     } = (a as KV) || {}
@@ -240,6 +262,7 @@ export default class Compose {
       throw Error('field upload is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.namespaceUploadEndpoint(),
     }
@@ -254,7 +277,7 @@ export default class Compose {
   }
 
   // Clone compose namespace
-  async namespaceClone (a: KV): Promise<KV> {
+  async namespaceClone (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       name,
@@ -270,6 +293,7 @@ export default class Compose {
       throw Error('field slug is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.namespaceCloneEndpoint({
         namespaceID,
@@ -290,7 +314,7 @@ export default class Compose {
   }
 
   // Export compose namespace
-  async namespaceExport (a: KV): Promise<KV> {
+  async namespaceExport (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       filename,
@@ -306,6 +330,7 @@ export default class Compose {
       throw Error('field ext is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.namespaceExportEndpoint({
         namespaceID, filename, ext,
@@ -325,7 +350,7 @@ export default class Compose {
   }
 
   // Import namespace
-  async namespaceImport (a: KV): Promise<KV> {
+  async namespaceImport (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       upload,
     } = (a as KV) || {}
@@ -333,6 +358,7 @@ export default class Compose {
       throw Error('field upload is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.namespaceImportEndpoint(),
     }
@@ -347,7 +373,7 @@ export default class Compose {
   }
 
   // Fire compose:namespace trigger
-  async namespaceTriggerScript (a: KV): Promise<KV> {
+  async namespaceTriggerScript (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       script,
@@ -359,6 +385,7 @@ export default class Compose {
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.namespaceTriggerScriptEndpoint({
         namespaceID,
@@ -378,7 +405,7 @@ export default class Compose {
   }
 
   // List translation
-  async namespaceListTranslations (a: KV): Promise<KV> {
+  async namespaceListTranslations (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
     } = (a as KV) || {}
@@ -386,6 +413,7 @@ export default class Compose {
       throw Error('field namespaceID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.namespaceListTranslationsEndpoint({
         namespaceID,
@@ -403,7 +431,7 @@ export default class Compose {
   }
 
   // Update translation
-  async namespaceUpdateTranslations (a: KV): Promise<KV> {
+  async namespaceUpdateTranslations (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       translations,
@@ -415,6 +443,7 @@ export default class Compose {
       throw Error('field translations is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'patch',
       url: this.namespaceUpdateTranslationsEndpoint({
         namespaceID,
@@ -434,7 +463,7 @@ export default class Compose {
   }
 
   // List available pages
-  async pageList (a: KV): Promise<KV> {
+  async pageList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       selfID,
@@ -450,6 +479,7 @@ export default class Compose {
       throw Error('field namespaceID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.pageListEndpoint({
         namespaceID,
@@ -477,7 +507,7 @@ export default class Compose {
   }
 
   // Create page
-  async pageCreate (a: KV): Promise<KV> {
+  async pageCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       selfID,
@@ -497,6 +527,7 @@ export default class Compose {
       throw Error('field title is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.pageCreateEndpoint({
         namespaceID,
@@ -524,7 +555,7 @@ export default class Compose {
   }
 
   // Get page details
-  async pageRead (a: KV): Promise<KV> {
+  async pageRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       pageID,
@@ -536,6 +567,7 @@ export default class Compose {
       throw Error('field pageID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.pageReadEndpoint({
         namespaceID, pageID,
@@ -554,7 +586,7 @@ export default class Compose {
   }
 
   // Get page all (non-record) pages, hierarchically
-  async pageTree (a: KV): Promise<KV> {
+  async pageTree (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
     } = (a as KV) || {}
@@ -562,6 +594,7 @@ export default class Compose {
       throw Error('field namespaceID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.pageTreeEndpoint({
         namespaceID,
@@ -579,7 +612,7 @@ export default class Compose {
   }
 
   // Update page
-  async pageUpdate (a: KV): Promise<KV> {
+  async pageUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       pageID,
@@ -603,6 +636,7 @@ export default class Compose {
       throw Error('field title is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.pageUpdateEndpoint({
         namespaceID, pageID,
@@ -631,7 +665,7 @@ export default class Compose {
   }
 
   // Reorder pages
-  async pageReorder (a: KV): Promise<KV> {
+  async pageReorder (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       selfID,
@@ -647,6 +681,7 @@ export default class Compose {
       throw Error('field pageIDs is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.pageReorderEndpoint({
         namespaceID, selfID,
@@ -667,7 +702,7 @@ export default class Compose {
   }
 
   // Delete page
-  async pageDelete (a: KV): Promise<KV> {
+  async pageDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       pageID,
@@ -679,6 +714,7 @@ export default class Compose {
       throw Error('field pageID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.pageDeleteEndpoint({
         namespaceID, pageID,
@@ -697,7 +733,7 @@ export default class Compose {
   }
 
   // Uploads attachment to page
-  async pageUpload (a: KV): Promise<KV> {
+  async pageUpload (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       pageID,
@@ -713,6 +749,7 @@ export default class Compose {
       throw Error('field upload is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.pageUploadEndpoint({
         namespaceID, pageID,
@@ -733,7 +770,7 @@ export default class Compose {
   }
 
   // Fire compose:page trigger
-  async pageTriggerScript (a: KV): Promise<KV> {
+  async pageTriggerScript (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       pageID,
@@ -749,6 +786,7 @@ export default class Compose {
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.pageTriggerScriptEndpoint({
         namespaceID, pageID,
@@ -769,7 +807,7 @@ export default class Compose {
   }
 
   // List page translation
-  async pageListTranslations (a: KV): Promise<KV> {
+  async pageListTranslations (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       pageID,
@@ -781,6 +819,7 @@ export default class Compose {
       throw Error('field pageID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.pageListTranslationsEndpoint({
         namespaceID, pageID,
@@ -799,7 +838,7 @@ export default class Compose {
   }
 
   // Update page translation
-  async pageUpdateTranslations (a: KV): Promise<KV> {
+  async pageUpdateTranslations (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       pageID,
@@ -815,6 +854,7 @@ export default class Compose {
       throw Error('field translations is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'patch',
       url: this.pageUpdateTranslationsEndpoint({
         namespaceID, pageID,
@@ -835,7 +875,7 @@ export default class Compose {
   }
 
   // List modules
-  async moduleList (a: KV): Promise<KV> {
+  async moduleList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       query,
@@ -850,6 +890,7 @@ export default class Compose {
       throw Error('field namespaceID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.moduleListEndpoint({
         namespaceID,
@@ -876,7 +917,7 @@ export default class Compose {
   }
 
   // Create module
-  async moduleCreate (a: KV): Promise<KV> {
+  async moduleCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       name,
@@ -898,6 +939,7 @@ export default class Compose {
       throw Error('field meta is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.moduleCreateEndpoint({
         namespaceID,
@@ -921,7 +963,7 @@ export default class Compose {
   }
 
   // Read module
-  async moduleRead (a: KV): Promise<KV> {
+  async moduleRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -933,6 +975,7 @@ export default class Compose {
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.moduleReadEndpoint({
         namespaceID, moduleID,
@@ -951,7 +994,7 @@ export default class Compose {
   }
 
   // Update module
-  async moduleUpdate (a: KV): Promise<KV> {
+  async moduleUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -978,6 +1021,7 @@ export default class Compose {
       throw Error('field meta is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.moduleUpdateEndpoint({
         namespaceID, moduleID,
@@ -1003,7 +1047,7 @@ export default class Compose {
   }
 
   // Delete module
-  async moduleDelete (a: KV): Promise<KV> {
+  async moduleDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1015,6 +1059,7 @@ export default class Compose {
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.moduleDeleteEndpoint({
         namespaceID, moduleID,
@@ -1033,7 +1078,7 @@ export default class Compose {
   }
 
   // Fire compose:module trigger
-  async moduleTriggerScript (a: KV): Promise<KV> {
+  async moduleTriggerScript (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1049,6 +1094,7 @@ export default class Compose {
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.moduleTriggerScriptEndpoint({
         namespaceID, moduleID,
@@ -1069,7 +1115,7 @@ export default class Compose {
   }
 
   // List moudle translation
-  async moduleListTranslations (a: KV): Promise<KV> {
+  async moduleListTranslations (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1081,6 +1127,7 @@ export default class Compose {
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.moduleListTranslationsEndpoint({
         namespaceID, moduleID,
@@ -1099,7 +1146,7 @@ export default class Compose {
   }
 
   // Update module translation
-  async moduleUpdateTranslations (a: KV): Promise<KV> {
+  async moduleUpdateTranslations (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1115,6 +1162,7 @@ export default class Compose {
       throw Error('field translations is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'patch',
       url: this.moduleUpdateTranslationsEndpoint({
         namespaceID, moduleID,
@@ -1135,7 +1183,7 @@ export default class Compose {
   }
 
   // Generates report from module records
-  async recordReport (a: KV): Promise<KV> {
+  async recordReport (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1153,6 +1201,7 @@ export default class Compose {
       throw Error('field dimensions is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.recordReportEndpoint({
         namespaceID, moduleID,
@@ -1176,7 +1225,7 @@ export default class Compose {
   }
 
   // List/read records from module section
-  async recordList (a: KV): Promise<KV> {
+  async recordList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1196,6 +1245,7 @@ export default class Compose {
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.recordListEndpoint({
         namespaceID, moduleID,
@@ -1224,7 +1274,7 @@ export default class Compose {
   }
 
   // Initiate record import session
-  async recordImportInit (a: KV): Promise<KV> {
+  async recordImportInit (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1240,6 +1290,7 @@ export default class Compose {
       throw Error('field upload is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.recordImportInitEndpoint({
         namespaceID, moduleID,
@@ -1260,7 +1311,7 @@ export default class Compose {
   }
 
   // Run record import
-  async recordImportRun (a: KV): Promise<KV> {
+  async recordImportRun (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1284,6 +1335,7 @@ export default class Compose {
       throw Error('field onError is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'patch',
       url: this.recordImportRunEndpoint({
         namespaceID, moduleID, sessionID,
@@ -1306,7 +1358,7 @@ export default class Compose {
   }
 
   // Get import progress
-  async recordImportProgress (a: KV): Promise<KV> {
+  async recordImportProgress (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1322,6 +1374,7 @@ export default class Compose {
       throw Error('field sessionID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.recordImportProgressEndpoint({
         namespaceID, moduleID, sessionID,
@@ -1341,7 +1394,7 @@ export default class Compose {
   }
 
   // Exports records that match
-  async recordExport (a: KV): Promise<KV> {
+  async recordExport (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1364,6 +1417,7 @@ export default class Compose {
       throw Error('field fields is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.recordExportEndpoint({
         namespaceID, moduleID, filename, ext,
@@ -1389,7 +1443,7 @@ export default class Compose {
   }
 
   // Executes server-side procedure over one or more module records
-  async recordExec (a: KV): Promise<KV> {
+  async recordExec (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1406,6 +1460,7 @@ export default class Compose {
       throw Error('field procedure is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.recordExecEndpoint({
         namespaceID, moduleID, procedure,
@@ -1427,7 +1482,7 @@ export default class Compose {
   }
 
   // Create record in module section
-  async recordCreate (a: KV): Promise<KV> {
+  async recordCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1442,6 +1497,7 @@ export default class Compose {
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.recordCreateEndpoint({
         namespaceID, moduleID,
@@ -1464,7 +1520,7 @@ export default class Compose {
   }
 
   // Read records by ID from module section
-  async recordRead (a: KV): Promise<KV> {
+  async recordRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1480,6 +1536,7 @@ export default class Compose {
       throw Error('field recordID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.recordReadEndpoint({
         namespaceID, moduleID, recordID,
@@ -1499,7 +1556,7 @@ export default class Compose {
   }
 
   // Update records in module section
-  async recordUpdate (a: KV): Promise<KV> {
+  async recordUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1518,6 +1575,7 @@ export default class Compose {
       throw Error('field recordID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.recordUpdateEndpoint({
         namespaceID, moduleID, recordID,
@@ -1541,7 +1599,7 @@ export default class Compose {
   }
 
   // Delete record row from module section
-  async recordBulkDelete (a: KV): Promise<KV> {
+  async recordBulkDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1555,6 +1613,7 @@ export default class Compose {
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.recordBulkDeleteEndpoint({
         namespaceID, moduleID,
@@ -1576,7 +1635,7 @@ export default class Compose {
   }
 
   // Delete record row from module section
-  async recordDelete (a: KV): Promise<KV> {
+  async recordDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1592,6 +1651,7 @@ export default class Compose {
       throw Error('field recordID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.recordDeleteEndpoint({
         namespaceID, moduleID, recordID,
@@ -1611,7 +1671,7 @@ export default class Compose {
   }
 
   // Uploads attachment and validates it against record field requirements
-  async recordUpload (a: KV): Promise<KV> {
+  async recordUpload (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1632,6 +1692,7 @@ export default class Compose {
       throw Error('field upload is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.recordUploadEndpoint({
         namespaceID, moduleID,
@@ -1654,7 +1715,7 @@ export default class Compose {
   }
 
   // Fire compose:record trigger
-  async recordTriggerScript (a: KV): Promise<KV> {
+  async recordTriggerScript (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1678,6 +1739,7 @@ export default class Compose {
       throw Error('field values is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.recordTriggerScriptEndpoint({
         namespaceID, moduleID, recordID,
@@ -1700,7 +1762,7 @@ export default class Compose {
   }
 
   // Fire compose:record trigger
-  async recordTriggerScriptOnList (a: KV): Promise<KV> {
+  async recordTriggerScriptOnList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       moduleID,
@@ -1716,6 +1778,7 @@ export default class Compose {
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.recordTriggerScriptOnListEndpoint({
         namespaceID, moduleID,
@@ -1736,7 +1799,7 @@ export default class Compose {
   }
 
   // List/read charts
-  async chartList (a: KV): Promise<KV> {
+  async chartList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       query,
@@ -1750,6 +1813,7 @@ export default class Compose {
       throw Error('field namespaceID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.chartListEndpoint({
         namespaceID,
@@ -1775,7 +1839,7 @@ export default class Compose {
   }
 
   // List/read charts
-  async chartCreate (a: KV): Promise<KV> {
+  async chartCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       config,
@@ -1793,6 +1857,7 @@ export default class Compose {
       throw Error('field name is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.chartCreateEndpoint({
         namespaceID,
@@ -1815,7 +1880,7 @@ export default class Compose {
   }
 
   // Read charts by ID
-  async chartRead (a: KV): Promise<KV> {
+  async chartRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       chartID,
@@ -1827,6 +1892,7 @@ export default class Compose {
       throw Error('field chartID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.chartReadEndpoint({
         namespaceID, chartID,
@@ -1845,7 +1911,7 @@ export default class Compose {
   }
 
   // Add/update charts
-  async chartUpdate (a: KV): Promise<KV> {
+  async chartUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       chartID,
@@ -1868,6 +1934,7 @@ export default class Compose {
       throw Error('field name is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.chartUpdateEndpoint({
         namespaceID, chartID,
@@ -1892,7 +1959,7 @@ export default class Compose {
   }
 
   // Delete chart
-  async chartDelete (a: KV): Promise<KV> {
+  async chartDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       chartID,
@@ -1904,6 +1971,7 @@ export default class Compose {
       throw Error('field chartID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.chartDeleteEndpoint({
         namespaceID, chartID,
@@ -1922,7 +1990,7 @@ export default class Compose {
   }
 
   // Send email from the Compose
-  async notificationEmailSend (a: KV): Promise<KV> {
+  async notificationEmailSend (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       to,
       cc,
@@ -1938,6 +2006,7 @@ export default class Compose {
       throw Error('field content is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.notificationEmailSendEndpoint(),
     }
@@ -1957,7 +2026,7 @@ export default class Compose {
   }
 
   // List, filter all page attachments
-  async attachmentList (a: KV): Promise<KV> {
+  async attachmentList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       kind,
       namespaceID,
@@ -1977,6 +2046,7 @@ export default class Compose {
       throw Error('field namespaceID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.attachmentListEndpoint({
         kind, namespaceID,
@@ -2005,7 +2075,7 @@ export default class Compose {
   }
 
   // Attachment details
-  async attachmentRead (a: KV): Promise<KV> {
+  async attachmentRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       kind,
       namespaceID,
@@ -2023,6 +2093,7 @@ export default class Compose {
       throw Error('field attachmentID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.attachmentReadEndpoint({
         kind, namespaceID, attachmentID,
@@ -2046,7 +2117,7 @@ export default class Compose {
   }
 
   // Delete attachment
-  async attachmentDelete (a: KV): Promise<KV> {
+  async attachmentDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       kind,
       namespaceID,
@@ -2064,6 +2135,7 @@ export default class Compose {
       throw Error('field attachmentID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.attachmentDeleteEndpoint({
         kind, namespaceID, attachmentID,
@@ -2087,7 +2159,7 @@ export default class Compose {
   }
 
   // Serves attached file
-  async attachmentOriginal (a: KV): Promise<KV> {
+  async attachmentOriginal (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       kind,
       namespaceID,
@@ -2110,6 +2182,7 @@ export default class Compose {
       throw Error('field name is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.attachmentOriginalEndpoint({
         kind, namespaceID, attachmentID, name,
@@ -2135,7 +2208,7 @@ export default class Compose {
   }
 
   // Serves preview of an attached file
-  async attachmentPreview (a: KV): Promise<KV> {
+  async attachmentPreview (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       kind,
       namespaceID,
@@ -2157,6 +2230,7 @@ export default class Compose {
       throw Error('field ext is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.attachmentPreviewEndpoint({
         kind, namespaceID, attachmentID, ext,
@@ -2181,9 +2255,10 @@ export default class Compose {
   }
 
   // Retrieve defined permissions
-  async permissionsList (): Promise<KV> {
+  async permissionsList (extra: AxiosRequestConfig = {}): Promise<KV> {
 
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.permissionsListEndpoint(),
     }
@@ -2196,11 +2271,12 @@ export default class Compose {
   }
 
   // Effective rules for current user
-  async permissionsEffective (a: KV): Promise<KV> {
+  async permissionsEffective (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       resource,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.permissionsEffectiveEndpoint(),
     }
@@ -2216,7 +2292,7 @@ export default class Compose {
   }
 
   // Retrieve role permissions
-  async permissionsRead (a: KV): Promise<KV> {
+  async permissionsRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
     } = (a as KV) || {}
@@ -2224,6 +2300,7 @@ export default class Compose {
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.permissionsReadEndpoint({
         roleID,
@@ -2241,7 +2318,7 @@ export default class Compose {
   }
 
   // Remove all defined role permissions
-  async permissionsDelete (a: KV): Promise<KV> {
+  async permissionsDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
     } = (a as KV) || {}
@@ -2249,6 +2326,7 @@ export default class Compose {
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.permissionsDeleteEndpoint({
         roleID,
@@ -2266,7 +2344,7 @@ export default class Compose {
   }
 
   // Update permission settings
-  async permissionsUpdate (a: KV): Promise<KV> {
+  async permissionsUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
       rules,
@@ -2278,6 +2356,7 @@ export default class Compose {
       throw Error('field rules is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'patch',
       url: this.permissionsUpdateEndpoint({
         roleID,
@@ -2297,7 +2376,7 @@ export default class Compose {
   }
 
   // List all available automation scripts for compose resources
-  async automationList (a: KV): Promise<KV> {
+  async automationList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       resourceTypePrefixes,
       resourceTypes,
@@ -2307,6 +2386,7 @@ export default class Compose {
       excludeServerScripts,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.automationListEndpoint(),
     }
@@ -2327,13 +2407,14 @@ export default class Compose {
   }
 
   // Serves client scripts bundle
-  async automationBundle (a: KV): Promise<KV> {
+  async automationBundle (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       bundle,
       type,
       ext,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.automationBundleEndpoint({
         bundle, type, ext,
@@ -2353,7 +2434,7 @@ export default class Compose {
   }
 
   // Triggers execution of a specific script on a system service level
-  async automationTriggerScript (a: KV): Promise<KV> {
+  async automationTriggerScript (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       script,
     } = (a as KV) || {}
@@ -2361,6 +2442,7 @@ export default class Compose {
       throw Error('field script is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.automationTriggerScriptEndpoint(),
     }

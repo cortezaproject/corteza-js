@@ -24,6 +24,10 @@ interface CortezaResponse {
   response?: unknown;
 }
 
+interface ExtraConfig {
+  headers?: Headers;
+}
+
 function stdResolve (response: AxiosResponse<CortezaResponse>): KV|Promise<never> {
   if (response.data.error) {
     return Promise.reject(response.data.error)
@@ -33,15 +37,18 @@ function stdResolve (response: AxiosResponse<CortezaResponse>): KV|Promise<never
 }
 
 export default class Federation {
-  protected baseURL?: string
-  protected accessTokenFn?: () => string | undefined
-  protected headers: Headers = {}
+  protected baseURL?: string;
+  protected accessTokenFn?: () => (string | undefined);
+  protected headers: Headers = {};
 
   constructor ({ baseURL, headers, accessTokenFn }: Ctor) {
     this.baseURL = baseURL
     this.accessTokenFn = accessTokenFn
     this.headers = {
-      'Content-Type': 'application/json'
+      /**
+       * All we send is JSON
+       */
+      'Content-Type': 'application/json',
     }
 
     this.setHeaders(headers)
@@ -55,6 +62,16 @@ export default class Federation {
   setHeaders (headers?: Headers): Federation {
     if (typeof headers === 'object') {
       this.headers = headers
+    }
+
+    return this
+  }
+
+  setHeader (name: string, value: string | undefined): Federation {
+    if (value === undefined) {
+      delete this.headers[name]
+    } else {
+      this.headers[name] = value
     }
 
     return this
@@ -75,7 +92,7 @@ export default class Federation {
   }
 
   // Initialize the handshake step with node B
-  async nodeHandshakeInitialize (a: KV): Promise<KV> {
+  async nodeHandshakeInitialize (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
       pairToken,
@@ -95,6 +112,7 @@ export default class Federation {
       throw Error('field authToken is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.nodeHandshakeInitializeEndpoint({
         nodeID,
@@ -116,12 +134,13 @@ export default class Federation {
   }
 
   // Search federated nodes
-  async nodeSearch (a: KV): Promise<KV> {
+  async nodeSearch (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       query,
       status,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.nodeSearchEndpoint(),
     }
@@ -138,7 +157,7 @@ export default class Federation {
   }
 
   // Create a new federation node
-  async nodeCreate (a: KV): Promise<KV> {
+  async nodeCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       baseURL,
       name,
@@ -146,6 +165,7 @@ export default class Federation {
       pairingURI,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.nodeCreateEndpoint(),
     }
@@ -163,7 +183,7 @@ export default class Federation {
   }
 
   // Read a federation node
-  async nodeRead (a: KV): Promise<KV> {
+  async nodeRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
     } = (a as KV) || {}
@@ -171,6 +191,7 @@ export default class Federation {
       throw Error('field nodeID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.nodeReadEndpoint({
         nodeID,
@@ -188,7 +209,7 @@ export default class Federation {
   }
 
   // Creates new sharable federation URI
-  async nodeGenerateUri (a: KV): Promise<KV> {
+  async nodeGenerateUri (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
     } = (a as KV) || {}
@@ -196,6 +217,7 @@ export default class Federation {
       throw Error('field nodeID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.nodeGenerateUriEndpoint({
         nodeID,
@@ -213,7 +235,7 @@ export default class Federation {
   }
 
   // Updates existing node
-  async nodeUpdate (a: KV): Promise<KV> {
+  async nodeUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
       name,
@@ -224,6 +246,7 @@ export default class Federation {
       throw Error('field nodeID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.nodeUpdateEndpoint({
         nodeID,
@@ -245,7 +268,7 @@ export default class Federation {
   }
 
   // Deletes node
-  async nodeDelete (a: KV): Promise<KV> {
+  async nodeDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
     } = (a as KV) || {}
@@ -253,6 +276,7 @@ export default class Federation {
       throw Error('field nodeID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.nodeDeleteEndpoint({
         nodeID,
@@ -270,7 +294,7 @@ export default class Federation {
   }
 
   // Undeletes a node
-  async nodeUndelete (a: KV): Promise<KV> {
+  async nodeUndelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
     } = (a as KV) || {}
@@ -278,6 +302,7 @@ export default class Federation {
       throw Error('field nodeID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.nodeUndeleteEndpoint({
         nodeID,
@@ -295,7 +320,7 @@ export default class Federation {
   }
 
   // Initialize the pairing process between the two nodes
-  async nodePair (a: KV): Promise<KV> {
+  async nodePair (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
     } = (a as KV) || {}
@@ -303,6 +328,7 @@ export default class Federation {
       throw Error('field nodeID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.nodePairEndpoint({
         nodeID,
@@ -320,7 +346,7 @@ export default class Federation {
   }
 
   // Confirm the requested handshake
-  async nodeHandshakeConfirm (a: KV): Promise<KV> {
+  async nodeHandshakeConfirm (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
     } = (a as KV) || {}
@@ -328,6 +354,7 @@ export default class Federation {
       throw Error('field nodeID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.nodeHandshakeConfirmEndpoint({
         nodeID,
@@ -345,7 +372,7 @@ export default class Federation {
   }
 
   // Complete the handshake
-  async nodeHandshakeComplete (a: KV): Promise<KV> {
+  async nodeHandshakeComplete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
       authToken,
@@ -357,6 +384,7 @@ export default class Federation {
       throw Error('field authToken is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.nodeHandshakeCompleteEndpoint({
         nodeID,
@@ -376,7 +404,7 @@ export default class Federation {
   }
 
   // Exposed settings for module
-  async manageStructureReadExposed (a: KV): Promise<KV> {
+  async manageStructureReadExposed (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
       moduleID,
@@ -388,6 +416,7 @@ export default class Federation {
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.manageStructureReadExposedEndpoint({
         nodeID, moduleID,
@@ -406,7 +435,7 @@ export default class Federation {
   }
 
   // Add module to federation
-  async manageStructureCreateExposed (a: KV): Promise<KV> {
+  async manageStructureCreateExposed (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
       composeModuleID,
@@ -431,6 +460,7 @@ export default class Federation {
       throw Error('field handle is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'put',
       url: this.manageStructureCreateExposedEndpoint({
         nodeID,
@@ -454,7 +484,7 @@ export default class Federation {
   }
 
   // Update already exposed module
-  async manageStructureUpdateExposed (a: KV): Promise<KV> {
+  async manageStructureUpdateExposed (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
       moduleID,
@@ -483,6 +513,7 @@ export default class Federation {
       throw Error('field handle is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'post',
       url: this.manageStructureUpdateExposedEndpoint({
         nodeID, moduleID,
@@ -507,7 +538,7 @@ export default class Federation {
   }
 
   // Remove from federation
-  async manageStructureRemoveExposed (a: KV): Promise<KV> {
+  async manageStructureRemoveExposed (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
       moduleID,
@@ -519,6 +550,7 @@ export default class Federation {
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.manageStructureRemoveExposedEndpoint({
         nodeID, moduleID,
@@ -537,7 +569,7 @@ export default class Federation {
   }
 
   // Shared settings for module
-  async manageStructureReadShared (a: KV): Promise<KV> {
+  async manageStructureReadShared (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
       moduleID,
@@ -549,6 +581,7 @@ export default class Federation {
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.manageStructureReadSharedEndpoint({
         nodeID, moduleID,
@@ -567,7 +600,7 @@ export default class Federation {
   }
 
   // Add fields mappings to federated module
-  async manageStructureCreateMappings (a: KV): Promise<KV> {
+  async manageStructureCreateMappings (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
       moduleID,
@@ -588,6 +621,7 @@ export default class Federation {
       throw Error('field composeNamespaceID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'put',
       url: this.manageStructureCreateMappingsEndpoint({
         nodeID, moduleID,
@@ -610,7 +644,7 @@ export default class Federation {
   }
 
   // Fields mappings for module
-  async manageStructureReadMappings (a: KV): Promise<KV> {
+  async manageStructureReadMappings (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
       moduleID,
@@ -623,6 +657,7 @@ export default class Federation {
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.manageStructureReadMappingsEndpoint({
         nodeID, moduleID,
@@ -644,7 +679,7 @@ export default class Federation {
   }
 
   // List of shared/exposed/mapped modules
-  async manageStructureListAll (a: KV): Promise<KV> {
+  async manageStructureListAll (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
       shared,
@@ -655,6 +690,7 @@ export default class Federation {
       throw Error('field nodeID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.manageStructureListAllEndpoint({
         nodeID,
@@ -677,7 +713,7 @@ export default class Federation {
   }
 
   // List all exposed modules changes
-  async syncStructureReadExposedInternal (a: KV): Promise<KV> {
+  async syncStructureReadExposedInternal (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
       lastSync,
@@ -690,6 +726,7 @@ export default class Federation {
       throw Error('field nodeID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.syncStructureReadExposedInternalEndpoint({
         nodeID,
@@ -714,7 +751,7 @@ export default class Federation {
   }
 
   // List all exposed modules changes in activity streams format
-  async syncStructureReadExposedSocial (a: KV): Promise<KV> {
+  async syncStructureReadExposedSocial (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
       lastSync,
@@ -727,6 +764,7 @@ export default class Federation {
       throw Error('field nodeID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.syncStructureReadExposedSocialEndpoint({
         nodeID,
@@ -751,7 +789,7 @@ export default class Federation {
   }
 
   // List all record changes
-  async syncDataReadExposedAll (a: KV): Promise<KV> {
+  async syncDataReadExposedAll (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
       lastSync,
@@ -764,6 +802,7 @@ export default class Federation {
       throw Error('field nodeID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.syncDataReadExposedAllEndpoint({
         nodeID,
@@ -788,7 +827,7 @@ export default class Federation {
   }
 
   // List all records per module
-  async syncDataReadExposedInternal (a: KV): Promise<KV> {
+  async syncDataReadExposedInternal (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
       moduleID,
@@ -805,6 +844,7 @@ export default class Federation {
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.syncDataReadExposedInternalEndpoint({
         nodeID, moduleID,
@@ -830,7 +870,7 @@ export default class Federation {
   }
 
   // List all records per module in activitystreams format
-  async syncDataReadExposedSocial (a: KV): Promise<KV> {
+  async syncDataReadExposedSocial (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       nodeID,
       moduleID,
@@ -847,6 +887,7 @@ export default class Federation {
       throw Error('field moduleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.syncDataReadExposedSocialEndpoint({
         nodeID, moduleID,
@@ -872,9 +913,10 @@ export default class Federation {
   }
 
   // Retrieve defined permissions
-  async permissionsList (): Promise<KV> {
+  async permissionsList (extra: AxiosRequestConfig = {}): Promise<KV> {
 
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.permissionsListEndpoint(),
     }
@@ -887,11 +929,12 @@ export default class Federation {
   }
 
   // Effective rules for current user
-  async permissionsEffective (a: KV): Promise<KV> {
+  async permissionsEffective (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       resource,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.permissionsEffectiveEndpoint(),
     }
@@ -907,7 +950,7 @@ export default class Federation {
   }
 
   // Retrieve role permissions
-  async permissionsRead (a: KV): Promise<KV> {
+  async permissionsRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
     } = (a as KV) || {}
@@ -915,6 +958,7 @@ export default class Federation {
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'get',
       url: this.permissionsReadEndpoint({
         roleID,
@@ -932,7 +976,7 @@ export default class Federation {
   }
 
   // Remove all defined role permissions
-  async permissionsDelete (a: KV): Promise<KV> {
+  async permissionsDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
     } = (a as KV) || {}
@@ -940,6 +984,7 @@ export default class Federation {
       throw Error('field roleID is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'delete',
       url: this.permissionsDeleteEndpoint({
         roleID,
@@ -957,7 +1002,7 @@ export default class Federation {
   }
 
   // Update permission settings
-  async permissionsUpdate (a: KV): Promise<KV> {
+  async permissionsUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
       rules,
@@ -969,6 +1014,7 @@ export default class Federation {
       throw Error('field rules is empty')
     }
     const cfg: AxiosRequestConfig = {
+      ...extra,
       method: 'patch',
       url: this.permissionsUpdateEndpoint({
         roleID,
