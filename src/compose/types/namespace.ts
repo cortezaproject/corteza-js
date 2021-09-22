@@ -16,9 +16,8 @@ interface Meta {
   // Temporary icon & logo URLs
   // @todo rework this when we rework attachment management
   icon: string;
-  iconID: string;
   logo: string;
-  logoID: string;
+  logoEnabled: boolean;
 }
 
 interface PartialNamespace extends Partial<Omit<Namespace, 'meta' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
