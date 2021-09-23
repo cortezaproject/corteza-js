@@ -43,7 +43,7 @@ const defaults: Readonly<Options> = Object.freeze({
   responsive: true,
   noCollapse: false,
   headVariant: null,
-  tableVariant: 'light',
+  tableVariant: '',
 })
 
 export class DisplayElementTable extends DisplayElement {

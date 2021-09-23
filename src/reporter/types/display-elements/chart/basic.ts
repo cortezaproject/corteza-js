@@ -28,19 +28,23 @@ export class BasicChartOptions extends ChartOptions {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        scales: {
-          yAxes: [{
-            ticks: {
-              beginAtZero: true,
-            },
-          }],
-        },
+        scales: {},
         plugins: {
           colorschemes: {
             scheme: this.colorScheme,
             reverse: true,
           }
         }
+      }
+    }
+
+    if (['bar', 'line'].includes(this.type)) {
+      config.options.scales = {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true,
+          },
+        }],
       }
     }
 
