@@ -1750,6 +1750,7 @@ export default class System {
       scheduledUntil,
       scheduledOnly,
       excludeDismissed,
+      includeDeleted,
       limit,
       pageCursor,
       sort,
@@ -1766,6 +1767,7 @@ export default class System {
       scheduledUntil,
       scheduledOnly,
       excludeDismissed,
+      includeDeleted,
       limit,
       pageCursor,
       sort,
@@ -2529,7 +2531,7 @@ export default class System {
     return `/reports/${reportID}/undelete`
   }
 
-  // Describe report (fresh)
+  // Describe report
   async reportDescribe (a: KV): Promise<KV> {
     const {
       sources,
@@ -2550,29 +2552,6 @@ export default class System {
 
   reportDescribeEndpoint (): string {
     return '/reports/describe'
-  }
-
-  // Run report (fresh)
-  async reportRunFresh (a: KV): Promise<KV> {
-    const {
-      sources,
-      steps,
-      frames,
-    } = (a as KV) || {}
-    const cfg: AxiosRequestConfig = {
-      method: 'post',
-      url: this.reportRunFreshEndpoint(),
-    }
-    cfg.data = {
-      sources,
-      steps,
-      frames,
-    }
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  reportRunFreshEndpoint (): string {
-    return '/reports/run'
   }
 
   // Run report
