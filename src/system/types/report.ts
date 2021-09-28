@@ -1,11 +1,10 @@
-import { Step } from '../../reporter'
+import { Step, Block } from '../../reporter'
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
 import { IsOf } from '../../guards'
-import { Projection } from '../../reporter'
 
-interface PartialReport extends Partial<Omit<Report, 'steps' | 'projections' | 'createdAt' | 'createdBy' | 'updatedAt' | 'updatedBy' | 'deletedAt' | 'deletedBy'>> {
+interface PartialReport extends Partial<Omit<Report, 'steps' | 'blocks' | 'createdAt' | 'createdBy' | 'updatedAt' | 'updatedBy' | 'deletedAt' | 'deletedBy'>> {
   steps?: Array<ReportStepGroup>;
-  projections?: Array<unknown|Projection>;
+  blocks?: Array<unknown|Block>;
   createdAt?: string|number|Date;
   createdBy?: string;
   updatedAt?: string|number|Date;
@@ -36,7 +35,7 @@ export class Report {
   public handle = ''
   public meta: Meta = {}
   public sources: Array<ReportDataSource> = []
-  public projections: Array<Projection> = []
+  public blocks: Array<Block> = []
 
   public labels: object = {}
   public createdAt?: Date = undefined
@@ -67,10 +66,10 @@ export class Report {
       this.sources.push(s as ReportDataSource)
     }
 
-    if (r?.projections) {
-      this.projections = []
-      for (const p of r.projections) {
-        this.projections.push(new Projection(p as Projection))
+    if (r?.blocks) {
+      this.blocks = []
+      for (const p of r.blocks) {
+        this.blocks.push(new Block(p as Block))
       }
     }
 

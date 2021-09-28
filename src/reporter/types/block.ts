@@ -4,7 +4,7 @@ import { DisplayElement, DisplayElementMaker } from './display-elements'
 
 const defaultXYWH: () => [number, number, number, number] = () => [0, 0, 20, 15]
 
-export class Projection {
+export class Block {
   public title = ''
   public description = ''
   public layout = 'horizontal'
@@ -12,7 +12,7 @@ export class Projection {
 
   xywh: number[] = defaultXYWH()
 
-  constructor (p: Partial<Projection>) {
+  constructor (p: Partial<Block>) {
     if (!p) return
 
     Apply(this, p, String, 'title', 'description', 'layout')

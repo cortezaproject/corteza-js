@@ -2399,7 +2399,7 @@ export default class System {
       handle,
       meta,
       sources,
-      projections,
+      blocks,
       labels,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
@@ -2410,7 +2410,7 @@ export default class System {
       handle,
       meta,
       sources,
-      projections,
+      blocks,
       labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
@@ -2427,7 +2427,7 @@ export default class System {
       handle,
       meta,
       sources,
-      projections,
+      blocks,
       labels,
     } = (a as KV) || {}
     if (!reportID) {
@@ -2443,7 +2443,7 @@ export default class System {
       handle,
       meta,
       sources,
-      projections,
+      blocks,
       labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
