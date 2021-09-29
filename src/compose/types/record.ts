@@ -80,6 +80,7 @@ export class Record {
   public deletedBy = NoID;
 
   public canUpdateRecord = false;
+  public canReadRecord = false;
   public canDeleteRecord = false;
   public canGrant = false;
 
@@ -163,6 +164,7 @@ export class Record {
 
     Apply(this, r, Boolean,
       'canUpdateRecord',
+      'canReadRecord',
       'canDeleteRecord',
       'canGrant',
     )
