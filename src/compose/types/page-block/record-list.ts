@@ -19,6 +19,7 @@ interface Options {
   hideRecordCloneButton: boolean;
   hideRecordEditButton: boolean;
   hideRecordViewButton: boolean;
+  hideRecordPermissionsButton: boolean;
   allowExport: boolean;
   perPage: number;
 
@@ -112,6 +113,7 @@ export class PageBlockRecordList extends PageBlock {
       'hideRecordCloneButton',
       'hideRecordEditButton',
       'hideRecordViewButton',
+      'hideRecordPermissionsButton',
       'editable',
       'draggable',
     )
