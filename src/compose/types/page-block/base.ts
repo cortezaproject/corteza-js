@@ -16,7 +16,7 @@ interface PageBlockStyle {
 
 export type PageBlockInput = PageBlock | Partial<PageBlock>
 
-const defaultXYWH = [0, 0, 3, 3]
+const defaultXYWH = [0, 2000, 3, 3]
 
 export class PageBlock {
   public title = '';
