@@ -50,6 +50,7 @@ export interface Expressions {
 }
 
 interface Validator {
+  validatorID: string;
   test: string;
   error: string;
 }
