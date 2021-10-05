@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import moment from 'moment'
+import { date } from '../../../formatting'
 import {
   ChartConfig,
   ChartRenderer,
@@ -189,6 +189,8 @@ export class BaseChart {
     // Not a time dimensions, build set of labels
     if (!isTimeDimension) {
       labels = results.map((r: any) => pickValue(r[dLabel], dimension)) as Array<string>
+    } else {
+      labels = results.map((r: any) => date(pickValue(r[dLabel], dimension) as string)) as Array<string>
     }
 
     // Build data sets
@@ -196,10 +198,7 @@ export class BaseChart {
       const alias = makeAlias({ field: m.field, aggregate: m.aggregate })
       const data = results.map((r: any) => {
         const y: any = r[m.field === 'count' ? m.field : alias]
-        if (!isTimeDimension) {
-          return pickValue(y, dimension)
-        }
-        return { y, t: moment(pickValue(r[dLabel], dimension) as string).toDate() }
+        return pickValue(y, dimension)
       })
 
       // Any sub class has the ability to define how the dataset looks like.
