@@ -45,6 +45,12 @@ export class Report {
   public deletedAt?: Date = undefined
   public deletedBy?: string = undefined
 
+  public canReadReport = false;
+  public canUpdateReport = false;
+  public canDeleteReport = false;
+  public canGrant = false;
+  public canRunReport = false;
+
   constructor (r?: PartialReport) {
     this.apply(r)
   }
@@ -79,6 +85,13 @@ export class Report {
 
     Apply(this, r, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt')
     Apply(this, r, CortezaID, 'createdBy', 'updatedBy', 'deletedBy')
+    Apply(this, r, Boolean,
+      'canReadReport',
+      'canUpdateReport',
+      'canDeleteReport', 
+      'canGrant',
+      'canRunReport',
+    )
   }
 
   /**
