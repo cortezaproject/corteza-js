@@ -60,7 +60,7 @@ export class ModuleFieldDateTime extends ModuleField {
     } else if (o.format.length > 0) {
       return m.format(o.format)
     } else if (o.onlyTime) {
-      return fmt.time(m)
+      return fmt.time(moment(value, ['YYYY-MM-DD HH:mm', 'YYYY-MM-DD', 'HH:mm']))
     } else if (o.onlyDate) {
       return fmt.date(m)
     } else {
