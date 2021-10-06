@@ -3184,7 +3184,6 @@ export default class System {
       limit,
       pageCursor,
       sort,
-      enabled,
     } = (a as KV) || {}
     if (!routeID) {
       throw Error('field routeID is empty')
@@ -3201,7 +3200,6 @@ export default class System {
       limit,
       pageCursor,
       sort,
-      enabled,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))
