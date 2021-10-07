@@ -37,7 +37,7 @@ export function GenericCasterFreezer<T> (C: GenericCtor<T>): GenericGetterFn<Rea
 
 export interface BaseArgs {
   $invoker: User;
-  authToken: string;
+  accessToken: string;
 }
 
 export interface GenericGetterFn<T> {

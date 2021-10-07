@@ -27,7 +27,7 @@ describe('execution', () => {
       const scriptLogger = pino()
       const config: Config = { cServers: { compose: {}, system: {} } }
       const args: BaseArgs = {
-        authToken: '',
+        accessToken: '',
         $invoker: new User(),
       }
 
