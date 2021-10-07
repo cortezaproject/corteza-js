@@ -1133,9 +1133,6 @@ export default class System {
     if (!userID) {
       throw Error('field userID is empty')
     }
-    if (!password) {
-      throw Error('field password is empty')
-    }
     const cfg: AxiosRequestConfig = {
       method: 'post',
       url: this.userSetPasswordEndpoint({
