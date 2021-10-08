@@ -14,7 +14,7 @@ describe(__filename, () => {
       const ctx = new Ctx(
         {
           $invoker: new User(),
-          accessToken: '',
+          authToken: '',
         },
         pino(),
         { config: { cServers: { system: cscfg, compose: cscfg } } },

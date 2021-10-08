@@ -80,7 +80,7 @@ export class Ctx {
   }
 
   /**
-   * Returns promise with the current user (if accessToken argument was given)
+   * Returns promise with the current user (if authToken argument was given)
    *
    * This is a temporary solution that decodes the userID from the access token (JWT)
    * and fetches the user info
@@ -88,7 +88,7 @@ export class Ctx {
    * @returns {Promise<User>}
    */
   get $authUser (): Promise<User> {
-    const [, payload] = this.args.accessToken.split('.')
+    const [, payload] = this.args.authToken.split('.')
     // eslint-disable-next-line node/no-deprecated-api
     const buf = new Buffer(payload, 'base64')
     const { sub: userID } = JSON.parse(buf.toString('ascii'))
@@ -107,7 +107,7 @@ export class Ctx {
 
       this.systemAPI = new apiClients.System({
         baseURL: this.config.cServers.system.apiBaseURL,
-        accessTokenFn: (): string => this.args.accessToken,
+        accessTokenFn: (): string => this.args.authToken,
       })
     }
 
@@ -125,7 +125,7 @@ export class Ctx {
 
       this.composeAPI = new apiClients.Compose({
         baseURL: this.config.cServers.compose.apiBaseURL,
-        accessTokenFn: (): string => this.args.accessToken,
+        accessTokenFn: (): string => this.args.authToken,
       })
     }
 
