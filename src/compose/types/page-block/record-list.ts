@@ -68,7 +68,7 @@ const defaults: Readonly<Options> = Object.freeze({
   refField: undefined,
   editFields: [],
 
-  selectable: false,
+  selectable: true,
   selectMode: 'multi',
 
   selectionButtons: [],
