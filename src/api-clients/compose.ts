@@ -349,8 +349,8 @@ export default class Compose {
     return `/namespace/${namespaceID}/export/${filename}.zip`
   }
 
-  // Import namespace
-  async namespaceImport (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+  // Initiate namespace import session
+  async namespaceImportInit (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       upload,
     } = (a as KV) || {}
@@ -360,7 +360,7 @@ export default class Compose {
     const cfg: AxiosRequestConfig = {
       ...extra,
       method: 'post',
-      url: this.namespaceImportEndpoint(),
+      url: this.namespaceImportInitEndpoint(),
     }
     cfg.data = {
       upload,
@@ -368,8 +368,45 @@ export default class Compose {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  namespaceImportEndpoint (): string {
+  namespaceImportInitEndpoint (): string {
     return '/namespace/import'
+  }
+
+  // Run namespace import
+  async namespaceImportRun (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      sessionID,
+      name,
+      slug,
+    } = (a as KV) || {}
+    if (!sessionID) {
+      throw Error('field sessionID is empty')
+    }
+    if (!name) {
+      throw Error('field name is empty')
+    }
+    if (!slug) {
+      throw Error('field slug is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'post',
+      url: this.namespaceImportRunEndpoint({
+        sessionID,
+      }),
+    }
+    cfg.data = {
+      name,
+      slug,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  namespaceImportRunEndpoint (a: KV): string {
+    const {
+      sessionID,
+    } = a || {}
+    return `/namespace/import/${sessionID}`
   }
 
   // Fire compose:namespace trigger
