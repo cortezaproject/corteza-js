@@ -82,6 +82,7 @@ export default class FunnelChart extends BaseChart {
   makeOptions (data: any) {
     const options: any = {
       sort: 'desc',
+      maintainAspectRatio: false
     }
 
     if (this.config.colorScheme) {
@@ -115,12 +116,19 @@ export default class FunnelChart extends BaseChart {
   private makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): any {
     const dataset = datasets[datasetIndex]
     const total = dataset.data.reduce((acc: number, v: number) => acc + v, 0)
-
+    
+    let suffix
+    if(total === 0 && dataset.data[index] === 0) {
+      suffix = ` (${total.toFixed(2)})%`
+    }else {
+      suffix = ` (${((dataset.data[index] * 100) / total).toFixed(2)}%)`
+    }
+    
     return makeDataLabel({
       prefix: labels[index],
       value: dataset.data[index],
       dataset,
-      suffix: ` (${((dataset.data[index] * 100) / total).toFixed(2)}%)`,
+      suffix
     })
   }
 
