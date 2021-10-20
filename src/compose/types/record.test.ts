@@ -5,7 +5,8 @@ import { Module } from './module'
 
 const m = Object.freeze(new Module({
   fields: [
-    { name: 'simple' },
+    { name: 'bool', kind: 'Bool' },
+    { name: 'simple', kind: 'String' },
     { name: 'required', isRequired: true },
     { name: 'multi', isMulti: true },
     { name: 'multiRequired', isRequired: true, isMulti: true },
@@ -21,6 +22,7 @@ describe(__filename, () => {
        * even if to undefined. Without this we will have problems
        * with Vue reactivity
        */
+      expect(r.values).to.have.property('bool').and.to.be.undefined
       expect(r.values).to.have.property('simple').and.to.be.undefined
       expect(r.values).to.have.property('required').to.be.undefined
       expect(r.values).to.have.property('multi').to.be.deep.eq([])
@@ -29,12 +31,14 @@ describe(__filename, () => {
 
     const assertSimpleSet = function (r: Record): void {
       expect(r.module).to.eq(m)
+      expect(r.values.bool).to.eq('0')
       expect(r.values.simple).to.eq('foo')
       expect(r.values.multi).to.deep.eq(['bar'])
     }
 
-    const values: Values = { simple: 'foo', multi: ['bar'] }
+    const values: Values = { bool: '0', simple: 'foo', multi: ['bar'] }
     const rawValues = [
+      { name: 'bool' },
       { name: 'simple', value: 'foo' },
       { name: 'multi', value: 'bar' },
     ]
@@ -194,7 +198,7 @@ describe(__filename, () => {
         '{"recordID":"0","moduleID":"0","namespaceID":"0",' +
         '"values":[{"name":"simple","value":"foo"},{"name":"multi","value":"bar"},{"name":"multi","value":"baz"}],' +
         '"labels":{},' +
-        '"ownedBy":"0","createdBy":"0","updatedBy":"0","deletedBy":"0"}')
+        '"ownedBy":"0","createdBy":"0","updatedBy":"0","deletedBy":"0","canUpdateRecord":false,"canReadRecord":false,"canDeleteRecord":false,"canGrant":false}')
     })
 
     it('serialization magic should sustain object manipulation', () => {
