@@ -16,7 +16,7 @@ interface Headers {
 
 interface Ctor {
   baseURL?: string;
-  accessTokenFn: () => string | undefined
+  accessTokenFn?: () => string | undefined
   headers?: Headers;
 }
 
