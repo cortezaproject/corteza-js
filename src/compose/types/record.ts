@@ -370,11 +370,11 @@ export class Record {
     if (!this[fieldIndex].has(name)) {
       return
     }
-    const { isMulti } = this[fieldIndex].get(name) as FieldIndex
+    const { kind, isMulti } = this[fieldIndex].get(name) as FieldIndex
 
     if (value === undefined || value.length === 0) {
       // nothing given, nothing set
-      this.values[name] = isMulti ? [] : undefined
+      this.values[name] = isMulti ? [] : (kind === 'Bool' ? '0' : undefined)
       return
     }
 
