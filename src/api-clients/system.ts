@@ -15,7 +15,8 @@ interface Headers {
 
 interface Ctor {
   baseURL?: string;
-  accessTokenFn?: () => string | undefined
+  searcherURL?: string;
+  accessTokenFn: () => string | undefined;
   headers?: Headers;
 }
 
@@ -38,11 +39,13 @@ function stdResolve (response: AxiosResponse<CortezaResponse>): KV|Promise<never
 
 export default class System {
   protected baseURL?: string;
+  protected searcherURL?: string;
   protected accessTokenFn?: () => (string | undefined);
   protected headers: Headers = {};
 
-  constructor ({ baseURL, headers, accessTokenFn }: Ctor) {
+  constructor ({ baseURL, searcherURL, headers, accessTokenFn }: Ctor) {
     this.baseURL = baseURL
+    this.searcherURL = searcherURL
     this.accessTokenFn = accessTokenFn
     this.headers = {
       /**
@@ -1394,6 +1397,21 @@ export default class System {
 
   applicationListEndpoint (): string {
     return '/application/'
+  }
+
+  async getSearchData (a: string, extra: AxiosRequestConfig = {}): Promise<KV> {
+    if (!a) throw Error('field userID is empty')
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'post',
+      url: this.getSearchDataEndpoint(a),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  getSearchDataEndpoint (a: string): string {
+    return `${this.searcherURL}/?q=${a}`
   }
 
   // Create application
