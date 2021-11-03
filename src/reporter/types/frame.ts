@@ -25,3 +25,7 @@ export class FrameDefinition {
   columns?: Array<FrameColumn>;
   rows?: Array<string>;
 }
+
+export interface DefinitionOptions {
+  [header: string]: FrameDefinition;
+}

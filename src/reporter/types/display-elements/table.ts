@@ -1,5 +1,5 @@
 import { DisplayElement, DisplayElementInput, Registry } from './base'
-import { FrameDefinition, FrameColumn } from '../frame'
+import { FrameDefinition, FrameColumn, DefinitionOptions } from '../frame'
 import { Apply } from '../../../cast'
 
 const kind = 'Table'
@@ -82,7 +82,7 @@ export class DisplayElementTable extends DisplayElement {
     }
   }
 
-  reportDefinitions (definition: FrameDefinition = {}): { dataframes: Array<FrameDefinition> } {
+  reportDefinitions (definition: DefinitionOptions): { dataframes: Array<FrameDefinition> } {
     if (typeof this.options.source === 'object') {
       // @todo allow implicit sources
       throw new Error('table source must be provided as a reference')
@@ -90,7 +90,7 @@ export class DisplayElementTable extends DisplayElement {
 
     const dataframes: Array<FrameDefinition> = []
 
-    this.options.datasources.map(({ name, filter, sort, paging }) => {
+    this.options.datasources.forEach(({ name = '', filter, sort, paging }) => {
       const df: FrameDefinition = {
         name: this.name,
         source: this.options.source,
@@ -100,10 +100,27 @@ export class DisplayElementTable extends DisplayElement {
         paging,
       }
 
-      if (name === definition.ref) {
-        df.sort = (definition.sort ? definition.sort : sort) || undefined
+      const relatedDefinition = definition[name]
 
-        if (definition.paging || paging) {
+      if (relatedDefinition) {
+        df.sort = (relatedDefinition.sort ? relatedDefinition.sort : sort) || undefined
+
+        if (relatedDefinition.filter && relatedDefinition.filter?.ref) {
+          // If element and scenario have filter AND them together
+          if (filter && filter.ref) {
+            df.filter = {
+              ref: 'and',
+              args: [
+                filter,
+                relatedDefinition.filter,
+              ]
+            }
+          } else {
+            df.filter = relatedDefinition.filter
+          }
+        }
+
+        if (relatedDefinition.paging || paging) {
           df.paging = { ...(paging || {}), ...(definition.paging || {}) }
         }
       }

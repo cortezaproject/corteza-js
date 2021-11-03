@@ -1,10 +1,11 @@
-import { Step, Block } from '../../reporter'
+import { Step, Block, FilterDefinition } from '../../reporter'
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
 import { IsOf } from '../../guards'
 
-interface PartialReport extends Partial<Omit<Report, 'steps' | 'blocks' | 'createdAt' | 'createdBy' | 'updatedAt' | 'updatedBy' | 'deletedAt' | 'deletedBy'>> {
-  steps?: Array<ReportStepGroup>;
+interface PartialReport extends Partial<Omit<Report, 'steps' | 'blocks' | 'scenarios' | 'createdAt' | 'createdBy' | 'updatedAt' | 'updatedBy' | 'deletedAt' | 'deletedBy'>> {
+  sources?: Array<ReportDataSource>;
   blocks?: Array<unknown|Block>;
+  scenarios?: Array<ReportScenarios>;
   createdAt?: string|number|Date;
   createdBy?: string;
   updatedAt?: string|number|Date;
@@ -19,14 +20,15 @@ interface Meta {
   tags?: Array<string>;
 }
 
-interface ReportStepGroup {
-  name?: string;
-  steps: Array<Step>;
-}
-
 interface ReportDataSource {
   meta?: Object;
   step: Step;
+}
+
+interface ReportScenarios {
+  label: string;
+  datasource: string;
+  filter: FilterDefinition;
 }
 
 // @todo rework fresh reporter thing and the backend thing
@@ -36,6 +38,7 @@ export class Report {
   public meta: Meta = {}
   public sources: Array<ReportDataSource> = []
   public blocks: Array<Block> = []
+  public scenarios: Array<ReportScenarios> = []
 
   public labels: object = {}
   public createdAt?: Date = undefined
@@ -79,6 +82,13 @@ export class Report {
       }
     }
 
+    if (r?.scenarios) {
+      this.scenarios = []
+      for (const s of r.scenarios) {
+        this.scenarios.push(s as ReportScenarios)
+      }
+    }
+
     if (IsOf(r, 'labels')) {
       this.labels = { ...r.labels }
     }
@@ -92,19 +102,5 @@ export class Report {
       'canGrant',
       'canRunReport',
     )
-  }
-
-  /**
-   * Returns resource ID
-   */
-  get resourceID (): string {
-    return `${this.resourceType}:${this.reportID}`
-  }
-
-  /**
-   * Resource type
-   */
-  get resourceType (): string {
-    return 'system:role'
   }
 }

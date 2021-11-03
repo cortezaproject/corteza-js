@@ -1,5 +1,5 @@
 import { DisplayElement, DisplayElementInput, Registry } from './base'
-import { FrameDefinition } from '../frame'
+import { FrameDefinition, DefinitionOptions } from '../frame'
 import { Apply } from '../../../cast'
 
 const kind = 'Metric'
@@ -52,7 +52,7 @@ export class DisplayElementMetric extends DisplayElement {
     }
   }
 
-  reportDefinitions (definition: FrameDefinition = {}): { dataframes: Array<FrameDefinition> } {
+  reportDefinitions (definition: DefinitionOptions): { dataframes: Array<FrameDefinition> } {
     if (typeof this.options.source === 'object') {
       // @todo allow implicit sources
       throw new Error('metric source must be provided as a reference')
@@ -60,14 +60,37 @@ export class DisplayElementMetric extends DisplayElement {
 
     const dataframes: Array<FrameDefinition> = []
 
-    this.options.datasources.map(({ name, filter, sort }) => {
-      dataframes.push({
+    this.options.datasources.forEach(({ name = '', filter, sort }) => {
+      const df: FrameDefinition = {
         name: this.name,
         source: this.options.source,
         ref: name,
-        sort: (definition.sort ? definition.sort : sort) || undefined,
         filter,
-      })
+        sort,
+      }
+
+      const relatedDefinition = definition[name]
+
+      if (relatedDefinition) {
+        df.sort = (relatedDefinition.sort ? relatedDefinition.sort : sort) || undefined
+
+        if (relatedDefinition.filter && relatedDefinition.filter?.ref) {
+          // If element and scenario have filter AND them together
+          if (filter && filter.ref) {
+            df.filter = {
+              ref: 'and',
+              args: [
+                filter,
+                relatedDefinition.filter,
+              ]
+            }
+          } else {
+            df.filter = relatedDefinition.filter
+          }
+        }
+      }
+
+      dataframes.push(df)
     })
 
     return { dataframes }

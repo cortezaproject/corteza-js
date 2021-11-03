@@ -2496,6 +2496,7 @@ export default class System {
     const {
       handle,
       meta,
+      scenarios,
       sources,
       blocks,
       labels,
@@ -2508,6 +2509,7 @@ export default class System {
     cfg.data = {
       handle,
       meta,
+      scenarios,
       sources,
       blocks,
       labels,
@@ -2525,6 +2527,7 @@ export default class System {
       reportID,
       handle,
       meta,
+      scenarios,
       sources,
       blocks,
       labels,
@@ -2542,6 +2545,7 @@ export default class System {
     cfg.data = {
       handle,
       meta,
+      scenarios,
       sources,
       blocks,
       labels,
