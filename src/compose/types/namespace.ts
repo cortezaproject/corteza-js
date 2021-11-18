@@ -2,44 +2,45 @@ import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
 import { IsOf } from '../../guards'
 
 interface MetaAdminRecordList {
-  columns: string[];
+  columns: string[]
 }
 
 interface MetaAdmin {
-  recordList: MetaAdminRecordList;
+  recordList: MetaAdminRecordList
 }
 
 interface Meta {
-  subtitle: string;
-  description: string;
+  subtitle: string
+  description: string
 
   // Temporary icon & logo URLs
   // @todo rework this when we rework attachment management
-  icon: string;
-  logo: string;
-  logoEnabled: boolean;
+  icon: string
+  logo: string
+  logoEnabled: boolean
 }
 
 interface PartialNamespace extends Partial<Omit<Namespace, 'meta' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
   meta?: Partial<Meta>;
-  createdAt?: string|number|Date;
-  updatedAt?: string|number|Date;
-  deletedAt?: string|number|Date;
+  createdAt?: string|number|Date
+  updatedAt?: string|number|Date
+  deletedAt?: string|number|Date
 }
 
 export class Namespace {
   public namespaceID = NoID
   public name = ''
   public slug = ''
+
   public enabled = false
 
   public labels: object = {}
 
   public meta: object = {}
 
-  public createdAt?: Date = undefined;
-  public updatedAt?: Date = undefined;
-  public deletedAt?: Date = undefined;
+  public createdAt?: Date = undefined
+  public updatedAt?: Date = undefined
+  public deletedAt?: Date = undefined
 
   public canCreateChart = false
   public canCreateModule = false
