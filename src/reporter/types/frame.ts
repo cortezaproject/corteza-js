@@ -8,7 +8,11 @@ export interface FrameColumn {
   unique?: boolean;
 }
 
-export interface FramePaging { limit?: number; cursor?: string }
+export interface FramePaging {
+  limit?: number;
+  cursor?: string
+}
+
 export class FrameDefinition {
   name?: string;
   source?: string;

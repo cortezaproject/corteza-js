@@ -121,7 +121,7 @@ export class DisplayElementTable extends DisplayElement {
         }
 
         if (relatedDefinition.paging || paging) {
-          df.paging = { ...(paging || {}), ...(definition.paging || {}) }
+          df.paging = { ...(paging || {}), ...(relatedDefinition.paging || {}) }
         }
       }
 
