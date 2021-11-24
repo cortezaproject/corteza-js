@@ -8,6 +8,7 @@ import {
   Report,
   dimensionFunctions,
   makeAlias,
+  isRadialChart,
 } from './util'
 
 import {
@@ -172,6 +173,7 @@ export class BaseChart {
     const dLabel = 'dimension_0'
     const { dimensions: [dimension] = [] } = report
     const isTimeDimension = !!(dimensionFunctions.lookup(dimension) || {}).time
+    const hasRadialChart = report.metrics?.find(isRadialChart)
     let labels: Array<string> = []
 
     // helper to choose between eight the provided value, default value or a generic 'undefined'
@@ -187,7 +189,7 @@ export class BaseChart {
     }
 
     // Not a time dimensions, build set of labels
-    if (!isTimeDimension) {
+    if (!isTimeDimension || hasRadialChart) {
       labels = results.map((r: any) => pickValue(r[dLabel], dimension)) as Array<string>
     }
 
@@ -196,7 +198,7 @@ export class BaseChart {
       const alias = makeAlias({ field: m.field, aggregate: m.aggregate })
       const data = results.map((r: any) => {
         const y: any = r[m.field === 'count' ? m.field : alias]
-        if (!isTimeDimension) {
+        if (!isTimeDimension || hasRadialChart) {
           return pickValue(y, dimension)
         }
         return { y, t: moment(pickValue(r[dLabel], dimension) as string).toDate() }
