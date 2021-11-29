@@ -1818,6 +1818,38 @@ export default class System {
     return `/permissions/${roleID}/rules`
   }
 
+  // Clone permission settings to a role
+  async permissionsClone (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      roleID,
+      cloneToRoleID,
+    } = (a as KV) || {}
+    if (!roleID) {
+      throw Error('field roleID is empty')
+    }
+    if (!cloneToRoleID) {
+      throw Error('field cloneToRoleID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'post',
+      url: this.permissionsCloneEndpoint({
+        roleID,
+      }),
+    }
+    cfg.data = {
+      cloneToRoleID,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  permissionsCloneEndpoint (a: KV): string {
+    const {
+      roleID,
+    } = a || {}
+    return `/permissions/${roleID}/rules/clone`
+  }
+
   // List/read reminders
   async reminderList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
