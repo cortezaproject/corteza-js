@@ -1,6 +1,8 @@
 import { ChartOptions, ChartOptionsRegistry } from './base'
 import { FrameDefinition } from '../../frame'
 import { Apply } from '../../../../cast'
+import { makeDataLabel } from '../../../../compose/types/chart/util'
+import moment from 'moment'
 
 export class BasicChartOptions extends ChartOptions {
   public labelColumn: string = ''
@@ -21,30 +23,87 @@ export class BasicChartOptions extends ChartOptions {
   getChartConfiguration (dataframes: Array<FrameDefinition>) {
     const config = {
       type: this.type,
-      data: {
-        labels: this.getLabels(dataframes[0]),
-        datasets: this.getDatasets(dataframes[0], dataframes),
-      },
+      data: this.getData(dataframes[0], dataframes),
       options: {
+        title: {
+          display: !!this.title,
+          text: this.title,
+        },
+        legend: {
+          display: this.showLegend
+        },
         responsive: true,
         maintainAspectRatio: false,
         scales: {},
+        tooltips: {
+          enabled: this.showTooltips,
+          displayColors: false,
+          intersect: !['bar', 'line'].includes(this.type),
+          callbacks: {},
+        },
         plugins: {
           colorschemes: {
             scheme: this.colorScheme,
             reverse: true,
-          }
-        }
+          },
+        },
       }
     }
 
     if (['bar', 'line'].includes(this.type)) {
+      const {
+        label: xLabel,
+        type: xType,
+        unit,
+      } = this.xAxis
+
+      const {
+        label: yLabel,
+        type: yType = 'linear',
+        position = 'left',
+        beginAtZero = true,
+        stepSize,
+        min,
+        max,
+      } = this.yAxis
+
       config.options.scales = {
-        yAxes: [{
+        xAxes: [{
+          type: xType || undefined,
+          offset: true,
+          time: {
+            unit,
+            round: true,
+            minUnit: 'day',
+          },
+          scaleLabel: {
+            display: !!xLabel,
+            labelString: xLabel,
+          },
           ticks: {
-            beginAtZero: true,
+            autoSkip: false,
+          }
+        }],
+
+        yAxes: [{
+          display: true,
+          type: yType,
+          position,
+          scaleLabel: {
+            display: !!yLabel,
+            labelString: yLabel,
+          },
+          ticks: {
+            beginAtZero,
+            stepSize: stepSize ? parseFloat(stepSize) : undefined,
+            min: min ? parseFloat(min) : undefined,
+            max: max ? parseFloat(max) : undefined,
           },
         }],
+      }
+    } else {
+      config.options.tooltips.callbacks = {
+        label: this.makeLabel,
       }
     }
 
@@ -58,40 +117,33 @@ export class BasicChartOptions extends ChartOptions {
     return dataframe.columns.findIndex(({ name }) => name === col)
   }
 
-  getLabels (localDataframe: FrameDefinition) {
-    const labels = []
+  makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): string {
+    const dataset = datasets[datasetIndex]
+    const total = dataset.data.reduce((acc: number, v: string) => acc + parseFloat(v), 0)
 
-    if (this.labelColumn && localDataframe) {
-      const columnIndex = this.getColIndex(localDataframe, this.labelColumn)
-      if (columnIndex < 0) {
-        throw new Error(`Column ${this.labelColumn} not found`)
-      }
-
-      if (localDataframe.rows) {
-        for (const row of localDataframe.rows) {
-          labels.push(row[columnIndex])
-        }
-      }
+    let suffix = `(${total.toFixed(2)})%`
+    if (total) {
+      suffix = `(${((dataset.data[index] * 100) / total).toFixed(2)}%)`
     }
 
-    return labels
+    return `${labels[index]}: ${dataset.data[index]} ${suffix}`
   }
 
-  getDatasets (localDataframe: FrameDefinition, dataframes: Array<FrameDefinition>) {
-    const chartDataset = []
+  getData (localDataframe: FrameDefinition, dataframes: Array<FrameDefinition>) {
+    const datasets: any[] = []
+    let labels: any[] = []
 
+    // Get datasets
     if (this.dataColumns.length && localDataframe.rows) {
-      // Create dataset for each dataColumn
       for (const { name } of this.dataColumns) {
         // Assume localDataframe has the dataColumn
         let columnIndex = this.getColIndex(localDataframe, name)
 
         // If dataColumn is in localDataframe, then set that value
-        const data = localDataframe.rows.map(r => {
+        let data = localDataframe.rows.map(r => {
           return columnIndex < 0 ? undefined : r[columnIndex]
         })
 
-        // Otherwise check other dataframes for that columnn
         if (columnIndex < 0) {
           dataframes.slice(1).forEach(df => {
             const { relColumn = '', refValue = '' } = df
@@ -121,14 +173,46 @@ export class BasicChartOptions extends ChartOptions {
           })
         }
 
-        chartDataset.push({
+        datasets.push({
           label: name,
           data,
         })
       }
     }
 
-    return chartDataset
+    // Get labels, if dimensions type is not time
+    if (this.labelColumn && localDataframe) {
+      const columnIndex = this.getColIndex(localDataframe, this.labelColumn)
+      if (columnIndex < 0) {
+        throw new Error(`Column ${this.labelColumn} not found`)
+      }
+
+      if (localDataframe.rows) {
+        for (const row of localDataframe.rows) {
+          let label = row[columnIndex] || (!this.xAxis.skipMissing ? this.xAxis.defaultValue : undefined)
+
+          if (this.xAxis.type === 'time') {
+            label = label ? moment(label).toDate() : undefined
+          }
+
+          labels.push(label)
+        }
+      }
+    }
+
+    if (this.xAxis.skipMissing) {
+      labels.forEach((label, index) => {
+        if (!label) {
+          datasets.forEach(ds => {
+            ds.data.splice(index, 1)
+          })
+        }
+      })
+
+      labels = labels.filter(label => label)
+    }
+
+    return { datasets, labels }
   }
 }
 

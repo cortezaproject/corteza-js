@@ -30,6 +30,13 @@ export class FunnelChartOptions extends ChartOptions {
         datasets: this.getDatasets(dataframes[0], dataframes),
       },
       options: {
+        title: {
+          display: !!this.title,
+          text: this.title,
+        },
+        legend: {
+          display: this.showLegend
+        },
         responsive: true,
         maintainAspectRatio: false,
         sort: 'desc',
@@ -87,16 +94,16 @@ export class FunnelChartOptions extends ChartOptions {
     return labels
   }
 
-  private makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): any {
+  makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): string {
     const dataset = datasets[datasetIndex]
     const total = dataset.data.reduce((acc: number, v: string) => acc + parseFloat(v), 0)
 
-    return makeDataLabel({
-      prefix: labels[index],
-      value: dataset.data[index],
-      dataset,
-      suffix: ` (${((dataset.data[index] * 100) / total).toFixed(2)}%)`,
-    })
+    let suffix = `(${total.toFixed(2)})%`
+    if (total) {
+      suffix = `(${((dataset.data[index] * 100) / total).toFixed(2)}%)`
+    }
+
+    return `${labels[index]}: ${dataset.data[index]} ${suffix}`
   }
 
   getDatasets (localDataframe: FrameDefinition, dataframes: Array<FrameDefinition>) {

@@ -28,19 +28,62 @@ export type PartialChartOptions = Partial<ChartOptions>
 export type ChartOptionsInput = ChartOptions | PartialChartOptions
 export const ChartOptionsRegistry = new Map<string, typeof ChartOptions>()
 
+
+interface XAxisOptions {
+  type: string;
+  label?: string;
+  unit?: string;
+  skipMissing: boolean;
+  defaultValue?: any;
+}
+
+interface YAxisOptions {
+  label?: string;
+  type?: string;
+  position?: string;
+  beginAtZero?: boolean;
+  stepSize?: string;
+  min?: string;
+  max?: string;
+}
+
 export class ChartOptions {
+  public title = ''
   public type = 'bar'
   public colorScheme = ''
   public source = ''
   public datasources: Array<FrameDefinition> = []
+  public showTooltips = true
+  public showLegend = true
+
+  public xAxis: XAxisOptions = {
+    type: '',
+    skipMissing: true,
+  }
+
+  public yAxis: YAxisOptions = {
+    type: 'linear',
+    position: 'left',
+    beginAtZero: true,
+  }
+
 
   constructor (o: PartialChartOptions = {}) {
     if (!o) return
 
-    Apply(this, o, String, 'type', 'colorScheme', 'source')
+    Apply(this, o, String, 'title', 'type', 'colorScheme', 'source')
+    Apply(this, o, Boolean, 'showTooltips', 'showLegend')
 
     if (o.datasources) {
       this.datasources = o.datasources
+    }
+
+    if (o.xAxis) {
+      this.xAxis = { ...this.xAxis, ...o.xAxis }
+    }
+
+    if (o.yAxis) {
+      this.yAxis = { ...this.yAxis, ...o.yAxis }
     }
   }
 }
