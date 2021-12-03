@@ -5,7 +5,6 @@ import { CortezaID } from '../../../cast'
 const kind = 'Metric'
 
 enum Operation {
-  COUNT = 'countd',
   SUM = 'sum',
   MAX = 'max',
   MIN = 'min',
