@@ -1837,9 +1837,10 @@ export default class System {
         roleID,
       }),
     }
-    cfg.data = {
+    cfg.params = {
       cloneToRoleID,
     }
+
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
