@@ -878,6 +878,7 @@ export default class System {
     const {
       roleID,
       script,
+      args,
     } = (a as KV) || {}
     if (!roleID) {
       throw Error('field roleID is empty')
@@ -894,6 +895,7 @@ export default class System {
     }
     cfg.data = {
       script,
+      args,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -1306,6 +1308,7 @@ export default class System {
     const {
       userID,
       script,
+      args,
     } = (a as KV) || {}
     if (!userID) {
       throw Error('field userID is empty')
@@ -1322,6 +1325,7 @@ export default class System {
     }
     cfg.data = {
       script,
+      args,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -1647,6 +1651,7 @@ export default class System {
     const {
       applicationID,
       script,
+      args,
     } = (a as KV) || {}
     if (!applicationID) {
       throw Error('field applicationID is empty')
@@ -1663,6 +1668,7 @@ export default class System {
     }
     cfg.data = {
       script,
+      args,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -2802,6 +2808,7 @@ export default class System {
   async automationTriggerScript (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       script,
+      args,
     } = (a as KV) || {}
     if (!script) {
       throw Error('field script is empty')
@@ -2813,6 +2820,7 @@ export default class System {
     }
     cfg.data = {
       script,
+      args,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }

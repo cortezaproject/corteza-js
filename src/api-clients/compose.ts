@@ -414,6 +414,7 @@ export default class Compose {
     const {
       namespaceID,
       script,
+      args,
     } = (a as KV) || {}
     if (!namespaceID) {
       throw Error('field namespaceID is empty')
@@ -430,6 +431,7 @@ export default class Compose {
     }
     cfg.data = {
       script,
+      args,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -812,6 +814,7 @@ export default class Compose {
       namespaceID,
       pageID,
       script,
+      args,
     } = (a as KV) || {}
     if (!namespaceID) {
       throw Error('field namespaceID is empty')
@@ -831,6 +834,7 @@ export default class Compose {
     }
     cfg.data = {
       script,
+      args,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -1120,6 +1124,7 @@ export default class Compose {
       namespaceID,
       moduleID,
       script,
+      args,
     } = (a as KV) || {}
     if (!namespaceID) {
       throw Error('field namespaceID is empty')
@@ -1139,6 +1144,7 @@ export default class Compose {
     }
     cfg.data = {
       script,
+      args,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -1804,6 +1810,7 @@ export default class Compose {
       namespaceID,
       moduleID,
       script,
+      args,
     } = (a as KV) || {}
     if (!namespaceID) {
       throw Error('field namespaceID is empty')
@@ -1823,6 +1830,7 @@ export default class Compose {
     }
     cfg.data = {
       script,
+      args,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -2474,6 +2482,7 @@ export default class Compose {
   async automationTriggerScript (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       script,
+      args,
     } = (a as KV) || {}
     if (!script) {
       throw Error('field script is empty')
@@ -2485,6 +2494,7 @@ export default class Compose {
     }
     cfg.data = {
       script,
+      args,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
