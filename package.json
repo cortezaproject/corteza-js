@@ -11,7 +11,8 @@
     "dist/"
   ],
   "scripts": {
-    "build": "rollup -c",
+    "build": "rollup -c --environment BUILD:production",
+    "build:dev": "rollup -c",
     "lint": "eslint src/** --ext .js,.ts",
     "test:unit": "mocha",
     "test:unit:cc": "nyc mocha",
