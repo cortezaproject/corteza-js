@@ -180,7 +180,7 @@ export class BaseChart {
     const pickValue = (val: unknown, { default: dDft }: Dimension): unknown => {
       if (val !== undefined && val !== null) return val
       if (dDft !== undefined && dDft !== null) return dDft
-      return 'undefined'
+      return 'Not defined'
     }
 
     // Skip missing values; if so requested
