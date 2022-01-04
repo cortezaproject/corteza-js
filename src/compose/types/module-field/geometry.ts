@@ -32,7 +32,7 @@ export class ModuleFieldGeometry extends ModuleField {
   public get cap (): Readonly<Capabilities> {
     return {
       ...super.cap,
-      multi: false,
+      multi: true,
     }
   }
 }
