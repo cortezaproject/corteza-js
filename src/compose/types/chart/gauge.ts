@@ -5,6 +5,7 @@ import {
   Dimension,
   ChartType,
   makeDataLabel,
+  calculatePercentages,
 } from './util'
 import { makeTipper } from './chartjs/plugins'
 import { defaultBGColor } from './common'
@@ -126,19 +127,30 @@ export default class GaugeChart extends BaseChart {
 
   private makeTooltip ({ datasetIndex, index }: any, { datasets, labels }: any): any {
     const dataset = datasets[datasetIndex]
+
+    const percentages = calculatePercentages(
+      [...dataset.data],
+      dataset.tooltips.relativePrecision,
+      dataset.tooltips.relativeValue,
+    )
+
     return makeDataLabel({
-      value: dataset.data[index],
-      dataset,
-      relativeValue: dataset.tooltips.relativeValue,
-      relativePrecision: dataset.tooltips.relativePrecision,
+      prefix: labels[index],
+      value: percentages[index],
     })
   }
 
   private makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): any {
     const dataset = datasets[datasetIndex]
+    
+    const percentages = calculatePercentages(
+      [...dataset.data],
+      dataset.tooltips.relativePrecision,
+      dataset.tooltips.relativeValue,
+    )
+    
     return makeDataLabel({
-      value: labels[index],
-      dataset,
+      value: percentages[index],
     })
   }
 

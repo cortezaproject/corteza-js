@@ -3,15 +3,13 @@ import {
   Dimension,
   Metric,
   dimensionFunctions,
-  makeAlias,
   isRadialChart,
   makeDataLabel,
   KV,
   Report,
   TemporalDataPoint,
+  calculatePercentages,
 } from './util'
-
-import { defaultBGColor } from './common'
 
 import { makeTipper } from './chartjs/plugins'
 const ChartJS = require('chart.js')
@@ -184,22 +182,31 @@ export default class Chart extends BaseChart {
 
   private makeTooltip ({ datasetIndex, index }: any, { datasets, labels }: any): any {
     const dataset = datasets[datasetIndex]
+    
+    const percentages = calculatePercentages(
+      [...dataset.data],
+      dataset.tooltips.relativePrecision,
+      dataset.tooltips.relativeValue,
+    )
+
     return makeDataLabel({
       prefix: labels[index],
-      value: dataset.data[index],
-      dataset,
-      relativeValue: dataset.tooltips.relativeValue,
-      relativePrecision: dataset.tooltips.relativePrecision,
+      value: percentages[index],
     })
   }
 
   private makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): any {
     const dataset = datasets[datasetIndex]
+    
+    const percentages = calculatePercentages(
+      [...dataset.data],
+      dataset.tooltips.relativePrecision,
+      dataset.tooltips.relativeValue,
+    )
+    
     return makeDataLabel({
-      value: dataset.data[index],
-      dataset,
+      value: percentages[index],
       relativeValue: dataset.tooltips.relativeValue,
-      relativePrecision: dataset.tooltips.relativePrecision,
     })
   }
 

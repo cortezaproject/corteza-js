@@ -207,28 +207,32 @@ export const hasRelativeDisplay = ({ type }: KV) => isRadialChart({ type })
 export const makeDataLabel = ({
   prefix = '',
   value = 0,
-  dataset = {},
   relativeValue = false,
-  relativePrecision = 2,
   suffix = '',
 }: any) => {
-  let newValue = ''
-
-  // If time dimension is provided, value is represented with a { y, t } object
   if (typeof value === 'object') {
-    newValue = value.y || 0
-  } else {
-    newValue = `${value}`
+    value = value.y || 0
   }
-
-  if (relativeValue && hasRelativeDisplay({ type: dataset.type as ChartType })) {
-    // get relative value
-    const total = dataset.data.reduce((acc: number, cur: number) => acc + cur, 0)
-    newValue = (value / total * 100).toFixed(parseInt(relativePrecision || 2))
+  
+  if (relativeValue) {
     suffix = suffix || '%'
   }
 
-  return `${prefix ? prefix + ': ' : ''}${(newValue)}${suffix}`
+  return `${prefix ? prefix + ': ' : ''}${(Number(value))}${suffix}`
+}
+
+export function calculatePercentages (values: number[], relativePrecision: number, relativeValue = false) {
+  let errorRounding: number = 0
+  const total = values.reduce((acc: number, cur: number) => acc + cur, 0)
+  let portions = values.map((n: number) => n / total * 100)
+
+  if (relativeValue) {
+    let result = 0
+    return portions.map(v => 
+      (result = Number((v + errorRounding).toFixed(relativePrecision || 2)), errorRounding += v - Number(result), result)
+    )
+  }
+  return values
 }
 
 // Makes a standarised alias from modifier or dimension report option

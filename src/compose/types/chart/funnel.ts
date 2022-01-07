@@ -5,6 +5,7 @@ import {
   Report,
   ChartType,
   makeDataLabel,
+  calculatePercentages,
 } from './util'
 
 import { defaultBGColor } from './common'
@@ -115,20 +116,16 @@ export default class FunnelChart extends BaseChart {
 
   private makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): any {
     const dataset = datasets[datasetIndex]
-    const total = dataset.data.reduce((acc: number, v: number) => acc + v, 0)
-    
-    let suffix
-    if(total === 0 && dataset.data[index] === 0) {
-      suffix = ` (${total.toFixed(2)})%`
-    }else {
-      suffix = ` (${((dataset.data[index] * 100) / total).toFixed(2)}%)`
-    }
+
+    const percentages = calculatePercentages(
+      [...dataset.data],
+      0,
+      false,
+    )
     
     return makeDataLabel({
       prefix: labels[index],
-      value: dataset.data[index],
-      dataset,
-      suffix
+      value: percentages[index],
     })
   }
 
