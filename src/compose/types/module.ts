@@ -5,16 +5,16 @@ import { Namespace } from './namespace'
 
 const propNamespace = Symbol('namespace')
 
-interface MetaAdminRecordList {
-  columns: string[];
+interface MetaAdmin {
+  fields: string[];
 }
 
-interface MetaAdmin {
-  recordList: MetaAdminRecordList;
+interface MetaUi {
+  admin: MetaAdmin;
 }
 
 interface Meta {
-  admin: MetaAdmin;
+  ui: MetaUi;
 }
 
 /**
