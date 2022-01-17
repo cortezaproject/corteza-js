@@ -192,6 +192,7 @@ export default class Chart extends BaseChart {
     return makeDataLabel({
       prefix: labels[index],
       value: percentages[index],
+      relativeValue: dataset.tooltips.relativeValue,
     })
   }
 
