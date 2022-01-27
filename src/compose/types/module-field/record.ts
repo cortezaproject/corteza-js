@@ -8,6 +8,7 @@ const kind = 'Record'
 interface RecordOptions extends Options {
   moduleID: string;
   labelField: string;
+  recordLabelField: string;
   queryFields: Array<string>;
   selectType: string;
   multiDelimiter: string;
@@ -18,6 +19,7 @@ const defaults = (): Readonly<RecordOptions> => Object.freeze({
   ...defaultOptions(),
   moduleID: NoID,
   labelField: '',
+  recordLabelField: '',
   queryFields: [],
   selectType: '',
   multiDelimiter: '\n',
@@ -39,7 +41,7 @@ export class ModuleFieldRecord extends ModuleField {
     super.applyOptions(o)
 
     Apply(this.options, o, CortezaID, 'moduleID')
-    Apply(this.options, o, String, 'labelField', 'selectType', 'multiDelimiter', 'prefilter')
+    Apply(this.options, o, String, 'labelField', 'recordLabelField', 'selectType', 'multiDelimiter', 'prefilter')
     Apply(this.options, o, (o) => {
       if (!o) {
         return []
