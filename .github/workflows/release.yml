@@ -1,0 +1,26 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '**'
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+      - uses: actions/cache@v2
+        if: ${{ !env.ACT }}
+        with:
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.OS }}-node-
+      - name: Install Dependencies
+        run: npm install
+      - name: Run All Tests
+        run: npm run test
