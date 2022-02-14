@@ -1,7 +1,6 @@
 import { ChartOptions, ChartOptionsRegistry } from './base'
 import { FrameDefinition } from '../../frame'
 import { Apply } from '../../../../cast'
-import { makeDataLabel } from '../../../../compose/types/chart/util'
 import moment from 'moment'
 
 export class BasicChartOptions extends ChartOptions {
@@ -119,7 +118,9 @@ export class BasicChartOptions extends ChartOptions {
 
   makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): string {
     const dataset = datasets[datasetIndex]
-    const total = dataset.data.reduce((acc: number, v: string) => acc + parseFloat(v), 0)
+    const total = dataset.data.reduce((acc: string, v: string) => {
+      return parseFloat(v) ? acc + parseFloat(v) : acc
+    }, 0)
 
     let suffix = `(${total.toFixed(2)})%`
     if (total) {
