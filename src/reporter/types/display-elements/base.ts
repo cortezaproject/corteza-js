@@ -1,5 +1,5 @@
+import { Apply, CortezaID, NoID } from '../../../cast'
 import { merge } from 'lodash'
-import { Apply } from '../../../cast'
 
 export type PartialDisplayElement = Partial<DisplayElement>
 export type DisplayElementInput = DisplayElement | PartialDisplayElement
@@ -7,6 +7,7 @@ export type DisplayElementInput = DisplayElement | PartialDisplayElement
 export const Registry = new Map<string, typeof DisplayElement>()
 
 export class DisplayElement {
+  public elementID = NoID
   public name = ''
   public description = ''
 
@@ -25,6 +26,7 @@ export class DisplayElement {
     if (!de) return
 
     Apply(this, de, String, 'name', 'description')
+    Apply(this, de, CortezaID, 'elementID')
 
     if (de.options) {
       this.options = merge({}, this.options, de.options)

@@ -1,10 +1,11 @@
-import { Apply } from '../../cast'
+import { Apply, CortezaID, NoID } from '../../cast'
 import { AreObjectsOf } from '../../guards'
 import { DisplayElement, DisplayElementMaker } from './display-elements'
 
 const defaultXYWH: () => [number, number, number, number] = () => [0, 0, 20, 15]
 
 export class Block {
+  public blockID = NoID
   public title = ''
   public description = ''
   public layout = 'horizontal'
@@ -16,6 +17,8 @@ export class Block {
     if (!p) return
 
     Apply(this, p, String, 'title', 'description', 'layout')
+    Apply(this, p, CortezaID, 'blockID')
+
 
     if (p.xywh) {
       if (!Array.isArray(p.xywh)) {

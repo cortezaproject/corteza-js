@@ -105,7 +105,7 @@ export class DisplayElementChart extends DisplayElement {
     this.options = ChartOptionsMaker(o)
   }
 
-  reportDefinitions (definition: DefinitionOptions): { dataframes: Array<FrameDefinition> } {
+  reportDefinitions (definition: DefinitionOptions = {}): { dataframes: Array<FrameDefinition> } {
     if (typeof this.options.source === 'object') {
       // @todo allow implicit sources
       throw new Error('chart source must be provided as a reference')
@@ -115,7 +115,7 @@ export class DisplayElementChart extends DisplayElement {
 
     this.options.datasources.forEach(({ name = '', filter, sort }) => {
       const df: FrameDefinition = {
-        name: this.name,
+        name: this.elementID,
         source: this.options.source,
         ref: name,
         filter,

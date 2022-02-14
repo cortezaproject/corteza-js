@@ -5,7 +5,7 @@ import { IsOf } from '../../guards'
 interface PartialReport extends Partial<Omit<Report, 'steps' | 'blocks' | 'scenarios' | 'createdAt' | 'createdBy' | 'updatedAt' | 'updatedBy' | 'deletedAt' | 'deletedBy'>> {
   sources?: Array<ReportDataSource>;
   blocks?: Array<unknown|Block>;
-  scenarios?: Array<ReportScenarios>;
+  scenarios?: Array<ReportScenario>;
   createdAt?: string|number|Date;
   createdBy?: string;
   updatedAt?: string|number|Date;
@@ -25,20 +25,20 @@ interface ReportDataSource {
   step: Step;
 }
 
-interface ReportScenarios {
+interface ReportScenario {
+  scenarioID: string;
   label: string;
   datasource: string;
   filter: FilterDefinition;
 }
 
-// @todo rework fresh reporter thing and the backend thing
 export class Report {
   public reportID = NoID
   public handle = ''
   public meta: Meta = {}
   public sources: Array<ReportDataSource> = []
   public blocks: Array<Block> = []
-  public scenarios: Array<ReportScenarios> = []
+  public scenarios: Array<ReportScenario> = []
 
   public labels: object = {}
   public createdAt?: Date = undefined
@@ -85,7 +85,7 @@ export class Report {
     if (r?.scenarios) {
       this.scenarios = []
       for (const s of r.scenarios) {
-        this.scenarios.push(s as ReportScenarios)
+        this.scenarios.push(s as ReportScenario)
       }
     }
 
