@@ -1363,6 +1363,61 @@ export default class System {
     return `/users/${userID}/sessions`
   }
 
+  // Export users
+  async userExport (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      filename,
+      inclRoleMembership,
+      inclRoles,
+    } = (a as KV) || {}
+    if (!filename) {
+      throw Error('field filename is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.userExportEndpoint({
+        filename,
+      }),
+    }
+    cfg.params = {
+      inclRoleMembership,
+      inclRoles,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  userExportEndpoint (a: KV): string {
+    const {
+      filename,
+    } = a || {}
+    return `/users/export/${filename}.zip`
+  }
+
+  // Import users
+  async userImport (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      upload,
+    } = (a as KV) || {}
+    if (!upload) {
+      throw Error('field upload is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'post',
+      url: this.userImportEndpoint(),
+    }
+    cfg.data = {
+      upload,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  userImportEndpoint (): string {
+    return '/users/import'
+  }
+
   // List applications
   async applicationList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
@@ -2245,6 +2300,478 @@ export default class System {
       ext,
     } = a || {}
     return `/attachment/${kind}/${attachmentID}/preview.${ext}`
+  }
+
+  // Create new gig
+  async gigCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      worker,
+      preprocessors,
+      postprocessors,
+      completion,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'post',
+      url: this.gigCreateEndpoint(),
+    }
+    cfg.data = {
+      worker,
+      preprocessors,
+      postprocessors,
+      completion,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigCreateEndpoint (): string {
+    return '/gig/'
+  }
+
+  // Run the entire lifecycle of a gig
+  async gigGo (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      worker,
+      preprocessors,
+      postprocessors,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'post',
+      url: this.gigGoEndpoint(),
+    }
+    cfg.data = {
+      worker,
+      preprocessors,
+      postprocessors,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigGoEndpoint (): string {
+    return '/gig/go'
+  }
+
+  // Read gig details
+  async gigRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      gigID,
+    } = (a as KV) || {}
+    if (!gigID) {
+      throw Error('field gigID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.gigReadEndpoint({
+        gigID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigReadEndpoint (a: KV): string {
+    const {
+      gigID,
+    } = a || {}
+    return `/gig/${gigID}`
+  }
+
+  // Update the gig parameters
+  async gigUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      gigID,
+      decoders,
+      preprocessors,
+      postprocessors,
+      completion,
+    } = (a as KV) || {}
+    if (!gigID) {
+      throw Error('field gigID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'put',
+      url: this.gigUpdateEndpoint({
+        gigID,
+      }),
+    }
+    cfg.data = {
+      decoders,
+      preprocessors,
+      postprocessors,
+      completion,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigUpdateEndpoint (a: KV): string {
+    const {
+      gigID,
+    } = a || {}
+    return `/gig/${gigID}`
+  }
+
+  // Delete the gig
+  async gigDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      gigID,
+    } = (a as KV) || {}
+    if (!gigID) {
+      throw Error('field gigID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'delete',
+      url: this.gigDeleteEndpoint({
+        gigID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigDeleteEndpoint (a: KV): string {
+    const {
+      gigID,
+    } = a || {}
+    return `/gig/${gigID}`
+  }
+
+  // Undelete the gig
+  async gigUndelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      gigID,
+    } = (a as KV) || {}
+    if (!gigID) {
+      throw Error('field gigID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'post',
+      url: this.gigUndeleteEndpoint({
+        gigID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigUndeleteEndpoint (a: KV): string {
+    const {
+      gigID,
+    } = a || {}
+    return `/gig/${gigID}/undelete`
+  }
+
+  // Update the gig parameters
+  async gigAddSource (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      gigID,
+      upload,
+      uri,
+      decoders,
+    } = (a as KV) || {}
+    if (!gigID) {
+      throw Error('field gigID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'patch',
+      url: this.gigAddSourceEndpoint({
+        gigID,
+      }),
+    }
+    cfg.data = {
+      upload,
+      uri,
+      decoders,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigAddSourceEndpoint (a: KV): string {
+    const {
+      gigID,
+    } = a || {}
+    return `/gig/${gigID}/sources`
+  }
+
+  // Remove source from the gig
+  async gigRemoveSource (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      gigID,
+      sourceID,
+    } = (a as KV) || {}
+    if (!gigID) {
+      throw Error('field gigID is empty')
+    }
+    if (!sourceID) {
+      throw Error('field sourceID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'delete',
+      url: this.gigRemoveSourceEndpoint({
+        gigID, sourceID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigRemoveSourceEndpoint (a: KV): string {
+    const {
+      gigID,
+      sourceID,
+    } = a || {}
+    return `/gig/${gigID}/sources/${sourceID}`
+  }
+
+  // Prepare the gig for execution
+  async gigPrepare (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      gigID,
+    } = (a as KV) || {}
+    if (!gigID) {
+      throw Error('field gigID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'put',
+      url: this.gigPrepareEndpoint({
+        gigID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigPrepareEndpoint (a: KV): string {
+    const {
+      gigID,
+    } = a || {}
+    return `/gig/${gigID}/prepare`
+  }
+
+  // Execute the gig
+  async gigExec (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      gigID,
+    } = (a as KV) || {}
+    if (!gigID) {
+      throw Error('field gigID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'put',
+      url: this.gigExecEndpoint({
+        gigID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigExecEndpoint (a: KV): string {
+    const {
+      gigID,
+    } = a || {}
+    return `/gig/${gigID}/exec`
+  }
+
+  // Get output of the gig
+  async gigOutput (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      gigID,
+    } = (a as KV) || {}
+    if (!gigID) {
+      throw Error('field gigID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.gigOutputEndpoint({
+        gigID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigOutputEndpoint (a: KV): string {
+    const {
+      gigID,
+    } = a || {}
+    return `/gig/${gigID}/output`
+  }
+
+  // Get output of the gig
+  async gigOutputAll (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      gigID,
+    } = (a as KV) || {}
+    if (!gigID) {
+      throw Error('field gigID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.gigOutputAllEndpoint({
+        gigID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigOutputAllEndpoint (a: KV): string {
+    const {
+      gigID,
+    } = a || {}
+    return `/gig/${gigID}/output/all`
+  }
+
+  // Get output of the gig
+  async gigOutputSpecific (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      gigID,
+      sourceID,
+    } = (a as KV) || {}
+    if (!gigID) {
+      throw Error('field gigID is empty')
+    }
+    if (!sourceID) {
+      throw Error('field sourceID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.gigOutputSpecificEndpoint({
+        gigID, sourceID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigOutputSpecificEndpoint (a: KV): string {
+    const {
+      gigID,
+      sourceID,
+    } = a || {}
+    return `/gig/${gigID}/output/${sourceID}`
+  }
+
+  // Get state of the gig
+  async gigState (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      gigID,
+    } = (a as KV) || {}
+    if (!gigID) {
+      throw Error('field gigID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.gigStateEndpoint({
+        gigID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigStateEndpoint (a: KV): string {
+    const {
+      gigID,
+    } = a || {}
+    return `/gig/${gigID}/state`
+  }
+
+  // Get status of the gig
+  async gigStatus (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      gigID,
+    } = (a as KV) || {}
+    if (!gigID) {
+      throw Error('field gigID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.gigStatusEndpoint({
+        gigID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigStatusEndpoint (a: KV): string {
+    const {
+      gigID,
+    } = a || {}
+    return `/gig/${gigID}/status`
+  }
+
+  // Complete the gig
+  async gigComplete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      gigID,
+    } = (a as KV) || {}
+    if (!gigID) {
+      throw Error('field gigID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'patch',
+      url: this.gigCompleteEndpoint({
+        gigID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigCompleteEndpoint (a: KV): string {
+    const {
+      gigID,
+    } = a || {}
+    return `/gig/${gigID}/complete`
+  }
+
+  // Available gig workers
+  async gigWorkers (extra: AxiosRequestConfig = {}): Promise<KV> {
+
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.gigWorkersEndpoint(),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigWorkersEndpoint (): string {
+    return '/gig/workers'
+  }
+
+  // Available gig tasks
+  async gigTasks (extra: AxiosRequestConfig = {}): Promise<KV> {
+
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.gigTasksEndpoint(),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  gigTasksEndpoint (): string {
+    return '/gig/tasks'
   }
 
   // List templates
