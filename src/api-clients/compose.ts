@@ -558,6 +558,7 @@ export default class Compose {
       labels,
       visible,
       blocks,
+      config,
     } = (a as KV) || {}
     if (!namespaceID) {
       throw Error('field namespaceID is empty')
@@ -582,6 +583,7 @@ export default class Compose {
       labels,
       visible,
       blocks,
+      config,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -664,6 +666,7 @@ export default class Compose {
       labels,
       visible,
       blocks,
+      config,
     } = (a as KV) || {}
     if (!namespaceID) {
       throw Error('field namespaceID is empty')
@@ -691,6 +694,7 @@ export default class Compose {
       labels,
       visible,
       blocks,
+      config,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -745,6 +749,7 @@ export default class Compose {
     const {
       namespaceID,
       pageID,
+      strategy,
     } = (a as KV) || {}
     if (!namespaceID) {
       throw Error('field namespaceID is empty')
@@ -758,6 +763,9 @@ export default class Compose {
       url: this.pageDeleteEndpoint({
         namespaceID, pageID,
       }),
+    }
+    cfg.params = {
+      strategy,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))
