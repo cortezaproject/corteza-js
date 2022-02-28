@@ -137,7 +137,6 @@ export default class GaugeChart extends BaseChart {
     return makeDataLabel({
       prefix: labels[index],
       value: percentages[index],
-      relativeValue: dataset.tooltips.relativeValue,
     })
   }
 
