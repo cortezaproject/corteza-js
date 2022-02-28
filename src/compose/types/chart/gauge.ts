@@ -60,7 +60,9 @@ export default class GaugeChart extends BaseChart {
     const steps = (d.meta?.steps || [])
 
     return {
-      value: data.reduce((acc, cur) => acc + cur, 0),
+      value: data.reduce((acc, cur) => {
+        return !isNaN(cur) ? acc + parseFloat(cur) : acc
+      }, 0),
       data: steps.map(({ value }: any) => parseFloat(value)),
       backgroundColor: steps.map(({ color }: any) => color),
       tooltips: {
@@ -130,29 +132,28 @@ export default class GaugeChart extends BaseChart {
 
     const percentages = calculatePercentages(
       [...dataset.data],
-      dataset.tooltips.relativePrecision,
-      dataset.tooltips.relativeValue,
+      0,
+      false,
     )
 
     return makeDataLabel({
       prefix: labels[index],
       value: percentages[index],
-      relativeValue: dataset.tooltips.relativeValue,
     })
   }
 
   private makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): any {
     const dataset = datasets[datasetIndex]
-    
+
     const percentages = calculatePercentages(
       [...dataset.data],
-      dataset.tooltips.relativePrecision,
-      dataset.tooltips.relativeValue,
+      0,
+      false,
     )
-    
+
     return makeDataLabel({
+      prefix: labels[index],
       value: percentages[index],
-      relativeValue: dataset.tooltips.relativeValue,
     })
   }
 

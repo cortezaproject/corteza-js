@@ -119,14 +119,14 @@ export default class FunnelChart extends BaseChart {
 
     const percentages = calculatePercentages(
       [...dataset.data],
-      0,
-      false,
+      2,
+      true,
     )
     
     return makeDataLabel({
       prefix: labels[index],
       value: percentages[index],
-      relativeValue: dataset.tooltips.relativeValue,
+      relativeValue: true,
     })
   }
 
