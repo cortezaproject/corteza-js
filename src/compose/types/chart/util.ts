@@ -213,12 +213,12 @@ export const makeDataLabel = ({
   if (typeof value === 'object') {
     value = value.y || 0
   }
-  
+
   if (relativeValue) {
     suffix = suffix || '%'
   }
 
-  return `${prefix ? prefix + ': ' : ''}${(Number(value))}${suffix}`
+  return `${prefix ? prefix + ': ' : ''}${value}${suffix}`
 }
 
 export function calculatePercentages (values: number[], relativePrecision: number, relativeValue = false) {
