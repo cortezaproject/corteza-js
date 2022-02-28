@@ -125,8 +125,8 @@ export default class FunnelChart extends BaseChart {
 
     return makeDataLabel({
       prefix: labels[index],
-      value: `${dataset.data[index]} (${percentages[index]})`,
-      relativeValue: true,
+      value: dataset.data[index],
+      relativeValue: percentages[index],
     })
   }
 

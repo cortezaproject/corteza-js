@@ -207,7 +207,7 @@ export const hasRelativeDisplay = ({ type }: KV) => isRadialChart({ type })
 export const makeDataLabel = ({
   prefix = '',
   value = 0,
-  relativeValue = false,
+  relativeValue,
   suffix = '',
 }: any) => {
   if (typeof value === 'object') {
@@ -215,10 +215,18 @@ export const makeDataLabel = ({
   }
 
   if (relativeValue) {
-    suffix = suffix || '%'
+    value = `${value} (${relativeValue}%)`
   }
 
-  return `${prefix ? prefix + ': ' : ''}${value}${suffix}`
+  if (prefix) {
+    value = `${prefix}: ${value}`
+  }
+
+  if (suffix) {
+    value = `${value} ${suffix}`
+  }
+
+  return value
 }
 
 export function calculatePercentages (values: number[], relativePrecision: number, relativeValue = false) {
