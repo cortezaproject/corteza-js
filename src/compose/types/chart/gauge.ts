@@ -130,30 +130,18 @@ export default class GaugeChart extends BaseChart {
   private makeTooltip ({ datasetIndex, index }: any, { datasets, labels }: any): any {
     const dataset = datasets[datasetIndex]
 
-    const percentages = calculatePercentages(
-      [...dataset.data],
-      0,
-      false,
-    )
-
     return makeDataLabel({
       prefix: labels[index],
-      value: percentages[index],
+      value: dataset.data[index],
     })
   }
 
   private makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): any {
     const dataset = datasets[datasetIndex]
 
-    const percentages = calculatePercentages(
-      [...dataset.data],
-      0,
-      false,
-    )
-
     return makeDataLabel({
       prefix: labels[index],
-      value: percentages[index],
+      value: dataset.data[index],
     })
   }
 
