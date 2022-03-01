@@ -5,8 +5,7 @@ import { ModuleField } from '../types/module-field'
 import { IsOf } from '../../guards'
 import { NoID } from '../../cast'
 
-const emptyErr = new ValidatorError({ kind: 'empty', message: 'This field is required' })
-const duplicateValueInSetErr = new ValidatorError('duplicateValueInSet')
+const emptyErr = new ValidatorError({ kind: 'empty', message: 'field:required-field' })
 
 // Validator value types
 interface FieldValidatorPayload {
