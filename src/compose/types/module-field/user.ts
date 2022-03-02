@@ -48,8 +48,8 @@ export class ModuleFieldUser extends ModuleField {
     }, 'roles')
   }
 
-  formatter ({ userID, name, username, email }: Partial<User> = {}): string {
-    return name || username || email || userID || ''
+  formatter ({ userID, name, username, email, handle }: Partial<User> = {}): string {
+    return name || username || email || handle || userID || ''
   }
 }
 
