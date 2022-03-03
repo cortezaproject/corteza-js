@@ -117,10 +117,12 @@ export default class FunnelChart extends BaseChart {
   private makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): any {
     const dataset = datasets[datasetIndex]
 
+    // We use org data here to get actual percentages and not cumulative percentages
     const percentages = calculatePercentages(
-      [...dataset.data],
+      [...dataset.orgData],
       2,
       true,
+      true
     )
     
     return makeDataLabel({
@@ -153,9 +155,8 @@ export default class FunnelChart extends BaseChart {
    *    already passed the first stage.
    */
   async fetchReports (a: any) {
-    let labels = []
-    let data: any = []
     const rr = await super.fetchReports(a) as any
+    const values = []
 
     // Above provided data sets might not have their labels/values ordered
     // correctly
@@ -171,15 +172,22 @@ export default class FunnelChart extends BaseChart {
       const report = this.config.reports?.[ri]
       const d = report?.dimensions?.[0] as Dimension
       for (const { value } of d.meta?.fields || []) {
-        labels.push(value)
-        data.push(valMap[value] || 0)
+        values.push({
+          label: value,
+          data: valMap[value] || 0
+        })
       }
     }
 
     // We are rendering the chart upside down
     // (by default it renders in ASC, but we want DESC)
-    labels = labels.reverse()
-    data = data.reverse()
+    const labels: any[] = []
+    const data: any[] = []
+
+    values.sort((a, b) => a.data - b.data).forEach(v => {
+      labels.push(v.label)
+      data.push(v.data)
+    })
 
     // Determine color to render for specific value
     const colorMap: { [_: string]: string } = {}
@@ -189,7 +197,8 @@ export default class FunnelChart extends BaseChart {
       }
     })
 
-    // Create a commutative (see method comment)
+    // Get cumulative data but also keep original for tooltips
+    const orgData = [...data]
     for (let i = 1; i < data.length; i++) {
       data[i] += data[i - 1]
     }
@@ -198,6 +207,7 @@ export default class FunnelChart extends BaseChart {
       labels,
       datasets: [{
         data,
+        orgData,
         backgroundColor: labels.map(l => colorMap[l] || defaultBGColor),
       }],
     }
