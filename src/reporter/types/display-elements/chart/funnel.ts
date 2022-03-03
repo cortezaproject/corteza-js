@@ -21,7 +21,6 @@ export class FunnelChartOptions extends ChartOptions {
     }
   }
 
-  
   getChartConfiguration (dataframes: Array<FrameDefinition>) {
     const config = {
       type: this.type,

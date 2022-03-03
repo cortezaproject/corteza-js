@@ -30,6 +30,12 @@ export default class FunnelChart extends BaseChart {
           d.meta.fields = []
         }
       }
+
+      for (const m of (v.metrics || []) as Array<Metric>) {
+        if (m.cumulative === undefined) {
+          m.cumulative = true
+        }
+      }
     }
   }
 
@@ -122,7 +128,7 @@ export default class FunnelChart extends BaseChart {
       [...dataset.orgData],
       2,
       true,
-      true
+      dataset.cumulative,
     )
 
     return makeDataLabel({
@@ -150,9 +156,6 @@ export default class FunnelChart extends BaseChart {
    * Includes a few additional post processing steps:
    * * generate a set of labels based on all reports, all data sets,
    * * generates a set of data based on all reports, all data sets,
-   * * creates a sort of a commutative chart
-   * ** if a record is in the second stage, it's safe to assume that it has
-   *    already passed the first stage.
    */
   async fetchReports (a: any) {
     const rr = await super.fetchReports(a) as any
@@ -171,6 +174,7 @@ export default class FunnelChart extends BaseChart {
       // Construct labels & data based on provided reports
       const report = this.config.reports?.[ri]
       const d = report?.dimensions?.[0] as Dimension
+
       for (const { value } of d.meta?.fields || []) {
         values.push({
           label: value,
@@ -199,8 +203,10 @@ export default class FunnelChart extends BaseChart {
 
     // Get cumulative data but also keep original for tooltips
     const orgData = [...data]
-    for (let i = 1; i < data.length; i++) {
-      data[i] += data[i - 1]
+    if (this.isCumulative()) {
+      for (let i = 1; i < data.length; i++) {
+        data[i] += data[i - 1]
+      }
     }
 
     return {
@@ -209,8 +215,24 @@ export default class FunnelChart extends BaseChart {
         data,
         orgData,
         backgroundColor: labels.map(l => colorMap[l] || defaultBGColor),
+        cumulative: this.isCumulative(),
       }],
     }
+  }
+
+  isCumulative (): boolean {
+    // Cumulative true by default
+    // Find false value
+    let cumulative = true
+    const { reports = [] } = this.config
+
+    reports.forEach(({ metrics = [] }) => {
+      if (cumulative && !metrics[0].cumulative) {
+        cumulative = false
+      }
+    })
+
+    return cumulative
   }
 
   defMetrics (): Metric {

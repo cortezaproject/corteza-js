@@ -41,6 +41,7 @@ export interface Metric {
   field?: string;
   fixTooltips?: boolean;
   relativeValue?: boolean;
+  cumulative?: boolean;
   type?: ChartType;
   alias?: string;
   aggregate?: string;
