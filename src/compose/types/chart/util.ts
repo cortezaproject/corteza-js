@@ -229,17 +229,30 @@ export const makeDataLabel = ({
   return value
 }
 
-export function calculatePercentages (values: number[], relativePrecision: number, relativeValue = false) {
+export function calculatePercentages (values: number[], relativePrecision: number, relativeValue = false, cumulative = false): Array<number> {
   let errorRounding: number = 0
   const total = values.reduce((acc: number, cur: number) => acc + cur, 0)
   let portions = values.map((n: number) => n / total * 100)
 
+  if (cumulative) {
+    // Create a commutative (see method comment)
+    for (let i = portions.length - 1; i > 0; i--) {
+      portions[i - 1] += portions[i]
+    }
+  }
+
   if (relativeValue) {
     let result = 0
-    return portions.map(v => 
-      (result = Number((v + errorRounding).toFixed(relativePrecision || 2)), errorRounding += v - Number(result), result)
-    )
+    const percentages: Array<number> = []
+    portions.forEach(v => {
+      result = Number((v + errorRounding).toFixed(relativePrecision || 2))
+      errorRounding += v - Number(result)
+      percentages.push(result)
+    })
+
+    return percentages
   }
+
   return values
 }
 
