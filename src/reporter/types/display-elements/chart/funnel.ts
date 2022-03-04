@@ -48,7 +48,7 @@ export class FunnelChartOptions extends ChartOptions {
           },
         },
         plugins: {},
-      }
+      },
     }
 
     config.options.plugins = {
@@ -62,7 +62,10 @@ export class FunnelChartOptions extends ChartOptions {
           return e
         },
       },
-      tipper: makeTipper(ChartJS.Tooltip, {})
+      tipper: makeTipper(ChartJS.Tooltip, {}),
+      datalabels: {
+        display: false,
+      },
     }
 
 
@@ -116,8 +119,8 @@ export class FunnelChartOptions extends ChartOptions {
         let columnIndex = this.getColIndex(localDataframe, name)
 
         // If dataColumn is in localDataframe, then set that value
-        const data = localDataframe.rows.map(r => {
-          return columnIndex < 0 ? undefined : r[columnIndex]
+        const data: any = localDataframe.rows.map(r => {
+          return columnIndex < 0 ? undefined : parseFloat(r[columnIndex] || '0') || 0
         })
 
         // Otherwise check other dataframes for that columnn
@@ -145,7 +148,7 @@ export class FunnelChartOptions extends ChartOptions {
             if (columnIndex < 0) {
               throw new Error(`Column ${name} not found`)
             } else if (df.rows) {
-              data[refRowIndex] = df.rows[0][columnIndex]
+              data[refRowIndex] = parseFloat(df.rows[0][columnIndex] || '0') || 0
             }
           })
         }
