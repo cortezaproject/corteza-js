@@ -107,6 +107,9 @@ export default class FunnelChart extends BaseChart {
             return e
           },
         },
+        datalabels: {
+          display: false,
+        },
       }
     }
 
