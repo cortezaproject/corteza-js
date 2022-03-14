@@ -3501,6 +3501,95 @@ export default class System {
     return '/apigw/filter/proxy_auth/def'
   }
 
+  // List aggregated list of routes
+  async apigwProfilerAggregation (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      path,
+      before,
+      sort,
+      limit,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.apigwProfilerAggregationEndpoint(),
+    }
+    cfg.params = {
+      path,
+      before,
+      sort,
+      limit,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwProfilerAggregationEndpoint (): string {
+    return '/apigw/profiler/'
+  }
+
+  // List hits per route
+  async apigwProfilerRoute (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      routeID,
+      path,
+      before,
+      sort,
+      limit,
+    } = (a as KV) || {}
+    if (!routeID) {
+      throw Error('field routeID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.apigwProfilerRouteEndpoint({
+        routeID,
+      }),
+    }
+    cfg.params = {
+      path,
+      before,
+      sort,
+      limit,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwProfilerRouteEndpoint (a: KV): string {
+    const {
+      routeID,
+    } = a || {}
+    return `/apigw/profiler/route/${routeID}`
+  }
+
+  // Hit details
+  async apigwProfilerHit (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      hitID,
+    } = (a as KV) || {}
+    if (!hitID) {
+      throw Error('field hitID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.apigwProfilerHitEndpoint({
+        hitID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  apigwProfilerHitEndpoint (a: KV): string {
+    const {
+      hitID,
+    } = a || {}
+    return `/apigw/profiler/hit/${hitID}`
+  }
+
   // List resources translations
   async localeListResource (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
