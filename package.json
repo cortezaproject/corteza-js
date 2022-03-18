@@ -27,8 +27,7 @@
     "minimatch": "^3.0.4",
     "moment": "2.25.3",
     "numeral": "^2.0.6",
-    "pino": "^5.16.0",
-    "ts-sinon": "^1.0.25"
+    "pino": "^5.16.0"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "1.0.1",
@@ -68,6 +67,7 @@
     "source-map-support": "^0.5.16",
     "ts-node": "^9.0.0",
     "ts-node-dev": "^1.1.0",
+    "ts-sinon": "^1.0.25",
     "typescript": "^3.7.2"
   },
   "resolutions": {
