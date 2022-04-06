@@ -4,10 +4,12 @@ import { Apply } from '../../../cast'
 const kind = 'Geometry'
 
 interface GeometryOptions extends Options {
+  zoomLevel: number;
 }
 
 const defaults = (): Readonly<GeometryOptions> => Object.freeze({
   ...defaultOptions(),
+  zoomLevel: 3,
 })
 
 export class ModuleFieldGeometry extends ModuleField {
@@ -23,7 +25,8 @@ export class ModuleFieldGeometry extends ModuleField {
   applyOptions (o?: Partial<GeometryOptions>): void {
     if (!o) return
     super.applyOptions(o)
-
+    
+    Apply(this.options, o, Number, 'zoomLevel')
   }
 
   /**
