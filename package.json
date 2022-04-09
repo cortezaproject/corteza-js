@@ -25,7 +25,7 @@
     "lodash": "^4.17.15",
     "minimalist": "^1.0.0",
     "minimatch": "^3.0.4",
-    "moment": "2.25.3",
+    "moment": "2.29.2",
     "numeral": "^2.0.6",
     "pino": "^5.16.0"
   },
