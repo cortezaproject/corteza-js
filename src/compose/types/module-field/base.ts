@@ -2,7 +2,7 @@ import { merge } from 'lodash'
 import { IsOf } from '../../../guards'
 import { Apply, CortezaID, NoID } from '../../../cast'
 
-export const FieldNameValidator = /^\w{1,}$/
+export const FieldNameValidator = /^[A-Za-z][0-9A-Za-z_\-.]*[A-Za-z0-9]$/
 
 const unsortableFieldKinds = ['User', 'Record', 'File']
 const unsortableSysFields = ['recordID', 'ownedBy', 'createdBy', 'updatedBy', 'deletedBy']
@@ -17,13 +17,13 @@ export interface Capabilities {
 
 export interface Options {
   description: {
-    view: string,
-    edit: string | undefined,
-  },
+    view: string;
+    edit: string | undefined;
+  };
   hint: {
-    view: string,
-    edit: string | undefined,
-  },
+    view: string;
+    edit: string | undefined;
+  };
 }
 
 export const defaultOptions = (): Readonly<Options> => Object.freeze({
@@ -118,9 +118,7 @@ export class ModuleField {
        * so we can use it without conversion
        * false boolean values are represented only by the name, in all other cases the value is also present
        */
-      this.defaultValue = f.defaultValue
-        .filter(({ name, value }) => name !== undefined || (value !== undefined && value !== null))
-
+      this.defaultValue = f.defaultValue.filter(({ name, value }) => name !== undefined || (value !== undefined && value !== null))
     }
 
     if (this.isSystem) {
