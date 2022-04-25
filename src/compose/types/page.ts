@@ -1,6 +1,7 @@
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
 import { IsOf, AreObjectsOf } from '../../guards'
 import { PageBlock, PageBlockMaker } from './page-block'
+import { Button } from './page-block/types'
 
 interface PartialPage extends Partial<Omit<Page, 'children' | 'blocks' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
   children?: Array<PartialPage>;
@@ -10,6 +11,17 @@ interface PartialPage extends Partial<Omit<Page, 'children' | 'blocks' | 'create
   createdAt?: string|number|Date;
   updatedAt?: string|number|Date;
   deletedAt?: string|number|Date;
+}
+
+interface PageConfig {
+  buttons: {
+    submit: Button;
+    delete: Button;
+    new: Button;
+    edit: Button;
+    clone: Button;
+    back: Button;
+  };
 }
 
 export class Page {
@@ -30,6 +42,17 @@ export class Page {
   public children?: Array<Page>
 
   public blocks: (InstanceType<typeof PageBlock>)[] = [];
+
+  public config: PageConfig = {
+    buttons: {
+      submit: { enabled: true },
+      delete: { enabled: true },
+      new: { enabled: true },
+      edit: { enabled: true },
+      clone: { enabled: true },
+      back: { enabled: true },
+    },
+  }
 
   public createdAt?: Date = undefined;
   public updatedAt?: Date = undefined;
@@ -67,6 +90,10 @@ export class Page {
       if (AreObjectsOf<Page>(i.children, 'pageID')) {
         this.children = i.children.map(c => new Page(c))
       }
+    }
+
+    if (i.config) {
+      this.config = i.config
     }
 
     if (IsOf(i, 'labels')) {
