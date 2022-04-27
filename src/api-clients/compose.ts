@@ -2042,6 +2042,75 @@ export default class Compose {
     return `/namespace/${namespaceID}/chart/${chartID}`
   }
 
+  // fetch chart translations
+  async chartListTranslations (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      namespaceID,
+      chartID,
+    } = (a as KV) || {}
+    if (!namespaceID) {
+      throw Error('field namespaceID is empty')
+    }
+    if (!chartID) {
+      throw Error('field chartID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.chartListTranslationsEndpoint({
+        namespaceID, chartID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  chartListTranslationsEndpoint (a: KV): string {
+    const {
+      namespaceID,
+      chartID,
+    } = a || {}
+    return `/namespace/${namespaceID}/chart/${chartID}/translation`
+  }
+
+  // add/update chart translations
+  async chartUpdateTranslations (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      namespaceID,
+      chartID,
+      translations
+    } = (a as KV) || {}
+    if (!namespaceID) {
+      throw Error('field namespaceID is empty')
+    }
+    if (!chartID) {
+      throw Error('field chartID is empty')
+    }
+    if (!translations) {
+      throw Error('field translations is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'patch',
+      url: this.chartUpdateTranslationsEndpoint({
+        namespaceID, chartID,
+      }),
+    }
+    cfg.data = {
+      translations,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  chartUpdateTranslationsEndpoint (a: KV): string {
+    const {
+      namespaceID,
+      chartID,
+    } = a || {}
+    return `/namespace/${namespaceID}/chart/${chartID}/translation`
+  }
+
   // Send email from the Compose
   async notificationEmailSend (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
