@@ -146,7 +146,7 @@ export class ModuleField {
    * Expecting valid name
    */
   public get isValid (): boolean {
-    return FieldNameValidator.test(this.name)
+    return this.name.length > 0 && FieldNameValidator.test(this.name)
   }
 
   /**
