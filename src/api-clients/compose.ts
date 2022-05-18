@@ -2042,7 +2042,7 @@ export default class Compose {
     return `/namespace/${namespaceID}/chart/${chartID}`
   }
 
-  // fetch chart translations
+  // List chart translation
   async chartListTranslations (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
@@ -2073,12 +2073,12 @@ export default class Compose {
     return `/namespace/${namespaceID}/chart/${chartID}/translation`
   }
 
-  // add/update chart translations
+  // Update chart translation
   async chartUpdateTranslations (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       namespaceID,
       chartID,
-      translations
+      translations,
     } = (a as KV) || {}
     if (!namespaceID) {
       throw Error('field namespaceID is empty')
@@ -2099,7 +2099,6 @@ export default class Compose {
     cfg.data = {
       translations,
     }
-
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
