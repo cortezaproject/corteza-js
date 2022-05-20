@@ -116,6 +116,10 @@ export default class Chart extends BaseChart {
       },
       legend: {
         position: 'top',
+        labels: {
+          // This more specific font property overrides the global property
+          fontFamily: "'Poppins-Regular'",
+        }
       },
     }
 
@@ -145,6 +149,9 @@ export default class Chart extends BaseChart {
             return dataset.tooltips.labelCallback({ datasetIndex, index }, { datasets, labels })
           },
         },
+        titleFontFamily: "'Poppins-Regular'",
+        bodyFontFamily: "'Poppins-Regular'",
+        footerFontFamily: "'Poppins-Regular'",
       }
 
       if (r.metrics?.find((m: Metric) => !isRadialChart(m as KV))) {

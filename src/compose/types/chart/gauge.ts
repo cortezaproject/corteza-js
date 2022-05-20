@@ -93,6 +93,9 @@ export default class GaugeChart extends BaseChart {
             return dataset.tooltips.labelCallback({ datasetIndex, index }, { datasets, labels })
           },
         },
+        titleFontFamily: "'Poppins-Regular'",
+        bodyFontFamily: "'Poppins-Regular'",
+        footerFontFamily: "'Poppins-Regular'",
       },
       valueLabel: {
         display: true,
@@ -104,6 +107,12 @@ export default class GaugeChart extends BaseChart {
           top: 10,
           bottom: 10,
         },
+      },
+      legend: {
+        labels: {
+          // This more specific font property overrides the global property
+          fontFamily: "'Poppins-Regular'",
+        }
       },
     }
 
