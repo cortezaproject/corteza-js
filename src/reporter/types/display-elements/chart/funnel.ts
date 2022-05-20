@@ -32,6 +32,10 @@ export class FunnelChartOptions extends ChartOptions {
         title: {
           display: !!this.title,
           text: this.title,
+          labels: {
+            // This more specific font property overrides the global property
+            fontFamily: "'Poppins-Regular'",
+          },
         },
         legend: {
           display: this.showLegend
@@ -45,6 +49,9 @@ export class FunnelChartOptions extends ChartOptions {
           callbacks: {
             label: this.makeLabel,
           },
+          titleFontFamily: "'Poppins-Regular'",
+          bodyFontFamily: "'Poppins-Regular'",
+          footerFontFamily: "'Poppins-Regular'",
         },
         plugins: {},
       },

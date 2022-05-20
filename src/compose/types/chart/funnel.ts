@@ -89,7 +89,13 @@ export default class FunnelChart extends BaseChart {
   makeOptions (data: any) {
     const options: any = {
       sort: 'desc',
-      maintainAspectRatio: false
+      maintainAspectRatio: false,
+      legend: {
+        labels: {
+          // This more specific font property overrides the global property
+          fontFamily: "'Poppins-Regular'",
+        }
+      },
     }
 
     if (this.config.colorScheme) {
@@ -119,6 +125,9 @@ export default class FunnelChart extends BaseChart {
       callbacks: {
         label: this.makeLabel,
       },
+      titleFontFamily: "'Poppins-Regular'",
+      bodyFontFamily: "'Poppins-Regular'",
+      footerFontFamily: "'Poppins-Regular'",
     }
     return options
   }

@@ -29,7 +29,11 @@ export class BasicChartOptions extends ChartOptions {
           text: this.title,
         },
         legend: {
-          display: this.showLegend
+          display: this.showLegend,
+          labels: {
+            // This more specific font property overrides the global property
+            fontFamily: "'Poppins-Regular'",
+          },
         },
         responsive: true,
         maintainAspectRatio: false,
@@ -39,6 +43,9 @@ export class BasicChartOptions extends ChartOptions {
           displayColors: false,
           intersect: !['bar', 'line'].includes(this.type),
           callbacks: {},
+          titleFontFamily: "'Poppins-Regular'",
+          bodyFontFamily: "'Poppins-Regular'",
+          footerFontFamily: "'Poppins-Regular'",
         },
         plugins: {
           colorschemes: {
