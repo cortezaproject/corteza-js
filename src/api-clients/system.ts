@@ -4253,4 +4253,185 @@ export default class System {
     return `/locale/${lang}/${application}`
   }
 
+  // List data privacy requests
+  async dataPrivacyRequestList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      requestedBy,
+      query,
+      kind,
+      status,
+      limit,
+      pageCursor,
+      sort,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.dataPrivacyRequestListEndpoint(),
+    }
+    cfg.params = {
+      requestedBy,
+      query,
+      kind,
+      status,
+      limit,
+      pageCursor,
+      sort,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dataPrivacyRequestListEndpoint (): string {
+    return '/data-privacy/requests/'
+  }
+
+  // Create data privacy request
+  async dataPrivacyRequestCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      kind,
+      payload,
+    } = (a as KV) || {}
+    if (!kind) {
+      throw Error('field kind is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'post',
+      url: this.dataPrivacyRequestCreateEndpoint(),
+    }
+    cfg.data = {
+      kind,
+      payload,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dataPrivacyRequestCreateEndpoint (): string {
+    return '/data-privacy/requests/'
+  }
+
+  // Update data privacy request status
+  async dataPrivacyRequestUpdateStatus (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      requestID,
+      status,
+    } = (a as KV) || {}
+    if (!requestID) {
+      throw Error('field requestID is empty')
+    }
+    if (!status) {
+      throw Error('field status is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'patch',
+      url: this.dataPrivacyRequestUpdateStatusEndpoint({
+        requestID, status,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dataPrivacyRequestUpdateStatusEndpoint (a: KV): string {
+    const {
+      requestID,
+      status,
+    } = a || {}
+    return `/data-privacy/requests/${requestID}/status/${status}`
+  }
+
+  // Get details about specific request
+  async dataPrivacyRequestRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      requestID,
+    } = (a as KV) || {}
+    if (!requestID) {
+      throw Error('field requestID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.dataPrivacyRequestReadEndpoint({
+        requestID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dataPrivacyRequestReadEndpoint (a: KV): string {
+    const {
+      requestID,
+    } = a || {}
+    return `/data-privacy/requests/${requestID}`
+  }
+
+  // List data privacy request comments
+  async dataPrivacyRequestCommentList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      requestID,
+      limit,
+      pageCursor,
+      sort,
+    } = (a as KV) || {}
+    if (!requestID) {
+      throw Error('field requestID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.dataPrivacyRequestCommentListEndpoint({
+        requestID,
+      }),
+    }
+    cfg.params = {
+      limit,
+      pageCursor,
+      sort,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dataPrivacyRequestCommentListEndpoint (a: KV): string {
+    const {
+      requestID,
+    } = a || {}
+    return `/data-privacy/requests/${requestID}/comments/`
+  }
+
+  // Create data privacy request comment
+  async dataPrivacyRequestCommentCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      requestID,
+      comment,
+    } = (a as KV) || {}
+    if (!requestID) {
+      throw Error('field requestID is empty')
+    }
+    if (!comment) {
+      throw Error('field comment is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'post',
+      url: this.dataPrivacyRequestCommentCreateEndpoint({
+        requestID,
+      }),
+    }
+    cfg.data = {
+      comment,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dataPrivacyRequestCommentCreateEndpoint (a: KV): string {
+    const {
+      requestID,
+    } = a || {}
+    return `/data-privacy/requests/${requestID}/comments/`
+  }
+
 }
