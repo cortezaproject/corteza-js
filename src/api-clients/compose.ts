@@ -983,12 +983,6 @@ export default class Compose {
     if (!name) {
       throw Error('field name is empty')
     }
-    if (!modelConfig) {
-      throw Error('field modelConfig is empty')
-    }
-    if (!privacy) {
-      throw Error('field privacy is empty')
-    }
     if (!fields) {
       throw Error('field fields is empty')
     }
@@ -1074,12 +1068,6 @@ export default class Compose {
     }
     if (!name) {
       throw Error('field name is empty')
-    }
-    if (!modelConfig) {
-      throw Error('field modelConfig is empty')
-    }
-    if (!privacy) {
-      throw Error('field privacy is empty')
     }
     if (!fields) {
       throw Error('field fields is empty')
@@ -1873,6 +1861,29 @@ export default class Compose {
       moduleID,
     } = a || {}
     return `/namespace/${namespaceID}/module/${moduleID}/record/trigger`
+  }
+
+  // List sensitive data
+  async dataPrivacySensitiveDataList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      sensitivityLevelID,
+      connectionID,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.dataPrivacySensitiveDataListEndpoint(),
+    }
+    cfg.params = {
+      sensitivityLevelID,
+      connectionID,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dataPrivacySensitiveDataListEndpoint (): string {
+    return '/data-privacy/sensitive-data'
   }
 
   // List/read charts
