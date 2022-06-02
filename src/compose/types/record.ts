@@ -74,14 +74,15 @@ export class Record {
   public updatedAt?: Date = undefined;
   public deletedAt?: Date = undefined;
 
-  public ownedBy = NoID;
-  public createdBy = NoID;
-  public updatedBy = NoID;
-  public deletedBy = NoID;
+  public ownedBy = undefined;
+  public createdBy = undefined;
+  public updatedBy = undefined;
+  public deletedBy = undefined;
 
   public canUpdateRecord = false;
   public canReadRecord = false;
   public canDeleteRecord = false;
+  public canManageOwnerOnRecord = false;
   public canGrant = false;
 
   private [fieldIndex]: Map<string, FieldIndex>
@@ -166,6 +167,7 @@ export class Record {
       'canUpdateRecord',
       'canReadRecord',
       'canDeleteRecord',
+      'canManageOwnerOnRecord',
       'canGrant',
     )
 
