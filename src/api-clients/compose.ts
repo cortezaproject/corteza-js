@@ -971,6 +971,8 @@ export default class Compose {
       namespaceID,
       name,
       handle,
+      modelConfig,
+      privacy,
       fields,
       meta,
       labels,
@@ -980,6 +982,12 @@ export default class Compose {
     }
     if (!name) {
       throw Error('field name is empty')
+    }
+    if (!modelConfig) {
+      throw Error('field modelConfig is empty')
+    }
+    if (!privacy) {
+      throw Error('field privacy is empty')
     }
     if (!fields) {
       throw Error('field fields is empty')
@@ -997,6 +1005,8 @@ export default class Compose {
     cfg.data = {
       name,
       handle,
+      modelConfig,
+      privacy,
       fields,
       meta,
       labels,
@@ -1049,6 +1059,8 @@ export default class Compose {
       moduleID,
       name,
       handle,
+      modelConfig,
+      privacy,
       fields,
       meta,
       updatedAt,
@@ -1062,6 +1074,12 @@ export default class Compose {
     }
     if (!name) {
       throw Error('field name is empty')
+    }
+    if (!modelConfig) {
+      throw Error('field modelConfig is empty')
+    }
+    if (!privacy) {
+      throw Error('field privacy is empty')
     }
     if (!fields) {
       throw Error('field fields is empty')
@@ -1079,6 +1097,8 @@ export default class Compose {
     cfg.data = {
       name,
       handle,
+      modelConfig,
+      privacy,
       fields,
       meta,
       updatedAt,
@@ -1538,6 +1558,7 @@ export default class Compose {
       namespaceID,
       moduleID,
       values,
+      ownedBy,
       records,
       labels,
     } = (a as KV) || {}
@@ -1556,6 +1577,7 @@ export default class Compose {
     }
     cfg.data = {
       values,
+      ownedBy,
       records,
       labels,
     }
@@ -1613,6 +1635,7 @@ export default class Compose {
       moduleID,
       recordID,
       values,
+      ownedBy,
       records,
       labels,
     } = (a as KV) || {}
@@ -1634,6 +1657,7 @@ export default class Compose {
     }
     cfg.data = {
       values,
+      ownedBy,
       records,
       labels,
     }
