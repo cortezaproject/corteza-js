@@ -1418,6 +1418,428 @@ export default class System {
     return '/users/import'
   }
 
+  // Search drivers
+  async dalDriverList (extra: AxiosRequestConfig = {}): Promise<KV> {
+
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.dalDriverListEndpoint(),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dalDriverListEndpoint (): string {
+    return '/dal/drivers/'
+  }
+
+  // Search sensitivity levels
+  async dalSensitivityLevelList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      sensitivityLevelID,
+      deleted,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.dalSensitivityLevelListEndpoint(),
+    }
+    cfg.params = {
+      sensitivityLevelID,
+      deleted,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dalSensitivityLevelListEndpoint (): string {
+    return '/dal/sensitivity-levels/'
+  }
+
+  // Create sensitivity level
+  async dalSensitivityLevelCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      handle,
+      level,
+      meta,
+    } = (a as KV) || {}
+    if (!handle) {
+      throw Error('field handle is empty')
+    }
+    if (!level) {
+      throw Error('field level is empty')
+    }
+    if (!meta) {
+      throw Error('field meta is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'post',
+      url: this.dalSensitivityLevelCreateEndpoint(),
+    }
+    cfg.data = {
+      handle,
+      level,
+      meta,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dalSensitivityLevelCreateEndpoint (): string {
+    return '/dal/sensitivity-levels/'
+  }
+
+  // Update connection details
+  async dalSensitivityLevelUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      sensitivityLevelID,
+      handle,
+      level,
+      meta,
+    } = (a as KV) || {}
+    if (!sensitivityLevelID) {
+      throw Error('field sensitivityLevelID is empty')
+    }
+    if (!handle) {
+      throw Error('field handle is empty')
+    }
+    if (!level) {
+      throw Error('field level is empty')
+    }
+    if (!meta) {
+      throw Error('field meta is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'put',
+      url: this.dalSensitivityLevelUpdateEndpoint({
+        sensitivityLevelID,
+      }),
+    }
+    cfg.data = {
+      handle,
+      level,
+      meta,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dalSensitivityLevelUpdateEndpoint (a: KV): string {
+    const {
+      sensitivityLevelID,
+    } = a || {}
+    return `/dal/sensitivity-levels/${sensitivityLevelID}`
+  }
+
+  // Read connection details
+  async dalSensitivityLevelRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      sensitivityLevelID,
+    } = (a as KV) || {}
+    if (!sensitivityLevelID) {
+      throw Error('field sensitivityLevelID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.dalSensitivityLevelReadEndpoint({
+        sensitivityLevelID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dalSensitivityLevelReadEndpoint (a: KV): string {
+    const {
+      sensitivityLevelID,
+    } = a || {}
+    return `/dal/sensitivity-levels/${sensitivityLevelID}`
+  }
+
+  // Remove sensitivity level
+  async dalSensitivityLevelDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      sensitivityLevelID,
+    } = (a as KV) || {}
+    if (!sensitivityLevelID) {
+      throw Error('field sensitivityLevelID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'delete',
+      url: this.dalSensitivityLevelDeleteEndpoint({
+        sensitivityLevelID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dalSensitivityLevelDeleteEndpoint (a: KV): string {
+    const {
+      sensitivityLevelID,
+    } = a || {}
+    return `/dal/sensitivity-levels/${sensitivityLevelID}`
+  }
+
+  // Undelete sensitivity level
+  async dalSensitivityLevelUndelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      sensitivityLevelID,
+    } = (a as KV) || {}
+    if (!sensitivityLevelID) {
+      throw Error('field sensitivityLevelID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'post',
+      url: this.dalSensitivityLevelUndeleteEndpoint({
+        sensitivityLevelID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dalSensitivityLevelUndeleteEndpoint (a: KV): string {
+    const {
+      sensitivityLevelID,
+    } = a || {}
+    return `/dal/sensitivity-levels/${sensitivityLevelID}/undelete`
+  }
+
+  // Search connections (Directory)
+  async dalConnectionList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      connectionID,
+      handle,
+      type,
+      deleted,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.dalConnectionListEndpoint(),
+    }
+    cfg.params = {
+      connectionID,
+      handle,
+      type,
+      deleted,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dalConnectionListEndpoint (): string {
+    return '/dal/connections/'
+  }
+
+  // Create connection
+  async dalConnectionCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      handle,
+      name,
+      type,
+      location,
+      ownership,
+      sensitivityLevel,
+      config,
+      capabilities,
+    } = (a as KV) || {}
+    if (!handle) {
+      throw Error('field handle is empty')
+    }
+    if (!name) {
+      throw Error('field name is empty')
+    }
+    if (!type) {
+      throw Error('field type is empty')
+    }
+    if (!location) {
+      throw Error('field location is empty')
+    }
+    if (!ownership) {
+      throw Error('field ownership is empty')
+    }
+    if (!sensitivityLevel) {
+      throw Error('field sensitivityLevel is empty')
+    }
+    if (!config) {
+      throw Error('field config is empty')
+    }
+    if (!capabilities) {
+      throw Error('field capabilities is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'post',
+      url: this.dalConnectionCreateEndpoint(),
+    }
+    cfg.data = {
+      handle,
+      name,
+      type,
+      location,
+      ownership,
+      sensitivityLevel,
+      config,
+      capabilities,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dalConnectionCreateEndpoint (): string {
+    return '/dal/connections/'
+  }
+
+  // Update connection details
+  async dalConnectionUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      connectionID,
+      handle,
+      name,
+      type,
+      location,
+      ownership,
+      sensitivityLevel,
+      config,
+      capabilities,
+    } = (a as KV) || {}
+    if (!connectionID) {
+      throw Error('field connectionID is empty')
+    }
+    if (!handle) {
+      throw Error('field handle is empty')
+    }
+    if (!name) {
+      throw Error('field name is empty')
+    }
+    if (!type) {
+      throw Error('field type is empty')
+    }
+    if (!location) {
+      throw Error('field location is empty')
+    }
+    if (!ownership) {
+      throw Error('field ownership is empty')
+    }
+    if (!sensitivityLevel) {
+      throw Error('field sensitivityLevel is empty')
+    }
+    if (!config) {
+      throw Error('field config is empty')
+    }
+    if (!capabilities) {
+      throw Error('field capabilities is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'put',
+      url: this.dalConnectionUpdateEndpoint({
+        connectionID,
+      }),
+    }
+    cfg.data = {
+      handle,
+      name,
+      type,
+      location,
+      ownership,
+      sensitivityLevel,
+      config,
+      capabilities,
+    }
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dalConnectionUpdateEndpoint (a: KV): string {
+    const {
+      connectionID,
+    } = a || {}
+    return `/dal/connections/${connectionID}`
+  }
+
+  // Read connection details
+  async dalConnectionRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      connectionID,
+    } = (a as KV) || {}
+    if (!connectionID) {
+      throw Error('field connectionID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.dalConnectionReadEndpoint({
+        connectionID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dalConnectionReadEndpoint (a: KV): string {
+    const {
+      connectionID,
+    } = a || {}
+    return `/dal/connections/${connectionID}`
+  }
+
+  // Remove connection
+  async dalConnectionDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      connectionID,
+    } = (a as KV) || {}
+    if (!connectionID) {
+      throw Error('field connectionID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'delete',
+      url: this.dalConnectionDeleteEndpoint({
+        connectionID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dalConnectionDeleteEndpoint (a: KV): string {
+    const {
+      connectionID,
+    } = a || {}
+    return `/dal/connections/${connectionID}`
+  }
+
+  // Undelete connection
+  async dalConnectionUndelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      connectionID,
+    } = (a as KV) || {}
+    if (!connectionID) {
+      throw Error('field connectionID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'post',
+      url: this.dalConnectionUndeleteEndpoint({
+        connectionID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dalConnectionUndeleteEndpoint (a: KV): string {
+    const {
+      connectionID,
+    } = a || {}
+    return `/dal/connections/${connectionID}/undelete`
+  }
+
   // List applications
   async applicationList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
