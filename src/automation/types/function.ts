@@ -5,6 +5,8 @@ export interface FunctionMeta {
   short: string;
   description: string;
   visual: { [_: string]: any };
+  // List of webapps where function can be used, if omitted it can be used everywhere
+  webapps: Array<string>;
 }
 
 interface FunctionCtr extends Partial<Omit<Function, 'parameters' | 'results'>> {
