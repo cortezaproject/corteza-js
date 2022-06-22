@@ -145,11 +145,10 @@ export default class GaugeChart extends BaseChart {
     })
   }
 
-  private makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): any {
+  private makeLabel ({ datasetIndex, index }: any, { datasets }: any): any {
     const dataset = datasets[datasetIndex]
 
     return makeDataLabel({
-      prefix: labels[index],
       value: dataset.data[index],
     })
   }

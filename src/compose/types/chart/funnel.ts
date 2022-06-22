@@ -132,7 +132,7 @@ export default class FunnelChart extends BaseChart {
     return options
   }
 
-  private makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): any {
+  private makeLabel ({ datasetIndex, index }: any, { datasets }: any): any {
     const dataset = datasets[datasetIndex]
 
     // We use org data here to get actual percentages and not cumulative percentages
@@ -144,7 +144,6 @@ export default class FunnelChart extends BaseChart {
     )
 
     return makeDataLabel({
-      prefix: labels[index],
       value: dataset.data[index],
       relativeValue: percentages[index],
     })

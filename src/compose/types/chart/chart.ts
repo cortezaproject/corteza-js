@@ -119,7 +119,7 @@ export default class Chart extends BaseChart {
         labels: {
           // This more specific font property overrides the global property
           fontFamily: "'Poppins-Regular'",
-        }
+        },
       },
     }
 
@@ -152,6 +152,7 @@ export default class Chart extends BaseChart {
         titleFontFamily: "'Poppins-Regular'",
         bodyFontFamily: "'Poppins-Regular'",
         footerFontFamily: "'Poppins-Regular'",
+        displayColors: false,
       }
 
       if (r.metrics?.find((m: Metric) => !isRadialChart(m as KV))) {
@@ -203,7 +204,7 @@ export default class Chart extends BaseChart {
     })
   }
 
-  private makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): any {
+  private makeLabel ({ datasetIndex, index }: any, { datasets }: any): any {
     const dataset = datasets[datasetIndex]
 
     const percentages = calculatePercentages(
@@ -213,7 +214,6 @@ export default class Chart extends BaseChart {
     )
 
     return makeDataLabel({
-      prefix: labels[index],
       value: dataset.data[index],
       relativeValue: dataset.tooltips.relativeValue ? percentages[index] : undefined,
     })
