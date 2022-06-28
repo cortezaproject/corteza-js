@@ -845,6 +845,31 @@ export default class Automation {
     return '/permissions/effective'
   }
 
+  // Evaluate rules for given user/role combo
+  async permissionsTrace (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      resource,
+      userID,
+      roleID,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.permissionsTraceEndpoint(),
+    }
+    cfg.params = {
+      resource,
+      userID,
+      roleID,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  permissionsTraceEndpoint (): string {
+    return '/permissions/trace'
+  }
+
   // Retrieve role permissions
   async permissionsRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {

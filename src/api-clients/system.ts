@@ -907,6 +907,39 @@ export default class System {
     return `/roles/${roleID}/trigger`
   }
 
+  // Clone permission settings to a role
+  async roleCloneRules (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      roleID,
+      cloneToRoleID,
+    } = (a as KV) || {}
+    if (!roleID) {
+      throw Error('field roleID is empty')
+    }
+    if (!cloneToRoleID) {
+      throw Error('field cloneToRoleID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'post',
+      url: this.roleCloneRulesEndpoint({
+        roleID,
+      }),
+    }
+    cfg.params = {
+      cloneToRoleID,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  roleCloneRulesEndpoint (a: KV): string {
+    const {
+      roleID,
+    } = a || {}
+    return `/roles/${roleID}/rules/clone`
+  }
+
   // Search users (Directory)
   async userList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
@@ -2217,6 +2250,31 @@ export default class System {
     return '/permissions/effective'
   }
 
+  // Evaluate rules for given user/role combo
+  async permissionsTrace (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      resource,
+      userID,
+      roleID,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.permissionsTraceEndpoint(),
+    }
+    cfg.params = {
+      resource,
+      userID,
+      roleID,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  permissionsTraceEndpoint (): string {
+    return '/permissions/trace'
+  }
+
   // Retrieve role permissions
   async permissionsRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
@@ -2299,39 +2357,6 @@ export default class System {
       roleID,
     } = a || {}
     return `/permissions/${roleID}/rules`
-  }
-
-  // Clone permission settings to a role
-  async permissionsClone (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
-    const {
-      roleID,
-      cloneToRoleID,
-    } = (a as KV) || {}
-    if (!roleID) {
-      throw Error('field roleID is empty')
-    }
-    if (!cloneToRoleID) {
-      throw Error('field cloneToRoleID is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      ...extra,
-      method: 'post',
-      url: this.permissionsCloneEndpoint({
-        roleID,
-      }),
-    }
-    cfg.params = {
-      cloneToRoleID,
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  permissionsCloneEndpoint (a: KV): string {
-    const {
-      roleID,
-    } = a || {}
-    return `/permissions/${roleID}/rules/clone`
   }
 
   // List/read reminders
