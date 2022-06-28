@@ -34,6 +34,9 @@ interface Options {
   refField?: string;
   editFields?: unknown[];
 
+  // Should records be opened in a new tab
+  openInNewTab: boolean;
+
   // Are table rows selectable
   selectable: boolean;
   selectMode: 'multi' | 'single' | 'range';
@@ -69,6 +72,8 @@ const defaults: Readonly<Options> = Object.freeze({
   positionField: undefined,
   refField: undefined,
   editFields: [],
+
+  openInNewTab: false,
 
   selectable: true,
   selectMode: 'multi',
@@ -119,6 +124,7 @@ export class PageBlockRecordList extends PageBlock {
       'hideRecordPermissionsButton',
       'editable',
       'draggable',
+      'openInNewTab',
     )
 
     if (o.selectionButtons) {
