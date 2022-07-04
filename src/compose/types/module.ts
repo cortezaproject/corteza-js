@@ -62,6 +62,7 @@ export class Module {
   public canUpdateModule = false;
   public canDeleteModule = false;
   public canCreateRecord = false;
+  public canCreateOwnedRecord = false;
   public canGrant = false;
 
   private [propNamespace]?: Namespace
@@ -118,6 +119,7 @@ export class Module {
       'canUpdateModule',
       'canDeleteModule',
       'canCreateRecord',
+      'canCreateOwnedRecord',
       'canGrant',
     )
   }
