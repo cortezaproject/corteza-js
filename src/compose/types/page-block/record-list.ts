@@ -34,6 +34,9 @@ interface Options {
   refField?: string;
   editFields?: unknown[];
 
+  // When adding a new record, link it to parent when available
+  linkToParent: boolean;
+
   // Should records be opened in a new tab
   openInNewTab: boolean;
 
@@ -72,6 +75,8 @@ const defaults: Readonly<Options> = Object.freeze({
   positionField: undefined,
   refField: undefined,
   editFields: [],
+
+  linkToParent: true,
 
   openInNewTab: false,
 
@@ -125,6 +130,7 @@ export class PageBlockRecordList extends PageBlock {
       'editable',
       'draggable',
       'openInNewTab',
+      'linkToParent',
     )
 
     if (o.selectionButtons) {
