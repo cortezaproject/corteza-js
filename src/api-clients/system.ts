@@ -1697,9 +1697,6 @@ export default class System {
     if (!ownership) {
       throw Error('field ownership is empty')
     }
-    if (!sensitivityLevel) {
-      throw Error('field sensitivityLevel is empty')
-    }
     if (!config) {
       throw Error('field config is empty')
     }
@@ -1758,9 +1755,6 @@ export default class System {
     }
     if (!ownership) {
       throw Error('field ownership is empty')
-    }
-    if (!sensitivityLevel) {
-      throw Error('field sensitivityLevel is empty')
     }
     if (!config) {
       throw Error('field config is empty')
@@ -2279,6 +2273,7 @@ export default class System {
   async permissionsRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
+      resource,
     } = (a as KV) || {}
     if (!roleID) {
       throw Error('field roleID is empty')
@@ -2289,6 +2284,9 @@ export default class System {
       url: this.permissionsReadEndpoint({
         roleID,
       }),
+    }
+    cfg.params = {
+      resource,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))
