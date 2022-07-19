@@ -1863,8 +1863,8 @@ export default class Compose {
     return `/namespace/${namespaceID}/module/${moduleID}/record/trigger`
   }
 
-  // List sensitive data
-  async dataPrivacySensitiveDataList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+  // List records for data privacy
+  async dataPrivacyRecordList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       sensitivityLevelID,
       connectionID,
@@ -1872,7 +1872,7 @@ export default class Compose {
     const cfg: AxiosRequestConfig = {
       ...extra,
       method: 'get',
-      url: this.dataPrivacySensitiveDataListEndpoint(),
+      url: this.dataPrivacyRecordListEndpoint(),
     }
     cfg.params = {
       sensitivityLevelID,
@@ -1882,8 +1882,35 @@ export default class Compose {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  dataPrivacySensitiveDataListEndpoint (): string {
-    return '/data-privacy/sensitive-data'
+  dataPrivacyRecordListEndpoint (): string {
+    return '/data-privacy/record'
+  }
+
+  // List modules
+  async dataPrivacyModuleList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      connectionID,
+      limit,
+      pageCursor,
+      sort,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.dataPrivacyModuleListEndpoint(),
+    }
+    cfg.params = {
+      connectionID,
+      limit,
+      pageCursor,
+      sort,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dataPrivacyModuleListEndpoint (): string {
+    return '/data-privacy/module'
   }
 
   // List/read charts
@@ -2476,6 +2503,7 @@ export default class Compose {
   async permissionsRead (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       roleID,
+      resource,
     } = (a as KV) || {}
     if (!roleID) {
       throw Error('field roleID is empty')
@@ -2486,6 +2514,9 @@ export default class Compose {
       url: this.permissionsReadEndpoint({
         roleID,
       }),
+    }
+    cfg.params = {
+      resource,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))
