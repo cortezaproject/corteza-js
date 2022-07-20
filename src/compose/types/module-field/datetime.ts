@@ -53,14 +53,18 @@ export class ModuleFieldDateTime extends ModuleField {
     }
 
     const o = this.options
-    const m = moment(value)
+    let m = moment(value)
+
+    if (o.onlyTime) {
+      m = moment(value, ['YYYY-MM-DD HH:mm', 'YYYY-MM-DD', 'HH:mm'])
+    }
 
     if (o.outputRelative) {
       return m.fromNow()
     } else if (o.format.length > 0) {
       return m.format(o.format)
     } else if (o.onlyTime) {
-      return fmt.time(moment(value, ['YYYY-MM-DD HH:mm', 'YYYY-MM-DD', 'HH:mm']))
+      return fmt.time(m)
     } else if (o.onlyDate) {
       return fmt.date(m)
     } else {
