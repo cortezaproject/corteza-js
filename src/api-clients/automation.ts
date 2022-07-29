@@ -684,8 +684,8 @@ export default class Automation {
     return `/sessions/${sessionID}`
   }
 
-  // Read session trace info
-  async sessionTrace (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+  // Cancel session
+  async sessionCancel (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       sessionID,
     } = (a as KV) || {}
@@ -694,8 +694,8 @@ export default class Automation {
     }
     const cfg: AxiosRequestConfig = {
       ...extra,
-      method: 'get',
-      url: this.sessionTraceEndpoint({
+      method: 'post',
+      url: this.sessionCancelEndpoint({
         sessionID,
       }),
     }
@@ -703,37 +703,11 @@ export default class Automation {
     return this.api().request(cfg).then(result => stdResolve(result))
   }
 
-  sessionTraceEndpoint (a: KV): string {
+  sessionCancelEndpoint (a: KV): string {
     const {
       sessionID,
     } = a || {}
-    return `/sessions/${sessionID}/trace`
-  }
-
-  // Remove session
-  async sessionDelete (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
-    const {
-      sessionID,
-    } = (a as KV) || {}
-    if (!sessionID) {
-      throw Error('field sessionID is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      ...extra,
-      method: 'delete',
-      url: this.sessionDeleteEndpoint({
-        sessionID,
-      }),
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  sessionDeleteEndpoint (a: KV): string {
-    const {
-      sessionID,
-    } = a || {}
-    return `/sessions/${sessionID}`
+    return `/sessions/${sessionID}/cancel`
   }
 
   // Returns pending prompts from all sessions
@@ -779,37 +753,6 @@ export default class Automation {
   }
 
   sessionResumeStateEndpoint (a: KV): string {
-    const {
-      sessionID,
-      stateID,
-    } = a || {}
-    return `/sessions/${sessionID}/state/${stateID}`
-  }
-
-  // Cancel session&#x27;s state
-  async sessionDeleteState (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
-    const {
-      sessionID,
-      stateID,
-    } = (a as KV) || {}
-    if (!sessionID) {
-      throw Error('field sessionID is empty')
-    }
-    if (!stateID) {
-      throw Error('field stateID is empty')
-    }
-    const cfg: AxiosRequestConfig = {
-      ...extra,
-      method: 'delete',
-      url: this.sessionDeleteStateEndpoint({
-        sessionID, stateID,
-      }),
-    }
-
-    return this.api().request(cfg).then(result => stdResolve(result))
-  }
-
-  sessionDeleteStateEndpoint (a: KV): string {
     const {
       sessionID,
       stateID,
