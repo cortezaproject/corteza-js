@@ -971,10 +971,9 @@ export default class Compose {
       namespaceID,
       name,
       handle,
-      modelConfig,
-      privacy,
-      fields,
+      config,
       meta,
+      fields,
       labels,
     } = (a as KV) || {}
     if (!namespaceID) {
@@ -983,11 +982,11 @@ export default class Compose {
     if (!name) {
       throw Error('field name is empty')
     }
-    if (!fields) {
-      throw Error('field fields is empty')
-    }
     if (!meta) {
       throw Error('field meta is empty')
+    }
+    if (!fields) {
+      throw Error('field fields is empty')
     }
     const cfg: AxiosRequestConfig = {
       ...extra,
@@ -999,10 +998,9 @@ export default class Compose {
     cfg.data = {
       name,
       handle,
-      modelConfig,
-      privacy,
-      fields,
+      config,
       meta,
+      fields,
       labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
@@ -1053,12 +1051,11 @@ export default class Compose {
       moduleID,
       name,
       handle,
-      modelConfig,
-      privacy,
-      fields,
+      config,
       meta,
-      updatedAt,
+      fields,
       labels,
+      updatedAt,
     } = (a as KV) || {}
     if (!namespaceID) {
       throw Error('field namespaceID is empty')
@@ -1069,11 +1066,11 @@ export default class Compose {
     if (!name) {
       throw Error('field name is empty')
     }
-    if (!fields) {
-      throw Error('field fields is empty')
-    }
     if (!meta) {
       throw Error('field meta is empty')
+    }
+    if (!fields) {
+      throw Error('field fields is empty')
     }
     const cfg: AxiosRequestConfig = {
       ...extra,
@@ -1085,12 +1082,11 @@ export default class Compose {
     cfg.data = {
       name,
       handle,
-      modelConfig,
-      privacy,
-      fields,
+      config,
       meta,
-      updatedAt,
+      fields,
       labels,
+      updatedAt,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
