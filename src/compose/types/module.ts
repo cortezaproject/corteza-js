@@ -49,8 +49,7 @@ export class Module {
   public handle = '';
   public fields: Array<ModuleField> = [];
 
-  public modelConfig: object = {};
-  public privacy: object = {};
+  public config: object = {};
 
   public meta: object = {};
   public labels: object = {};
@@ -102,12 +101,8 @@ export class Module {
       this.meta = { ...m.meta }
     }
 
-    if (IsOf(m, 'modelConfig')) {
-      this.modelConfig = { ...m.modelConfig }
-    }
-
-    if (IsOf(m, 'privacy')) {
-      this.privacy = { ...m.privacy }
+    if (IsOf(m, 'config')) {
+      this.config = { ...m.config }
     }
 
     if (IsOf(m, 'labels')) {
