@@ -101,4 +101,24 @@ export class Namespace {
   get resourceType (): string {
     return 'compose:namespace'
   }
+
+  /**
+   * Calculate namespace initials
+   */
+  get initials (): string {
+    let base = this.name || this.slug
+
+    // if length is shorter than 3 letters, use that
+    if (base.length <= 3) {
+      return base
+    }
+
+    // split by space and take first letter of each word
+    base = base.split(/\s+/).map(w => w[0]).filter(c => /[a-zA-Z]/.test(c)).join('')
+    if (base.length > 3) {
+      base = base.slice(0, 3)
+    }
+
+    return base
+  }
 }
