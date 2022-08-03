@@ -1396,6 +1396,63 @@ export default class System {
     return `/users/${userID}/sessions`
   }
 
+  // List user credentials
+  async userListCredentials (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      userID,
+    } = (a as KV) || {}
+    if (!userID) {
+      throw Error('field userID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.userListCredentialsEndpoint({
+        userID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  userListCredentialsEndpoint (a: KV): string {
+    const {
+      userID,
+    } = a || {}
+    return `/users/${userID}/credentials`
+  }
+
+  // Delete user credentials
+  async userDeleteCredentials (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      userID,
+      credentialsID,
+    } = (a as KV) || {}
+    if (!userID) {
+      throw Error('field userID is empty')
+    }
+    if (!credentialsID) {
+      throw Error('field credentialsID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'delete',
+      url: this.userDeleteCredentialsEndpoint({
+        userID, credentialsID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  userDeleteCredentialsEndpoint (a: KV): string {
+    const {
+      userID,
+      credentialsID,
+    } = a || {}
+    return `/users/${userID}/credentials/${credentialsID}`
+  }
+
   // Export users
   async userExport (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {

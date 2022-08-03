@@ -1859,6 +1859,42 @@ export default class Compose {
     return `/namespace/${namespaceID}/module/${moduleID}/record/trigger`
   }
 
+  // List record revisions
+  async recordRevisions (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      namespaceID,
+      moduleID,
+      recordID,
+    } = (a as KV) || {}
+    if (!namespaceID) {
+      throw Error('field namespaceID is empty')
+    }
+    if (!moduleID) {
+      throw Error('field moduleID is empty')
+    }
+    if (!recordID) {
+      throw Error('field recordID is empty')
+    }
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.recordRevisionsEndpoint({
+        namespaceID, moduleID, recordID,
+      }),
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  recordRevisionsEndpoint (a: KV): string {
+    const {
+      namespaceID,
+      moduleID,
+      recordID,
+    } = a || {}
+    return `/namespace/${namespaceID}/module/${moduleID}/record/${recordID}/revisions`
+  }
+
   // List records for data privacy
   async dataPrivacyRecordList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
