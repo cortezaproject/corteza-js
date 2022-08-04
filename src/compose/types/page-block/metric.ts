@@ -110,7 +110,7 @@ export class PageBlockMetric extends PageBlock {
       moduleID,
       filter,
       metrics: metrics.join(','),
-      dimensions: dimensionFunctions.convert({ modifier: 'YEAR', field: 'created_at' }),
+      dimensions: dimensionFunctions.convert({ modifier: 'YEAR', field: 'createdAt' }),
     }
   }
 }

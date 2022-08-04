@@ -13,10 +13,6 @@ export enum ChartType {
   gauge = 'gauge',
 }
 
-export enum ChartRenderer {
-  chartJS = 'chart.js'
-}
-
 export interface TemporalDataPoint {
   t: Date;
   y: number;
@@ -69,10 +65,6 @@ export interface Report {
 }
 
 export interface ChartConfig {
-  renderer?: {
-    version?: ChartRenderer;
-  };
-
   reports?: Array<Report>;
   colorScheme?: string;
 }
@@ -144,7 +136,7 @@ dimensionFunctions.push(...[
   {
     text: 'week',
     value: 'WEEK',
-    convert: (f: string) => `DATE(${f})`,
+    convert: (f: string) => `WEEK(${f})`,
     time: { unit: 'week', minUnit: 'week', round: true, isoWeekday: true },
   },
 
@@ -156,9 +148,9 @@ dimensionFunctions.push(...[
   },
 
   {
-    text: 'quarter', // fetch monthly aggregation but tell renderer to group by quarter
+    text: 'quarter',
     value: 'QUARTER',
-    convert: (f: string) => `DATE_FORMAT(${f}, '%Y-%m-01')`,
+    convert: (f: string) => `QUARTER(${f})`,
     time: { unit: 'quarter', minUnit: 'quarter', round: true },
   },
 
@@ -172,29 +164,29 @@ dimensionFunctions.push(...[
 
 export const predefinedFilters = [
   {
-    value: 'YEAR(created_at) = YEAR(NOW())',
+    value: 'YEAR(createdAt) = YEAR(NOW())',
     text: 'recordsCreatedThisYear',
   },
   {
-    value: 'YEAR(created_at) = YEAR(NOW()) - 1',
+    value: 'YEAR(createdAt) = YEAR(NOW()) - 1',
     text: 'recordsCreatedLastYear',
   },
 
   {
-    value: 'YEAR(created_at) = YEAR(NOW()) AND QUARTER(created_at) = QUARTER(NOW())',
+    value: 'YEAR(createdAt) = YEAR(NOW()) AND QUARTER(createdAt) = QUARTER(NOW())',
     text: 'recordsCreatedThisQuarter',
   },
   {
-    value: 'YEAR(created_at) = YEAR(NOW()) - 1 AND QUARTER(created_at) = QUARTER(DATE_SUB(NOW(), INTERVAL 3 MONTH)',
+    value: 'YEAR(createdAt) = YEAR(NOW()) - 1 AND QUARTER(createdAt) = QUARTER(DATE_SUB(NOW(), INTERVAL 3 MONTH)',
     text: 'recordsCreatedLastQuarter',
   },
 
   {
-    value: 'DATE_FORMAT(created_at, \'%Y-%m\') = DATE_FORMAT(NOW(), \'%Y-%m\')',
+    value: 'DATE_FORMAT(createdAt, \'%Y-%m\') = DATE_FORMAT(NOW(), \'%Y-%m\')',
     text: 'recordsCreatedThisMonth',
   },
   {
-    value: 'DATE_FORMAT(created_at, \'%Y-%m\') = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 YEAR), \'%Y-%m\')',
+    value: 'DATE_FORMAT(createdAt, \'%Y-%m\') = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 YEAR), \'%Y-%m\')',
     text: 'recordsCreatedLastMonth',
   },
 ]
@@ -204,58 +196,6 @@ dimensionFunctions.convert = (d) => (dimensionFunctions.lookup(d) || {}).convert
 
 export const isRadialChart = ({ type }: KV) => type === 'doughnut' || type === 'pie'
 export const hasRelativeDisplay = ({ type }: KV) => isRadialChart({ type })
-
-export const makeDataLabel = ({
-  prefix = '',
-  value = 0,
-  relativeValue,
-  suffix = '',
-}: any) => {
-  if (typeof value === 'object') {
-    value = value.y || 0
-  }
-
-  if (relativeValue) {
-    value = `${value} (${relativeValue}%)`
-  }
-
-  if (prefix) {
-    value = `${prefix}: ${value}`
-  }
-
-  if (suffix) {
-    value = `${value} ${suffix}`
-  }
-
-  return value
-}
-
-export function calculatePercentages (values: number[], relativePrecision: number, relativeValue = false, cumulative = false): Array<number> {
-  let errorRounding: number = 0
-  const total = values.reduce((acc: number, cur: number) => acc + cur, 0)
-  let portions = values.map((n: number) => n / total * 100)
-
-  if (cumulative) {
-    // Create a commutative (see method comment)
-    for (let i = portions.length - 1; i > 0; i--) {
-      portions[i - 1] += portions[i]
-    }
-  }
-
-  if (relativeValue) {
-    let result = 0
-    const percentages: Array<number> = []
-    portions.forEach(v => {
-      result = Number((v + errorRounding).toFixed(relativePrecision || 2))
-      errorRounding += v - Number(result)
-      percentages.push(result)
-    })
-
-    return percentages
-  }
-
-  return values
-}
 
 // Makes a standarised alias from modifier or dimension report option
 export const makeAlias = ({ alias, aggregate, modifier, field }: Metric) => alias || `${aggregate || modifier || 'none'}_${field}`.toLocaleLowerCase()

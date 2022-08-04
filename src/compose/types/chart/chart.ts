@@ -3,16 +3,10 @@ import {
   Dimension,
   Metric,
   dimensionFunctions,
-  isRadialChart,
-  makeDataLabel,
-  KV,
-  Report,
   TemporalDataPoint,
-  calculatePercentages,
 } from './util'
-
-import { makeTipper } from './chartjs/plugins'
-const ChartJS = require('chart.js')
+import { getColorschemeColors } from '../../../shared'
+import moment from 'moment'
 
 // The default dataset post processing function to use.
 // This one simply returns the current value.
@@ -84,189 +78,149 @@ export default class Chart extends BaseChart {
 
   makeDataset (m: Metric, d: Dimension, data: Array<number|any>, alias: string) {
     data = this.datasetPostProc(data, m)
-    const ds: any = { data }
 
-    // colors
-    if (typeof m.backgroundColor === 'string' && !isRadialChart(m)) {
-      ds.backgroundColor = 'rgba(' + parseInt(m.backgroundColor.slice(-6, -4), 16) + ',' + parseInt(m.backgroundColor.slice(-4, -2), 16) + ',' + parseInt(m.backgroundColor.slice(-2), 16) + ',0.7)'
-      ds.hoverBackgroundColor = m.backgroundColor
-    }
-
-    return Object.assign(ds, {
-      label: m.label || m.field,
+    return {
       type: m.type,
+      label: m.label || m.field,
+      data,
       fill: !!m.fill,
-      lineTension: m.lineTension || 0,
-      tooltips: {
-        enabled: true,
-        relativeValue: !!m.relativeValue,
-        relativePrecision: m.relativePrecision,
-        labelCallback: m.fixTooltips ? this.makeLabel : this.makeTooltip,
+      tooltip: {
+        fixed: m.fixTooltips,
+        relative: !!m.relativeValue,
       },
-    })
+    }
   }
 
-  makeOptions () {
+  makeOptions (data: any): any {
+    const { reports = [], colorScheme } = this.config
+
     const options: any = {
-      // Allow chart to consume entire container
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: {
-        duration: 500,
-      },
-      legend: {
-        position: 'top',
-        labels: {
-          // This more specific font property overrides the global property
-          fontFamily: "'Poppins-Regular'",
-        },
+      series: [],
+      xAxis: [],
+      yAxis: [],
+      tooltip: {
+        show: true,
+        appendToBody: true,
+        position: 'inside',
       },
     }
 
-    if (this.config.colorScheme) {
-      options.plugins = {
-        colorschemes: {
-          scheme: this.config.colorScheme,
-        },
-      }
-    }
+    const { labels, datasets = [] } = data
+    const { dimensions: [dimension] = [], yAxis } = reports[0] || {}
 
-    (this.config.reports || []).forEach(r => {
-      if (!options.scales) {
-        options.scales = { xAxes: [], yAxes: [] }
-      }
+    const hasAxis = datasets.some(({ type }: any) => ['bar', 'line'].includes(type))
+    const timeDimension = (dimensionFunctions.lookup(dimension) || {}).time
 
-      // can't disable tooltips on dataset level, so this is required
-      options.tooltips = {
-        filter: ({ datasetIndex }: any, { datasets }: any) => {
-          // enabled can be undefined, so it must be checked against false
-          return ((datasets[datasetIndex] || {}).tooltips || {}).enabled !== false
-        },
+    if (hasAxis) {
+      if (yAxis) {
+        const {
+          label: yLabel,
+          axisType: yType = 'linear',
+          axisPosition: position = 'left',
+          beginAtZero,
+          min,
+          max,
+        } = yAxis
 
-        callbacks: {
-          label: ({ datasetIndex, index }: any, { datasets, labels }: any) => {
-            const dataset = datasets[datasetIndex]
-            return dataset.tooltips.labelCallback({ datasetIndex, index }, { datasets, labels })
+        options.yAxis = [
+          {
+            name: yLabel,
+            type: yType === 'linear' ? 'value' : 'log',
+            position,
+            nameLocation: 'center',
+            nameGap: 30,
+            min: beginAtZero ? 0 : min || undefined,
+            max: max || undefined,
           },
-        },
-        titleFontFamily: "'Poppins-Regular'",
-        bodyFontFamily: "'Poppins-Regular'",
-        footerFontFamily: "'Poppins-Regular'",
-        displayColors: false,
+        ]
       }
+    }
 
-      if (r.metrics?.find((m: Metric) => !isRadialChart(m as KV))) {
-        options.scales.xAxes = r.dimensions?.map((d: Dimension, i: number) => {
-          const ticks = {
-            autoSkip: !!d.autoSkip,
-          }
-          const timeDimensionUnit = (dimensionFunctions.lookup(d) || {}).time
+    options.series = datasets.map(({ type, label, data, fill, tooltip }: any) => {
+      const { fixed, relative } = tooltip
 
-          if (timeDimensionUnit) {
-            return {
-              type: 'time',
-              time: timeDimensionUnit,
-              ticks,
-            }
-          } else {
-            return {
-              ticks,
-            }
-          }
-        })
-      }
+      if (['pie', 'doughnut'].includes(type)) {
+        const startRadius = type === 'doughnut' ? 50 : 0
 
-      for (const m of r.metrics || []) {
-        if (m.legendPosition) {
-          options.legend.position = m.legendPosition
-          break
+        options.tooltip.trigger = 'item'
+
+        return {
+          name: label,
+          type: 'pie',
+          radius: [startRadius, '80%'],
+          center: ['50%', '55%'],
+          tooltip: {
+            trigger: 'item',
+            formatter: `{a}<br />{b} : {c}${relative ? ' ({d}%)' : ''}`,
+          },
+          label: {
+            show: fixed,
+            position: 'inner',
+            fontSize: 14,
+          },
+          itemStyle: {
+            borderRadius: 5,
+            borderColor: '#fff',
+            borderWidth: 1,
+          },
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+            },
+          },
+          data: labels.map((name: string, i: number) => {
+            return { name, value: data[i] }
+          }),
+        }
+      } else if (['bar', 'line'].includes(type)) {
+        options.tooltip.trigger = 'axis'
+
+        if (!options.xAxis.length) {
+          options.xAxis.push({
+            nameLocation: 'center',
+            type: 'category',
+            data: labels,
+          })
+        }
+
+        options.grid = {
+          left: '7%',
+          right: '5%',
+          bottom: '10%',
+        }
+
+        return {
+          name: label,
+          type: type,
+          smooth: true,
+          areaStyle: {
+            opacity: fill ? 0.7 : 0,
+          },
+          label: {
+            show: fixed,
+            position: 'inner',
+            fontSize: 14,
+          },
+          data,
         }
       }
-
-      options.scales.yAxes = this.makeYAxis(r)
     })
-    return options
-  }
 
-  private makeTooltip ({ datasetIndex, index }: any, { datasets, labels }: any): any {
-    const dataset = datasets[datasetIndex]
-
-    const percentages = calculatePercentages(
-      [...dataset.data],
-      dataset.tooltips.relativePrecision,
-      dataset.tooltips.relativeValue,
-    )
-
-    return makeDataLabel({
-      prefix: labels[index],
-      value: dataset.data[index],
-      relativeValue: dataset.tooltips.relativeValue ? percentages[index] : undefined,
-    })
-  }
-
-  private makeLabel ({ datasetIndex, index }: any, { datasets }: any): any {
-    const dataset = datasets[datasetIndex]
-
-    const percentages = calculatePercentages(
-      [...dataset.data],
-      dataset.tooltips.relativePrecision,
-      dataset.tooltips.relativeValue,
-    )
-
-    return makeDataLabel({
-      value: dataset.data[index],
-      relativeValue: dataset.tooltips.relativeValue ? percentages[index] : undefined,
-    })
-  }
-
-  private makeYAxis (r: Report) {
-    if (r.yAxis) {
-      return [{
-        display: !r.metrics?.find((m: KV) => isRadialChart(m)),
-        type: r.yAxis.axisType || 'linear',
-        position: r.yAxis.axisPosition || 'left',
-        scaleLabel: {
-          display: true,
-          labelString: r.yAxis.label || undefined,
-        },
-        ticks: {
-          beginAtZero: !!r.yAxis.beginAtZero,
-          min: r.yAxis.min ? parseFloat(r.yAxis.min) : undefined,
-          max: r.yAxis.max ? parseFloat(r.yAxis.max) : undefined,
-        },
-      }]
-    } else {
-      const m: Metric = r.metrics?.[0] || {}
-      return [{
-        display: !isRadialChart(m as KV),
-        type: m.axisType || 'linear',
-        position: m.axisPosition || 'left',
-        scaleLabel: {
-          display: true,
-          labelString: m.label || m.field,
-        },
-        ticks: {
-          beginAtZero: !!m.beginAtZero,
-        },
-      }]
+    return {
+      color: getColorschemeColors(colorScheme),
+      textStyle: {
+        fontFamily: 'Poppins-Regular',
+      },
+      legend: {
+        show: true,
+      },
+      ...options,
     }
   }
 
-  plugins () {
-    const mm: Array<Metric> = []
-
-    for (const r of (this.config.reports || []) as Array<Report>) {
-      mm.push(...(r.metrics || []) as Array<Metric>)
-    }
-
-    const rr: Array<any> = []
-    if (mm.find(({ fixTooltips }) => fixTooltips)) {
-      rr.push(makeTipper(ChartJS.Tooltip, {}))
-    }
-    return rr
-  }
-
-  baseChartType (datasets: Array<any>) {
+  baseChartType (datasets: Array<any>): string {
     return datasets[0].type
   }
 }

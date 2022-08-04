@@ -2,7 +2,6 @@ import _ from 'lodash'
 import moment from 'moment'
 import {
   ChartConfig,
-  ChartRenderer,
   Dimension,
   Metric,
   Report,
@@ -54,19 +53,9 @@ export class BaseChart {
 
     if (typeof c.config === 'object') {
       // Verify & normalize
-      let { renderer, reports, ...rest } = c.config
+      const { reports = [], ...rest } = c.config
 
-      if (renderer) {
-        const { version } = renderer || {}
-
-        if (version !== 'chart.js') {
-          throw Error('notification.chart.unsupportedRenderer')
-        }
-      } else {
-        renderer = { version: ChartRenderer.chartJS }
-      }
-
-      conf = { renderer, reports: reports || [], ...rest }
+      conf = { reports: reports || [], ...rest }
     }
 
     this.config = (conf ? _.merge(this.defConfig(), conf) : false) || this.config || this.defConfig()
@@ -189,19 +178,13 @@ export class BaseChart {
     }
 
     // Not a time dimensions, build set of labels
-    if (!isTimeDimension || hasRadialChart) {
-      labels = results.map((r: any) => pickValue(r[dLabel], dimension)) as Array<string>
-    }
+    labels = results.map((r: any) => pickValue(r[dLabel], dimension)) as Array<string>
 
     // Build data sets
     const datasets = report.metrics?.map(m => {
       const alias = makeAlias({ field: m.field, aggregate: m.aggregate })
       const data = results.map((r: any) => {
-        const y: any = r[m.field === 'count' ? m.field : alias]
-        if (!isTimeDimension || hasRadialChart) {
-          return pickValue(y, dimension)
-        }
-        return { y, t: moment(pickValue(r[dLabel], dimension) as string).toDate() }
+        return pickValue(r[m.field === 'count' ? m.field : alias], dimension)
       })
 
       // Any sub class has the ability to define how the dataset looks like.
@@ -263,7 +246,7 @@ export class BaseChart {
    */
   import (getModuleID: (moduleID: string) => string) {
     const copy = new BaseChart(this)
-    copy.config?.reports?.map(r => {
+    copy.config.reports = copy.config?.reports?.map(r => {
       const { moduleID } = r
       if (moduleID) {
         r.moduleID = getModuleID(moduleID)
@@ -295,9 +278,6 @@ export class BaseChart {
     return Object.assign({}, {
       colorScheme: undefined,
       reports: [this.defReport()],
-      renderer: {
-        version: ChartRenderer.chartJS,
-      },
     })
   }
 
