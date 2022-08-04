@@ -1,8 +1,8 @@
 import { ChartOptions, ChartOptionsRegistry } from './base'
 import { FrameDefinition } from '../../frame'
 import { Apply } from '../../../../cast'
+import { getColorschemeColors } from '../../../../shared'
 import moment from 'moment'
-
 export class BasicChartOptions extends ChartOptions {
   public labelColumn: string = ''
   public dataColumns: Array<{ name: string; label?: string }> = []
@@ -20,101 +20,134 @@ export class BasicChartOptions extends ChartOptions {
   }
 
   getChartConfiguration (dataframes: Array<FrameDefinition>) {
-    const config = {
-      type: this.type,
-      data: this.getData(dataframes[0], dataframes),
-      options: {
-        title: {
-          display: !!this.title,
-          text: this.title,
-        },
-        legend: {
-          display: this.showLegend,
-          labels: {
-            // This more specific font property overrides the global property
-            fontFamily: "'Poppins-Regular'",
-          },
-        },
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {},
-        tooltips: {
-          enabled: this.showTooltips,
-          displayColors: false,
-          intersect: !['bar', 'line'].includes(this.type),
-          callbacks: {},
-          titleFontFamily: "'Poppins-Regular'",
-          bodyFontFamily: "'Poppins-Regular'",
-          footerFontFamily: "'Poppins-Regular'",
-        },
-        plugins: {
-          colorschemes: {
-            scheme: this.colorScheme,
-            reverse: true,
-          },
-        },
-      }
+    const { labels, datasets = [] } = this.getData(dataframes[0], dataframes)
+
+    const options: any = {
+      series: [],
+      xAxis: [],
+      yAxis: [],
+      tooltip: {
+        show: this.showTooltips,
+        appendToBody: true,
+      },
     }
 
-    if (['bar', 'line'].includes(this.type)) {
-      const {
-        label: xLabel,
-        type: xType,
-        unit,
-      } = this.xAxis
+    if (['pie', 'doughnut'].includes(this.type)) {
+      const startRadius = this.type === 'doughnut' ? 35 : 0
+      const endRadius = 70
+      const radiusLength = (endRadius - startRadius) / (datasets.length || 1)
+
+      options.tooltip.trigger = 'item'
+
+      options.series = datasets.map(({ label, data }, index) => {
+        const sr = startRadius + (index * radiusLength)
+        const er = startRadius + ((index + 1) * radiusLength)
+
+        return {
+          name: label,
+          type: 'pie',
+          radius: [`${sr}%`, `${er}%`],
+          center: ['50%', '55%'],
+          tooltip: {
+            formatter: '{a}<br />{b} : {c} ({d}%)',
+          },
+          label: {
+            show: false,
+            position: 'inner',
+            fontSize: 14,
+          },
+          itemStyle: {
+            borderRadius: 5,
+            borderColor: '#fff',
+            borderWidth: 1,
+          },
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+            },
+          },
+          data: labels.map((name, i) => {
+            return { name, value: data[i] }
+          }),
+        }
+      })
+    } else if (['bar', 'line'].includes(this.type)) {
+      options.tooltip.trigger = 'axis'
+
+      const { label: xLabel, type: xType = 'category' } = this.xAxis
+
+      options.xAxis = [
+        {
+          name: xLabel,
+          nameLocation: 'center',
+          nameGap: 30,
+          type: xType,
+          data: labels,
+        },
+      ]
 
       const {
         label: yLabel,
         type: yType = 'linear',
         position = 'left',
-        beginAtZero = true,
-        stepSize,
+        beginAtZero,
         min,
         max,
       } = this.yAxis
 
-      config.options.scales = {
-        xAxes: [{
-          type: xType || undefined,
-          offset: true,
-          time: {
-            unit,
-            round: true,
-            minUnit: 'day',
-          },
-          scaleLabel: {
-            display: !!xLabel,
-            labelString: xLabel,
-          },
-          ticks: {
-            autoSkip: false,
-          }
-        }],
-
-        yAxes: [{
-          display: true,
-          type: yType,
+      options.yAxis = [
+        {
+          name: yLabel,
+          type: yType === 'linear' ? 'value' : 'log',
           position,
-          scaleLabel: {
-            display: !!yLabel,
-            labelString: yLabel,
+          nameLocation: 'center',
+          nameGap: 30,
+          min: beginAtZero ? 0 : min || undefined,
+          max: max || undefined,
+        },
+      ]
+
+      options.series = datasets.map(({ label, data }) => {
+        return {
+          name: label,
+          type: this.type,
+          smooth: true,
+          areaStyle: {},
+          left: 'left',
+          top: this.title ? '20%' : '15%',
+          bottom: '10%',
+          label: {
+            show: false,
+            position: 'inner',
+            fontSize: 14,
           },
-          ticks: {
-            beginAtZero,
-            stepSize: stepSize ? parseFloat(stepSize) : undefined,
-            min: min ? parseFloat(min) : undefined,
-            max: max ? parseFloat(max) : undefined,
-          },
-        }],
-      }
-    } else {
-      config.options.tooltips.callbacks = {
-        label: this.makeLabel,
-      }
+          data: xType === 'time' ? labels.map((name, i) => {
+            return [moment(name).valueOf() || undefined, data[i]]
+          }) : data,
+        }
+      })
     }
 
-
-    return config
+    return {
+      title: {
+        text: this.title,
+        left: 'center',
+        textStyle: {
+          fontSize: 16,
+        },
+      },
+      color: getColorschemeColors(this.colorScheme),
+      textStyle: {
+        fontFamily: 'Poppins-Regular',
+      },
+      legend: {
+        show: this.showLegend,
+        top: '7%',
+      },
+      ...options,
+    }
   }
 
   getColIndex (dataframe: FrameDefinition, col: string) {
@@ -123,23 +156,9 @@ export class BasicChartOptions extends ChartOptions {
     return dataframe.columns.findIndex(({ name }) => name === col)
   }
 
-  makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): string {
-    const dataset = datasets[datasetIndex]
-    const total = dataset.data.reduce((acc: string, v: string) => {
-      return parseFloat(v) ? acc + parseFloat(v) : acc
-    }, 0)
-
-    let suffix = `(${total.toFixed(2)})%`
-    if (total) {
-      suffix = `(${((dataset.data[index] * 100) / total).toFixed(2)}%)`
-    }
-
-    return `${labels[index]}: ${dataset.data[index]} ${suffix}`
-  }
-
   getData (localDataframe: FrameDefinition, dataframes: Array<FrameDefinition>) {
     const datasets: any[] = []
-    let labels: any[] = []
+    let labels: string[] = []
 
     // Get datasets
     if (this.dataColumns.length && localDataframe.rows) {
@@ -148,7 +167,7 @@ export class BasicChartOptions extends ChartOptions {
         let columnIndex = this.getColIndex(localDataframe, name)
 
         // If dataColumn is in localDataframe, then set that value
-        let data = localDataframe.rows.map(r => {
+        const data = localDataframe.rows.map(r => {
           return columnIndex < 0 ? undefined : r[columnIndex]
         })
 
@@ -163,7 +182,7 @@ export class BasicChartOptions extends ChartOptions {
             }
 
             if (!localDataframe.rows) {
-              throw new Error(`Local rows not found`)
+              throw new Error('Local rows not found')
             }
 
             // Get row index that matches refValue
@@ -197,12 +216,7 @@ export class BasicChartOptions extends ChartOptions {
 
       if (localDataframe.rows) {
         for (const row of localDataframe.rows) {
-          let label = row[columnIndex] || (!this.xAxis.skipMissing ? this.xAxis.defaultValue : undefined)
-
-          if (this.xAxis.type === 'time') {
-            label = label ? moment(label).toDate() : undefined
-          }
-
+          const label = row[columnIndex] || (!this.xAxis.skipMissing ? this.xAxis.defaultValue : undefined)
           labels.push(label)
         }
       }

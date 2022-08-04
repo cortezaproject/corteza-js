@@ -1,9 +1,7 @@
 import { ChartOptions, ChartOptionsRegistry } from './base'
 import { FrameDefinition } from '../../frame'
-import { makeDataLabel } from '../../../../compose/types/chart/util'
-import { makeTipper } from '../../../../compose/types/chart/chartjs/plugins'
 import { Apply } from '../../../../cast'
-const ChartJS = require('chart.js')
+import { getColorschemeColors } from '../../../../shared'
 
 export class FunnelChartOptions extends ChartOptions {
   public labelColumn: string = ''
@@ -22,60 +20,57 @@ export class FunnelChartOptions extends ChartOptions {
   }
 
   getChartConfiguration (dataframes: Array<FrameDefinition>) {
-    const config = {
-      type: this.type,
-      data: {
-        labels: this.getLabels(dataframes[0]),
-        datasets: this.getDatasets(dataframes[0], dataframes),
+    const labels = this.getLabels(dataframes[0])
+    const datasets = this.getDatasets(dataframes[0], dataframes)
+    const colors = getColorschemeColors(this.colorScheme)
+
+    return {
+      title: {
+        text: this.title,
+        left: 'center',
+        textStyle: {
+          fontSize: 16,
+        },
       },
-      options: {
-        title: {
-          display: !!this.title,
-          text: this.title,
-          labels: {
-            // This more specific font property overrides the global property
-            fontFamily: "'Poppins-Regular'",
+      textStyle: {
+        fontFamily: 'Poppins-Regular',
+      },
+      tooltip: {
+        show: this.showTooltips,
+        trigger: 'item',
+        formatter: '{b} : {c} ({d}%)',
+        appendToBody: true,
+      },
+      legend: {
+        show: this.showLegend,
+        top: '7%',
+      },
+      series: [
+        {
+          type: 'funnel',
+          name: this.labelColumn,
+          sort: 'descending',
+          left: '5%',
+          top: this.title ? '20%' : '15%',
+          bottom: '10%',
+          width: '90%',
+          label: {
+            show: false,
+            position: 'inside',
           },
-        },
-        legend: {
-          display: this.showLegend
-        },
-        responsive: true,
-        maintainAspectRatio: false,
-        sort: 'desc',
-        tooltips: {
-          enabled: true,
-          displayColors: false,
-          callbacks: {
-            label: this.makeLabel,
+          emphasis: {
+            label: {
+              show: !this.showTooltips,
+              fontSize: 14,
+              formatter: '{c} ({d}%)',
+            },
           },
-          titleFontFamily: "'Poppins-Regular'",
-          bodyFontFamily: "'Poppins-Regular'",
-          footerFontFamily: "'Poppins-Regular'",
+          data: labels.map((name, i) => {
+            return { name, value: datasets.data[i], itemStyle: { color: colors[i] } }
+          }),
         },
-        plugins: {},
-      },
+      ],
     }
-
-    config.options.plugins = {
-      colorschemes: {
-        scheme: this.colorScheme,
-        custom: (e: Array<string>) => {
-          config.data.datasets[0].backgroundColor = config.data.labels.map((label, index) => {
-            return e[index]
-          })
-
-          return e
-        },
-      },
-      tipper: makeTipper(ChartJS.Tooltip, {}),
-      datalabels: {
-        display: false,
-      },
-    }
-
-
-    return config
   }
 
   getColIndex (dataframe: FrameDefinition, col: string) {
@@ -103,19 +98,7 @@ export class FunnelChartOptions extends ChartOptions {
     return labels
   }
 
-  makeLabel ({ datasetIndex, index }: any, { datasets, labels }: any): string {
-    const dataset = datasets[datasetIndex]
-    const total = dataset.data.reduce((acc: number, v: string) => acc + parseFloat(v), 0)
-
-    let suffix = `(${total.toFixed(2)})%`
-    if (total) {
-      suffix = `(${((dataset.data[index] * 100) / total).toFixed(2)}%)`
-    }
-
-    return `${labels[index]}: ${dataset.data[index]} ${suffix}`
-  }
-
-  getDatasets (localDataframe: FrameDefinition, dataframes: Array<FrameDefinition>) {
+  getDatasets (localDataframe: FrameDefinition, dataframes: Array<FrameDefinition>): any {
     const chartDataset = []
 
     if (this.dataColumns.length && localDataframe.rows) {
@@ -159,19 +142,15 @@ export class FunnelChartOptions extends ChartOptions {
           })
         }
 
-        const backgroundColor: string[] = []
-
         chartDataset.push({
           label: name,
           data,
-          backgroundColor,
         })
       }
     }
 
-    return chartDataset
+    return chartDataset[0]
   }
 }
 
 ChartOptionsRegistry.set('funnel', FunnelChartOptions)
-

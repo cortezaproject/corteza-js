@@ -4,17 +4,9 @@ import {
   Metric,
   Report,
   ChartType,
-  makeDataLabel,
-  calculatePercentages,
 } from './util'
+import { getColorschemeColors } from '../../../shared'
 
-import { defaultBGColor } from './common'
-import { makeTipper } from './chartjs/plugins'
-const ChartJS = require('chart.js')
-
-/**
- * Funnel chart provides the definitions for the chartjs-plugin-funnel plugin.
- */
 export default class FunnelChart extends BaseChart {
   constructor (def: PartialChart = {}) {
     super(def)
@@ -81,85 +73,58 @@ export default class FunnelChart extends BaseChart {
 
   // Funnel chart creates a metric including all reports, so this step is deferred to there
   makeDataset (m: Metric, d: Dimension, data: Array<number|any>, alias: string) {
-    const ds: any = { data }
-    return ds
+    return {
+      type: m.type,
+      label: m.label || m.field,
+      data,
+    }
   }
 
-  // No much configurations available for funnel charts
   makeOptions (data: any) {
-    const options: any = {
-      sort: 'desc',
-      maintainAspectRatio: false,
+    const { colorScheme } = this.config
+    const { labels, datasets = [] } = data
+    const colors = getColorschemeColors(colorScheme)
+
+    return {
+      textStyle: {
+        fontFamily: 'Poppins-Regular',
+      },
+      tooltip: {
+        show: true,
+        trigger: 'item',
+        formatter: '{b} : {c} ({d}%)',
+        appendToBody: true,
+      },
       legend: {
-        labels: {
-          // This more specific font property overrides the global property
-          fontFamily: "'Poppins-Regular'",
-        }
+        show: true,
       },
-    }
-
-    if (this.config.colorScheme) {
-      options.plugins = {
-        colorschemes: {
-          scheme: this.config.colorScheme,
-          // this is a bit of a hack to make the plugin work on each dataset value
-          // we should improve this at a later point in time, but is ok for now.
-          custom: (e: Array<string>) => {
-            const cls = [...e]
-            while (cls.length < data.datasets[0].data.length) {
-              cls.push(...e)
-            }
-            data.datasets[0].backgroundColor = cls.slice(0, data.datasets[0].data.length)
-            return e
+      series: datasets.map(({ data }: any) => {
+        return {
+          type: 'funnel',
+          sort: 'descending',
+          left: '5%',
+          bottom: '10%',
+          width: '90%',
+          label: {
+            show: false,
+            position: 'inside',
+            formatter: '{c} ({d}%)',
           },
-        },
-        datalabels: {
-          display: false,
-        },
-      }
+          emphasis: {
+            label: {
+              show: false,
+              fontSize: 14,
+            },
+          },
+          data: labels.map((name: string, i: number) => {
+            return { name, value: data[i], itemStyle: { color: colors[i] } }
+          }),
+        }
+      }),
     }
-
-    options.tooltips = {
-      enabled: true,
-      displayColors: false,
-      callbacks: {
-        label: this.makeLabel,
-      },
-      titleFontFamily: "'Poppins-Regular'",
-      bodyFontFamily: "'Poppins-Regular'",
-      footerFontFamily: "'Poppins-Regular'",
-    }
-    return options
   }
 
-  private makeLabel ({ datasetIndex, index }: any, { datasets }: any): any {
-    const dataset = datasets[datasetIndex]
-
-    // We use org data here to get actual percentages and not cumulative percentages
-    const percentages = calculatePercentages(
-      [...dataset.orgData],
-      2,
-      true,
-      dataset.cumulative,
-    )
-
-    return makeDataLabel({
-      value: dataset.data[index],
-      relativeValue: percentages[index],
-    })
-  }
-
-  /**
-   * @note Funel chart requires the use of chartjs-plugin-funnel.
-   * I was unable to make this work if the plugin was provided from this object,
-   * so the plugin is registered on the webapp.
-   * We should fix this at a later point in time...
-   */
-  plugins (mm: Array<Metric>) {
-    return [makeTipper(ChartJS.Tooltip, {})]
-  }
-
-  baseChartType (datasets: Array<any>) {
+  baseChartType (): string {
     return 'funnel'
   }
 
@@ -214,7 +179,6 @@ export default class FunnelChart extends BaseChart {
     })
 
     // Get cumulative data but also keep original for tooltips
-    const orgData = [...data]
     if (this.isCumulative()) {
       for (let i = 1; i < data.length; i++) {
         data[i] += data[i - 1]
@@ -225,9 +189,6 @@ export default class FunnelChart extends BaseChart {
       labels,
       datasets: [{
         data,
-        orgData,
-        backgroundColor: labels.map(l => colorMap[l] || defaultBGColor),
-        cumulative: this.isCumulative(),
       }],
     }
   }
