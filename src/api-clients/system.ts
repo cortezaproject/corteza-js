@@ -1396,7 +1396,7 @@ export default class System {
     return `/users/${userID}/sessions`
   }
 
-  // List user credentials
+  // List user&#x27;s credentials
   async userListCredentials (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       userID,
@@ -1422,7 +1422,7 @@ export default class System {
     return `/users/${userID}/credentials`
   }
 
-  // Delete user credentials
+  // List user&#x27;s credentials
   async userDeleteCredentials (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       userID,
@@ -1731,34 +1731,21 @@ export default class System {
   async dalConnectionCreate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       handle,
-      name,
       type,
-      location,
-      ownership,
-      sensitivityLevel,
+      meta,
       config,
-      capabilities,
     } = (a as KV) || {}
     if (!handle) {
       throw Error('field handle is empty')
     }
-    if (!name) {
-      throw Error('field name is empty')
-    }
     if (!type) {
       throw Error('field type is empty')
     }
-    if (!location) {
-      throw Error('field location is empty')
-    }
-    if (!ownership) {
-      throw Error('field ownership is empty')
+    if (!meta) {
+      throw Error('field meta is empty')
     }
     if (!config) {
       throw Error('field config is empty')
-    }
-    if (!capabilities) {
-      throw Error('field capabilities is empty')
     }
     const cfg: AxiosRequestConfig = {
       ...extra,
@@ -1767,13 +1754,9 @@ export default class System {
     }
     cfg.data = {
       handle,
-      name,
       type,
-      location,
-      ownership,
-      sensitivityLevel,
+      meta,
       config,
-      capabilities,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -1787,13 +1770,9 @@ export default class System {
     const {
       connectionID,
       handle,
-      name,
       type,
-      location,
-      ownership,
-      sensitivityLevel,
+      meta,
       config,
-      capabilities,
     } = (a as KV) || {}
     if (!connectionID) {
       throw Error('field connectionID is empty')
@@ -1801,23 +1780,14 @@ export default class System {
     if (!handle) {
       throw Error('field handle is empty')
     }
-    if (!name) {
-      throw Error('field name is empty')
-    }
     if (!type) {
       throw Error('field type is empty')
     }
-    if (!location) {
-      throw Error('field location is empty')
-    }
-    if (!ownership) {
-      throw Error('field ownership is empty')
+    if (!meta) {
+      throw Error('field meta is empty')
     }
     if (!config) {
       throw Error('field config is empty')
-    }
-    if (!capabilities) {
-      throw Error('field capabilities is empty')
     }
     const cfg: AxiosRequestConfig = {
       ...extra,
@@ -1828,13 +1798,9 @@ export default class System {
     }
     cfg.data = {
       handle,
-      name,
       type,
-      location,
-      ownership,
-      sensitivityLevel,
+      meta,
       config,
-      capabilities,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
