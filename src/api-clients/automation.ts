@@ -886,6 +886,9 @@ export default class Automation {
         roleID,
       }),
     }
+    cfg.params = {
+      resource,
+    }
 
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -911,9 +914,6 @@ export default class Automation {
       url: this.permissionsDeleteEndpoint({
         roleID,
       }),
-    }
-    cfg.params = {
-      resource,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))
