@@ -66,6 +66,7 @@ export class Record {
   public recordID = NoID;
   public moduleID = NoID;
   public namespaceID = NoID;
+  public revision = 0;
 
   public values: Values = {}
   public labels: object = {};
@@ -83,6 +84,7 @@ export class Record {
   public canReadRecord = false;
   public canDeleteRecord = false;
   public canManageOwnerOnRecord = false;
+  public canSearchRevision = false;
   public canGrant = false;
 
   private [fieldIndex]: Map<string, FieldIndex>
@@ -163,6 +165,10 @@ export class Record {
     Apply(this, r, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt')
     Apply(this, r, CortezaID, 'ownedBy', 'createdBy', 'updatedBy', 'deletedBy')
 
+    Apply(this, r, Number,
+      'revision',
+    )
+
     Apply(this, r, Boolean,
       'canUpdateRecord',
       'canReadRecord',
@@ -170,6 +176,7 @@ export class Record {
       'canManageOwnerOnRecord',
       'canGrant',
     )
+
 
     // This is a brand new record; set default values
     if (!r.recordID || r.recordID === NoID) {
