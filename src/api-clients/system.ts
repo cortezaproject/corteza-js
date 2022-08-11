@@ -4480,4 +4480,31 @@ export default class System {
     return `/data-privacy/requests/${requestID}/comments/`
   }
 
+  // List connections for data privacy
+  async dataPrivacyConnectionList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
+    const {
+      connectionID,
+      handle,
+      type,
+      deleted,
+    } = (a as KV) || {}
+    const cfg: AxiosRequestConfig = {
+      ...extra,
+      method: 'get',
+      url: this.dataPrivacyConnectionListEndpoint(),
+    }
+    cfg.params = {
+      connectionID,
+      handle,
+      type,
+      deleted,
+    }
+
+    return this.api().request(cfg).then(result => stdResolve(result))
+  }
+
+  dataPrivacyConnectionListEndpoint (): string {
+    return '/data-privacy/connection/'
+  }
+
 }
