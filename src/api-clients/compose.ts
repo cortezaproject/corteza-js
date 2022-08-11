@@ -1285,7 +1285,7 @@ export default class Compose {
       namespaceID,
       moduleID,
       query,
-      labels,
+      meta,
       deleted,
       limit,
       incTotal,
@@ -1308,7 +1308,7 @@ export default class Compose {
     }
     cfg.params = {
       query,
-      labels,
+      meta,
       deleted,
       limit,
       incTotal,
@@ -1544,7 +1544,7 @@ export default class Compose {
       values,
       ownedBy,
       records,
-      labels,
+      meta,
     } = (a as KV) || {}
     if (!namespaceID) {
       throw Error('field namespaceID is empty')
@@ -1563,7 +1563,7 @@ export default class Compose {
       values,
       ownedBy,
       records,
-      labels,
+      meta,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
@@ -1620,8 +1620,8 @@ export default class Compose {
       recordID,
       values,
       ownedBy,
+      meta,
       records,
-      labels,
     } = (a as KV) || {}
     if (!namespaceID) {
       throw Error('field namespaceID is empty')
@@ -1642,8 +1642,8 @@ export default class Compose {
     cfg.data = {
       values,
       ownedBy,
+      meta,
       records,
-      labels,
     }
     return this.api().request(cfg).then(result => stdResolve(result))
   }
