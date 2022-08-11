@@ -69,7 +69,7 @@ export class Record {
   public revision = 0;
 
   public values: Values = {}
-  public labels: object = {};
+  public meta: object = {};
 
   public createdAt?: Date = undefined;
   public updatedAt?: Date = undefined;
@@ -193,8 +193,8 @@ export class Record {
       this[cleanValues] = Object.freeze({ ...this.values })
     }
 
-    if (IsOf(r, 'labels')) {
-      this.labels = { ...r.labels }
+    if (IsOf(r, 'meta')) {
+      this.meta = { ...r.meta }
     }
   }
 
@@ -428,4 +428,12 @@ export class Record {
   get resourceType (): string {
     return 'compose:record'
   }
+
+  /**
+   * Proxy to Record's meta to maintain BC
+   */
+  get labels (): object {
+    return this.meta
+  }
 }
+
