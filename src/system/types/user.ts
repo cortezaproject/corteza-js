@@ -40,6 +40,7 @@ export class User {
     },
   }
 
+  public canDeleteUser = false
   public createdAt?: Date = undefined
   public updatedAt?: Date = undefined
   public deletedAt?: Date = undefined
@@ -54,7 +55,7 @@ export class User {
     Apply(this, u, CortezaID, 'userID')
     Apply(this, u, String, 'handle', 'username', 'email', 'name')
     Apply(this, u, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt', 'suspendedAt')
-    Apply(this, u, Boolean, 'emailConfirmed')
+    Apply(this, u, Boolean, 'emailConfirmed', 'canDeleteUser')
 
     if (u?.roles) {
       this.roles = []

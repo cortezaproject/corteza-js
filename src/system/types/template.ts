@@ -27,6 +27,7 @@ export class Template {
   public updatedAt?: Date = undefined
   public deletedAt?: Date = undefined
   public lastUsedAt?: Date = undefined
+  public canDeleteTemplate = false
 
   constructor (r?: PartialTemplate) {
     this.apply(r)
@@ -36,7 +37,7 @@ export class Template {
     Apply(this, r, CortezaID, 'templateID', 'ownerID')
 
     Apply(this, r, String, 'handle', 'language', 'type', 'template')
-    Apply(this, r, Boolean, 'partial')
+    Apply(this, r, Boolean, 'partial', 'canDeleteTemplate')
 
     if (r && IsOf(r, 'meta')) {
       this.meta = r.meta
