@@ -82,7 +82,6 @@ export default class GaugeChart extends BaseChart {
     const colors = getColorschemeColors(colorScheme)
 
     const color = steps.map((s: any, i: number) => {
-      debugger
       return [s.value / max, colors[i]]
     })
 
@@ -101,7 +100,7 @@ export default class GaugeChart extends BaseChart {
           min: 0,
           max,
           splitNumber: 5,
-          radius: '120%',
+          radius: '100%',
           center: ['50%', '65%'],
           pointer: {
             length: '50%',
