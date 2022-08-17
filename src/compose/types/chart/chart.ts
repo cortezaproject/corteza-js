@@ -186,9 +186,11 @@ export default class Chart extends BaseChart {
         }
 
         options.grid = {
-          left: '7%',
-          right: '5%',
+          left: '10%',
+          right: '10%',
           bottom: '10%',
+          // prevents long labels like dates from being cut off
+          containLabel: true,
         }
 
         return {
