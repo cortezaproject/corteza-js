@@ -50,9 +50,16 @@ function isRawRevisionPayload (raw: unknown): raw is RawRevisionPayload {
   return true
 }
 
-export function convertRevisionPayloadToRevision (payload: unknown): Array<Revision> {
+export function convertRevisionPayloadToRevision (payload: unknown, validChangeKeys: string[]): Array<Revision> {
   if (!isRawRevisionPayload(payload)) {
     throw new Error('Invalid revision payload')
+  }
+
+  let filterChanges = (cc: Array<RevisionChange>): Array<RevisionChange> => cc
+
+  if (validChangeKeys.length > 0) {
+    // filter out changes that don't have valid keys
+    filterChanges = (cc: Array<RevisionChange>): Array<RevisionChange> => cc.filter(c => validChangeKeys.includes(c.key))
   }
 
   return payload.set.map(raw => ({
@@ -63,7 +70,7 @@ export function convertRevisionPayloadToRevision (payload: unknown): Array<Revis
     operation: raw.operation,
     userID: raw.userID,
     user: null,
-    changes: raw.changes,
     comment: raw.comment,
+    changes: filterChanges(raw.changes),
   }))
 }
