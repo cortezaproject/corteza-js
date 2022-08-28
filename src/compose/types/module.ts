@@ -17,6 +17,39 @@ interface Meta {
   ui: MetaUi;
 }
 
+interface Config {
+  dal: {
+    connectionID: string;
+    // operations
+    // constraints
+    ident: string;
+    // systemFieldEncoding
+  };
+
+  privacy: {
+    sensitivityLevelID: string;
+    usageDisclosure: string;
+  };
+
+  discovery: {
+    public: ConfigDiscoveryAccess;
+    private: ConfigDiscoveryAccess;
+    protected: ConfigDiscoveryAccess;
+  };
+
+  recordRevisions: {
+    enabled: boolean;
+    ident: string;
+  };
+}
+
+interface ConfigDiscoveryAccess {
+  result: {
+    lang: string;
+    fields: string[];
+  };
+}
+
 /**
  * System fields that are present in every object.
  */
@@ -34,6 +67,7 @@ export const systemFields = Object.freeze([
 interface PartialModule extends Partial<Omit<Module, 'fields' | 'meta' | 'labels' | 'createdAt' | 'updatedAt' | 'deletedAt'>> {
   fields?: Array<Partial<ModuleField>> | Array<ModuleField>;
   meta?: Partial<Meta>;
+  config?: Partial<Config>;
 
   labels?: Partial<object>;
 

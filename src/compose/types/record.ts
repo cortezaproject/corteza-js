@@ -177,8 +177,7 @@ export class Record {
       'canGrant',
     )
 
-
-    // This is a brand new record; set default values
+    // This is a brand-new record; set default values
     if (!r.recordID || r.recordID === NoID) {
       this.defaultValues()
     }
