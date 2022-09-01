@@ -1,6 +1,6 @@
 import { FilterDefinition } from './filter'
 
-interface GroupColumn {
+interface AggregateColumn {
   name: string;
   expr: string;
   aggregate: string;
@@ -17,7 +17,7 @@ export interface StepLoad {
   sort?: string;
 }
 
-export interface StepJoin {
+export interface StepLink {
   name: string;
   localSource: string;
   localColumn: string;
@@ -25,32 +25,19 @@ export interface StepJoin {
   foreignColumn: string;
 }
 
-export interface StepGroup {
+export interface StepAggregate {
   name: string;
   source: string;
   filter?: FilterDefinition;
-  keys?: Array<GroupColumn>;
-  columns?: Array<GroupColumn>;
+  keys?: Array<AggregateColumn>;
+  columns?: Array<AggregateColumn>;
   sort?: string;
 }
 
-interface TransformColumn {
-  name: string;
-  expr: string;
-  rows: unknown;
-}
-
-export interface StepTransform {
-  name?: string;
-  dimension?: string;
-  columns?: Array<TransformColumn>;
-}
-
 export interface Step {
-  group?: StepGroup;
+  aggregate?: StepAggregate;
   load?: StepLoad;
-  join?: StepJoin;
-  transform?: StepTransform;
+  link?: StepLink;
 }
 
 export function StepFactory (step: Partial<Step>): Step {
@@ -58,11 +45,9 @@ export function StepFactory (step: Partial<Step>): Step {
   switch (k) {
     case 'load':
       return step as Step
-    case 'join':
+    case 'link':
       return step as Step
-    case 'group':
-      return step as Step
-    case 'transform':
+    case 'aggregate':
       return step as Step
     default:
       throw new Error('unknown step: ' + k)
