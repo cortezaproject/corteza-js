@@ -1580,7 +1580,7 @@ export default class System {
     return '/dal/sensitivity-levels/'
   }
 
-  // Update connection details
+  // Update sensitivity details
   async dalSensitivityLevelUpdate (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       sensitivityLevelID,
@@ -2773,6 +2773,7 @@ export default class System {
   // List templates
   async templateList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
+      query,
       handle,
       type,
       ownerID,
@@ -2789,6 +2790,7 @@ export default class System {
       url: this.templateListEndpoint(),
     }
     cfg.params = {
+      query,
       handle,
       type,
       ownerID,
