@@ -18,7 +18,7 @@ const defaults = (): Readonly<NumberOptions> => Object.freeze({
   format: '',
   prefix: '',
   suffix: '',
-  precision: 0,
+  precision: 3,
   multiDelimiter: '\n',
 })
 
