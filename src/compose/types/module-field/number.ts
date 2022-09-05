@@ -5,21 +5,44 @@ import * as fmt from '../../../formatting'
 
 const kind = 'Number'
 
+interface Threshold {
+  value: number;
+  variant: string;
+}
+
 interface NumberOptions extends Options {
   format: string;
   prefix: string;
   suffix: string;
   precision: number;
   multiDelimiter: string;
+  display: string;
+  max: number;
+  showValue: boolean;
+  showRelative: boolean;
+  showProgress: boolean;
+  animated: boolean;
+  variant: string;
+  thresholds: Threshold[];
 }
 
 const defaults = (): Readonly<NumberOptions> => Object.freeze({
   ...defaultOptions(),
+  precision: 3,
+  multiDelimiter: '\n',
+  display: 'number', // Either number or progress (progress bar)
+  // Number display options
   format: '',
   prefix: '',
   suffix: '',
-  precision: 3,
-  multiDelimiter: '\n',
+  // Progress bar display options
+  max: 100,
+  showValue: true,
+  showRelative: true,
+  showProgress: false,
+  animated: false,
+  variant: 'success',
+  thresholds: [],
 })
 
 export class ModuleFieldNumber extends ModuleField {
@@ -36,8 +59,13 @@ export class ModuleFieldNumber extends ModuleField {
     if (!o) return
     super.applyOptions(o)
 
-    Apply(this.options, o, String, 'format', 'prefix', 'suffix', 'multiDelimiter')
-    Apply(this.options, o, Number, 'precision')
+    Apply(this.options, o, String, 'format', 'prefix', 'suffix', 'multiDelimiter', 'display', 'variant')
+    Apply(this.options, o, Number, 'precision', 'max')
+    Apply(this.options, o, Boolean, 'showValue', 'showRelative', 'showProgress', 'animated')
+
+    if (o.thresholds) {
+      this.options.thresholds = o.thresholds
+    }
   }
 
   formatValue (value: string): string {
