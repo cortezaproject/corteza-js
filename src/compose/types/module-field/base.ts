@@ -39,6 +39,21 @@ export const defaultOptions = (): Readonly<Options> => Object.freeze({
   },
 })
 
+interface Config {
+  dal: {
+    encodingStrategy: object;
+  };
+
+  privacy: {
+    sensitivityLevelID: string;
+    usageDisclosure: string;
+  };
+
+  recordRevisions: {
+    enabled: boolean;
+  };
+}
+
 export interface Expressions {
   value?: string;
 
@@ -78,6 +93,21 @@ export class ModuleField {
   public isFilterable = true
   public options: Options = { ...defaultOptions() }
   public expressions: Expressions = {}
+
+  public config: Partial<Config> = {
+    dal: {
+      encodingStrategy: {},
+    },
+
+    privacy: {
+      sensitivityLevelID: '',
+      usageDisclosure: '',
+    },
+
+    recordRevisions: {
+      enabled: false,
+    },
+  }
 
   public canUpdateRecordValue = false
   public canReadRecordValue = false
@@ -134,6 +164,10 @@ export class ModuleField {
       }
     } else {
       Apply(this, f, Boolean, 'canUpdateRecordValue', 'canReadRecordValue')
+    }
+
+    if (IsOf(f, 'config')) {
+      this.config = merge({}, this.config, f.config)
     }
 
     if (IsOf(f, 'kind')) {
