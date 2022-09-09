@@ -1,3 +1,4 @@
+import { merge } from 'lodash'
 import { ModuleField, ModuleFieldMaker } from './module-field'
 import { CortezaID, NoID, ISO8601Date, Apply } from '../../cast'
 import { AreObjects, AreStrings, IsOf } from '../../guards'
@@ -83,7 +84,43 @@ export class Module {
   public handle = '';
   public fields: Array<ModuleField> = [];
 
-  public config: object = {};
+  public config: Partial<Config> = {
+    dal: {
+      connectionID: '',
+      ident: '',
+    },
+
+    privacy: {
+      sensitivityLevelID: '',
+      usageDisclosure: '',
+    },
+
+    discovery: {
+      public: {
+        result: {
+          lang: '',
+          fields: [],
+        },
+      },
+      private: {
+        result: {
+          lang: '',
+          fields: [],
+        },
+      },
+      protected: {
+        result: {
+          lang: '',
+          fields: [],
+        },
+      },
+    },
+
+    recordRevisions: {
+      enabled: false,
+      ident: '',
+    },
+  }
 
   public meta: object = {};
   public labels: object = {};
@@ -136,7 +173,7 @@ export class Module {
     }
 
     if (IsOf(m, 'config')) {
-      this.config = { ...m.config }
+      this.config = merge({}, this.config, m.config)
     }
 
     if (IsOf(m, 'labels')) {
