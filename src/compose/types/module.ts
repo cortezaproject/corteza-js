@@ -86,12 +86,12 @@ export class Module {
 
   public config: Partial<Config> = {
     dal: {
-      connectionID: '',
+      connectionID: NoID,
       ident: '',
     },
 
     privacy: {
-      sensitivityLevelID: '',
+      sensitivityLevelID: NoID,
       usageDisclosure: '',
     },
 
