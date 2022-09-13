@@ -100,7 +100,7 @@ export class ModuleField {
     },
 
     privacy: {
-      sensitivityLevelID: '',
+      sensitivityLevelID: NoID,
       usageDisclosure: '',
     },
 
