@@ -69,7 +69,7 @@ interface PartialModule extends Partial<Omit<Module, 'fields' | 'meta' | 'labels
   fields?: Array<Partial<ModuleField>> | Array<ModuleField>;
   meta?: Partial<Meta>;
   config?: Partial<Config>;
-
+  issues?: Array<string>;
   labels?: Partial<object>;
 
   createdAt?: string|number|Date;
@@ -83,6 +83,7 @@ export class Module {
   public name = '';
   public handle = '';
   public fields: Array<ModuleField> = [];
+  public issues: Array<string> = [];
 
   public config: Partial<Config> = {
     dal: {
@@ -178,6 +179,10 @@ export class Module {
 
     if (IsOf(m, 'labels')) {
       this.labels = { ...m.labels }
+    }
+
+    if (IsOf(m, 'issues')) {
+      this.issues = m.issues
     }
 
     Apply(this, m, ISO8601Date, 'createdAt', 'updatedAt', 'deletedAt')
