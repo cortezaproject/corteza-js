@@ -1,4 +1,6 @@
 import { PageBlock, PageBlockInput, Registry } from './base'
+import { dimensionFunctions } from '../chart/util'
+import { Compose as ComposeAPI } from '../../../api-clients'
 
 const kind = 'Progress'
 
@@ -6,7 +8,7 @@ interface ValueOptions {
   moduleID: string;
   filter: string;
   field: string;
-  aggregation: string;
+  operation: string;
 }
 
 interface Threshold {
@@ -34,14 +36,14 @@ const defaults: Readonly<Options> = Object.freeze({
     moduleID: '',
     filter: '',
     field: '',
-    aggregation: '',
+    operation: '',
   },
 
   maxValue: {
     moduleID: '',
     filter: '',
     field: '',
-    aggregation: '',
+    operation: '',
   },
 
   display: {
@@ -78,6 +80,59 @@ export class PageBlockProgress extends PageBlock {
     if (o.display) {
       this.options.display = o.display
     }
+  }
+
+  /**
+   * Helper function to fetch and parse reporter's reports.
+   */
+  fetch (options: Options, api: ComposeAPI, namespaceID: string): Promise<object> {
+    const dimensions = dimensionFunctions.convert({ modifier: 'YEAR', field: 'createdAt' })
+
+    let metrics = ''
+
+    // Construct value report
+    const { field: valueField, operation: valueOperation = '' } = this.options.value
+    if (valueOperation && valueField && valueField !== 'count') {
+      metrics = `${valueOperation}(${valueField}) AS rp`
+    }
+    const valueReport = api.recordReport({ namespaceID, metrics, dimensions, ...this.options.value, ...options.value })
+
+    // Construct max value report
+    metrics = ''
+    const { field: maxValueField, operation: maxValueOperation = '' } = this.options.maxValue
+    if (maxValueOperation && maxValueField && maxValueField !== 'count') {
+      metrics = `${maxValueOperation}(${maxValueField}) AS rp`
+    }
+    const maxValueReport = api.recordReport({ namespaceID, metrics, dimensions, ...this.options.maxValue, ...options.maxValue })
+
+    return Promise.all([valueReport, maxValueReport]).then(([v, m]: Array<any>) => {
+      let value: number
+      let max: number
+
+      let datasets = v.map((r: any) => r.rp !== undefined ? r.rp : r.count)
+      if (valueOperation === 'max') {
+        value = datasets.sort((a: number, b: number) => b - a)[0]
+      } else if (valueOperation === 'min') {
+        value = datasets.sort((a: number, b: number) => a - b)[0]
+      } else if (valueOperation === 'avg') {
+        value = datasets.reduce((acc: number, cur: number) => acc + cur, 0) / datasets.length
+      } else {
+        value = datasets.reduce((acc: number, cur: number) => acc + cur, 0)
+      }
+
+      datasets = m.map((r: any) => r.rp !== undefined ? r.rp : r.count)
+      if (maxValueOperation === 'max') {
+        max = datasets.sort((a: number, b: number) => b - a)[0]
+      } else if (maxValueOperation === 'min') {
+        max = datasets.sort((a: number, b: number) => a - b)[0]
+      } else if (maxValueOperation === 'avg') {
+        max = datasets.reduce((acc: number, cur: number) => acc + cur, 0) / datasets.length
+      } else {
+        max = datasets.reduce((acc: number, cur: number) => acc + cur, 0)
+      }
+
+      return { value, max }
+    })
   }
 }
 

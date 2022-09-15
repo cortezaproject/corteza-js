@@ -4,13 +4,6 @@ import { CortezaID } from '../../../cast'
 
 const kind = 'Metric'
 
-enum Operation {
-  SUM = 'sum',
-  MAX = 'max',
-  MIN = 'min',
-  AVG = 'avg',
-}
-
 type Reporter = (p: ReporterParams) => Promise<any>
 
 interface ReporterParams {
@@ -34,7 +27,7 @@ interface Metric {
   filter?: string;
   bucketSize?: string;
   metricField: string;
-  operation: Operation;
+  operation: string;
   numberFormat?: string;
   prefix?: string;
   suffix?: string;
@@ -76,14 +69,14 @@ export class PageBlockMetric extends PageBlock {
    */
   async fetch ({ m }: { m: Metric }, reporter: Reporter): Promise<object> {
     const w = await reporter(this.formatParams(m))
-    const datasets = w.map((r: any) => r.rp || r.count)
+    const datasets = w.map((r: any) => r.rp !== undefined ? r.rp : r.count)
 
     let rtr: number
-    if (m.operation === Operation.MAX) {
+    if (m.operation === 'max') {
       rtr = datasets.sort((a: number, b: number) => b - a)[0]
-    } else if (m.operation === Operation.MIN) {
+    } else if (m.operation === 'min') {
       rtr = datasets.sort((a: number, b: number) => a - b)[0]
-    } else if (m.operation === Operation.AVG) {
+    } else if (m.operation === 'avg') {
       rtr = datasets.reduce((acc: number, cur: number) => acc + cur, 0) / datasets.length
     } else {
       rtr = datasets.reduce((acc: number, cur: number) => acc + cur, 0)
@@ -99,17 +92,17 @@ export class PageBlockMetric extends PageBlock {
   /**
    * Helper to construct reporter's params
    */
-  private formatParams ({ moduleID, filter, metricField, operation }: Metric): ReporterParams {
-    const metrics: Array<any> = []
+  private formatParams ({ moduleID, filter, metricField, operation = '' }: Metric): ReporterParams {
+    let metrics = ''
 
-    if (metricField !== 'count') {
-      metrics.push(`${operation}(${metricField}) AS rp`)
+    if (operation && metricField && metricField !== 'count') {
+      metrics = `${operation}(${metricField}) AS rp`
     }
 
     return {
       moduleID,
       filter,
-      metrics: metrics.join(','),
+      metrics,
       dimensions: dimensionFunctions.convert({ modifier: 'YEAR', field: 'createdAt' }),
     }
   }
