@@ -18,13 +18,27 @@ interface Meta {
   ui: MetaUi;
 }
 
+type systemFieldEncoding = null | { omit: true } | { ident: string }
+
 interface Config {
   dal: {
     connectionID: string;
     // operations
     // constraints
     ident: string;
-    // systemFieldEncoding
+    systemFieldEncoding: {
+      id: systemFieldEncoding;
+      revision: systemFieldEncoding;
+      moduleID: systemFieldEncoding;
+      namespaceID: systemFieldEncoding;
+      ownedBy: systemFieldEncoding;
+      createdBy: systemFieldEncoding;
+      createdAt: systemFieldEncoding;
+      updatedBy: systemFieldEncoding;
+      updatedAt: systemFieldEncoding;
+      deletedBy: systemFieldEncoding;
+      deletedAt: systemFieldEncoding;
+    };
   };
 
   privacy: {
@@ -52,10 +66,11 @@ interface ConfigDiscoveryAccess {
 }
 
 /**
- * System fields that are present in every object.
+ * System fields that are present in every record.
  */
 export const systemFields = Object.freeze([
   { isSystem: true, name: 'recordID', label: 'Record ID', kind: 'String' },
+  { isSystem: true, name: 'revision', label: 'Revision', kind: 'Number' },
   { isSystem: true, name: 'ownedBy', label: 'Owned by', kind: 'User' },
   { isSystem: true, name: 'createdBy', label: 'Created by', kind: 'User' },
   { isSystem: true, name: 'createdAt', label: 'Created at', kind: 'DateTime' },
@@ -89,6 +104,19 @@ export class Module {
     dal: {
       connectionID: NoID,
       ident: '',
+      systemFieldEncoding: {
+        id: null,
+        revision: null,
+        moduleID: null,
+        namespaceID: null,
+        ownedBy: null,
+        createdBy: null,
+        createdAt: null,
+        updatedBy: null,
+        updatedAt: null,
+        deletedBy: null,
+        deletedAt: null,
+      }
     },
 
     privacy: {
