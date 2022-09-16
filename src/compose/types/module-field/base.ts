@@ -9,6 +9,8 @@ const unsortableSysFields = ['recordID', 'ownedBy', 'createdBy', 'updatedBy', 'd
 
 const unfilterableFieldKinds = ['File', 'Geometry']
 
+type fieldEncoding = null | { omit: true } | { ident: string }
+
 export interface Capabilities {
   configurable: true;
   multi: boolean;
@@ -41,7 +43,7 @@ export const defaultOptions = (): Readonly<Options> => Object.freeze({
 
 interface Config {
   dal: {
-    encodingStrategy: object;
+    encodingStrategy: fieldEncoding;
   };
 
   privacy: {
@@ -96,7 +98,7 @@ export class ModuleField {
 
   public config: Partial<Config> = {
     dal: {
-      encodingStrategy: {},
+      encodingStrategy: null,
     },
 
     privacy: {
