@@ -69,6 +69,7 @@ export class Record {
   public revision = 0;
 
   public values: Values = {}
+  public valueErrors: object = {}
   public meta: object = {};
 
   public createdAt?: Date = undefined;
@@ -190,6 +191,10 @@ export class Record {
       // When there are no clean values,
       // make copy of values so that we know if change occurred
       this[cleanValues] = Object.freeze({ ...this.values })
+    }
+
+    if (r.valueErrors) {
+      this.valueErrors = r.valueErrors
     }
 
     if (IsOf(r, 'meta')) {
