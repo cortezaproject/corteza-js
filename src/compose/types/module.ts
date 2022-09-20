@@ -56,6 +56,12 @@ interface Config {
     enabled: boolean;
     ident: string;
   };
+
+  recordDeDup: {
+    enabled: boolean;
+    strict: boolean;
+    rules: RecordDeDupRule[];
+  };
 }
 
 interface ConfigDiscoveryAccess {
@@ -63,6 +69,12 @@ interface ConfigDiscoveryAccess {
     lang: string;
     fields: string[];
   };
+}
+
+interface RecordDeDupRule {
+  name: string;
+  strict: boolean;
+  attributes: string[];
 }
 
 /**
@@ -116,7 +128,7 @@ export class Module {
         updatedAt: null,
         deletedBy: null,
         deletedAt: null,
-      }
+      },
     },
 
     privacy: {
@@ -148,6 +160,13 @@ export class Module {
     recordRevisions: {
       enabled: false,
       ident: '',
+    },
+
+    recordDeDup: {
+      // Always true for now since empty array of rules is the same as disabling it
+      enabled: true,
+      strict: false,
+      rules: [],
     },
   }
 
