@@ -15,5 +15,6 @@ export {
   NamespaceEvent,
   ModuleEvent,
   RecordEvent,
+  PageEvent,
   TriggerComposeServerScriptOnManual,
 } from './events'

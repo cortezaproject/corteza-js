@@ -1,5 +1,6 @@
 import { Event, onManual } from '../eventbus/shared'
 import { Module } from './types/module'
+import { Page } from './types/page'
 import { Record, Values } from './types/record'
 import { Namespace } from './types/namespace'
 import { ConstraintMatcher } from '../eventbus/constraints'
@@ -100,6 +101,21 @@ export function RecordEvent (res: Record, event?: Partial<Event>): Event {
 
     // Override the arguments at the end
     args: { record: res, module: res.module, namespace: res.namespace, ...event?.args },
+  }
+}
+
+/**
+ * Creates record event with ready-to-go-defaults
+ */
+export function PageEvent (res: Page, event?: Partial<Event>): Event {
+  return {
+    eventType: onManual,
+    resourceType: 'compose:page',
+    match: (): boolean => true,
+    ...event,
+
+    // Override the arguments at the end
+    args: { page: res, ...event?.args },
   }
 }
 
