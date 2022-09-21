@@ -143,6 +143,7 @@ export class BaseChart {
       .map(params => reporter(params))
       // Process each result
       .map((p: any, index: number) => p.then((results: any) => {
+        results = results || []
         out[index] = this.processReporterResults(results, (this.config.reports || [])[index])
       }))
 
@@ -158,7 +159,7 @@ export class BaseChart {
    * * generate labels,
    * * creates dataset for the chart.
    */
-  private processReporterResults (results: Array<object>, report: Report) {
+  private processReporterResults (results: Array<object> = [], report: Report): object {
     const dLabel = 'dimension_0'
     const { dimensions: [dimension] = [] } = report
     const isTimeDimension = !!(dimensionFunctions.lookup(dimension) || {}).time
