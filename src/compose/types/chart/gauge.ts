@@ -78,7 +78,7 @@ export default class GaugeChart extends BaseChart {
   makeOptions (data: any) {
     const { colorScheme } = this.config
     const { datasets = [] } = data
-    const { steps, name, value, max } = datasets.find(({ value }: any) => value)
+    const { steps = [], name, value, max } = datasets.find(({ value }: any) => value) || datasets[0]
     const colors = getColorschemeColors(colorScheme)
 
     const color = steps.map((s: any, i: number) => {
@@ -117,10 +117,8 @@ export default class GaugeChart extends BaseChart {
           },
           axisLine: {
             lineStyle: {
-              width: 50,
-              color: steps.map((s: any, i: number) => {
-                return [s.value / max, colors[i]]
-              }),
+              width: 30,
+              color,
             },
           },
           axisTick: {
