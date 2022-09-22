@@ -90,7 +90,8 @@ export default class GaugeChart extends BaseChart {
         fontFamily: 'Poppins-Regular',
       },
       grid: {
-        left: '10%',
+        bottom: '0%',
+        left: '0%',
       },
       series: [
         {
@@ -100,8 +101,8 @@ export default class GaugeChart extends BaseChart {
           min: 0,
           max,
           splitNumber: 5,
-          radius: '100%',
-          center: ['50%', '65%'],
+          radius: '130%',
+          center: ['50%', '70%'],
           pointer: {
             length: '50%',
             itemStyle: {
@@ -126,16 +127,16 @@ export default class GaugeChart extends BaseChart {
             distance: -30,
           },
           axisLabel: {
+            show: false,
             distance: 60,
           },
           title: {
             offsetCenter: [0, '35%'],
           },
           detail: {
-            fontSize: 16,
-            offsetCenter: [0, '20%'],
+            fontSize: 13,
+            offsetCenter: [0, '30%'],
             valueAnimation: true,
-            color: 'inherit',
           },
           data: [
             {
