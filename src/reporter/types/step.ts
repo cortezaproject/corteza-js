@@ -25,6 +25,14 @@ export interface StepLink {
   foreignColumn: string;
 }
 
+export interface StepJoin {
+  name: string;
+  localSource: string;
+  localColumn: string;
+  foreignSource: string;
+  foreignColumn: string;
+}
+
 export interface StepAggregate {
   name: string;
   source: string;
@@ -46,6 +54,8 @@ export function StepFactory (step: Partial<Step>): Step {
     case 'load':
       return step as Step
     case 'link':
+      return step as Step
+    case 'join':
       return step as Step
     case 'aggregate':
       return step as Step
