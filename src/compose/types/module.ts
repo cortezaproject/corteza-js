@@ -222,6 +222,11 @@ export class Module {
 
     if (IsOf(m, 'config')) {
       this.config = merge({}, this.config, m.config)
+
+      // Remove when we improve duplicate detection, for now its always enabled
+      if (this.config.recordDeDup) {
+        this.config.recordDeDup.enabled = true
+      }
     }
 
     if (IsOf(m, 'labels')) {
