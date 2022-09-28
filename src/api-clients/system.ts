@@ -121,6 +121,7 @@ export default class System {
       deleted,
       labels,
       limit,
+      incTotal,
       pageCursor,
       sort,
     } = (a as KV) || {}
@@ -134,6 +135,7 @@ export default class System {
       deleted,
       labels,
       limit,
+      incTotal,
       pageCursor,
       sort,
     }
@@ -494,6 +496,7 @@ export default class System {
       archived,
       labels,
       limit,
+      incTotal,
       pageCursor,
       sort,
     } = (a as KV) || {}
@@ -509,6 +512,7 @@ export default class System {
       archived,
       labels,
       limit,
+      incTotal,
       pageCursor,
       sort,
     }
@@ -956,6 +960,7 @@ export default class System {
       suspended,
       labels,
       limit,
+      incTotal,
       pageCursor,
       sort,
     } = (a as KV) || {}
@@ -978,6 +983,7 @@ export default class System {
       suspended,
       labels,
       limit,
+      incTotal,
       pageCursor,
       sort,
     }
@@ -1707,6 +1713,7 @@ export default class System {
       handle,
       type,
       deleted,
+      incTotal,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
       ...extra,
@@ -1718,6 +1725,7 @@ export default class System {
       handle,
       type,
       deleted,
+      incTotal,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))
@@ -1900,6 +1908,7 @@ export default class System {
       flags,
       incFlags,
       limit,
+      incTotal,
       pageCursor,
       sort,
     } = (a as KV) || {}
@@ -1916,6 +1925,7 @@ export default class System {
       flags,
       incFlags,
       limit,
+      incTotal,
       pageCursor,
       sort,
     }
@@ -2781,6 +2791,7 @@ export default class System {
       deleted,
       labels,
       limit,
+      incTotal,
       pageCursor,
       sort,
     } = (a as KV) || {}
@@ -2798,6 +2809,7 @@ export default class System {
       deleted,
       labels,
       limit,
+      incTotal,
       pageCursor,
       sort,
     }
@@ -3031,6 +3043,7 @@ export default class System {
       deleted,
       labels,
       limit,
+      incTotal,
       pageCursor,
       sort,
     } = (a as KV) || {}
@@ -3044,6 +3057,7 @@ export default class System {
       deleted,
       labels,
       limit,
+      incTotal,
       pageCursor,
       sort,
     }
@@ -3392,6 +3406,7 @@ export default class System {
     const {
       query,
       limit,
+      incTotal,
       pageCursor,
       sort,
       deleted,
@@ -3404,6 +3419,7 @@ export default class System {
     cfg.params = {
       query,
       limit,
+      incTotal,
       pageCursor,
       sort,
       deleted,
@@ -3572,6 +3588,7 @@ export default class System {
       disabled,
       labels,
       limit,
+      incTotal,
       pageCursor,
       sort,
     } = (a as KV) || {}
@@ -3587,6 +3604,7 @@ export default class System {
       disabled,
       labels,
       limit,
+      incTotal,
       pageCursor,
       sort,
     }
