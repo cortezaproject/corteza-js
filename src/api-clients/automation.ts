@@ -98,8 +98,10 @@ export default class Automation {
       query,
       deleted,
       disabled,
+      subWorkflow,
       labels,
       limit,
+      incTotal,
       pageCursor,
       sort,
     } = (a as KV) || {}
@@ -113,8 +115,10 @@ export default class Automation {
       query,
       deleted,
       disabled,
+      subWorkflow,
       labels,
       limit,
+      incTotal,
       pageCursor,
       sort,
     }
@@ -630,6 +634,7 @@ export default class Automation {
       eventType,
       resourceType,
       limit,
+      incTotal,
       pageCursor,
       sort,
     } = (a as KV) || {}
@@ -647,6 +652,7 @@ export default class Automation {
       eventType,
       resourceType,
       limit,
+      incTotal,
       pageCursor,
       sort,
     }
