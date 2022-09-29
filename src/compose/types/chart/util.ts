@@ -177,7 +177,7 @@ export const predefinedFilters = [
     text: 'recordsCreatedThisQuarter',
   },
   {
-    value: 'YEAR(createdAt) = YEAR(NOW()) - 1 AND QUARTER(createdAt) = QUARTER(DATE_SUB(NOW(), INTERVAL 3 MONTH)',
+    value: 'YEAR(createdAt) = YEAR(NOW()) AND QUARTER(createdAt) = QUARTER(DATE_SUB(NOW(), INTERVAL 3 MONTH)',
     text: 'recordsCreatedLastQuarter',
   },
 
@@ -186,7 +186,7 @@ export const predefinedFilters = [
     text: 'recordsCreatedThisMonth',
   },
   {
-    value: 'DATE_FORMAT(createdAt, \'%Y-%m\') = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 YEAR), \'%Y-%m\')',
+    value: 'DATE_FORMAT(createdAt, \'%Y-%m\') = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), \'%Y-%m\')',
     text: 'recordsCreatedLastMonth',
   },
 ]
