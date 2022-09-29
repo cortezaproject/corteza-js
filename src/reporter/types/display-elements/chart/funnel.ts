@@ -21,7 +21,7 @@ export class FunnelChartOptions extends ChartOptions {
 
   getChartConfiguration (dataframes: Array<FrameDefinition>) {
     const labels = this.getLabels(dataframes[0])
-    const datasets = this.getDatasets(dataframes[0], dataframes)
+    const { data = [] } = this.getDatasets(dataframes[0], dataframes) || {}
     const colors = getColorschemeColors(this.colorScheme)
 
     return {
@@ -66,7 +66,7 @@ export class FunnelChartOptions extends ChartOptions {
             },
           },
           data: labels.map((name, i) => {
-            return { name, value: datasets.data[i], itemStyle: { color: colors[i] } }
+            return { name, value: data[i], itemStyle: { color: colors[i] } }
           }),
         },
       ],
@@ -101,51 +101,53 @@ export class FunnelChartOptions extends ChartOptions {
   getDatasets (localDataframe: FrameDefinition, dataframes: Array<FrameDefinition>): any {
     const chartDataset = []
 
-    if (this.dataColumns.length && localDataframe.rows) {
-      // Create dataset for each dataColumn
-      for (const { name } of this.dataColumns) {
-        // Assume localDataframe has the dataColumn
-        let columnIndex = this.getColIndex(localDataframe, name)
+    if (localDataframe && dataframes) {
+      if (this.dataColumns.length && localDataframe.rows) {
+        // Create dataset for each dataColumn
+        for (const { name } of this.dataColumns) {
+          // Assume localDataframe has the dataColumn
+          let columnIndex = this.getColIndex(localDataframe, name)
 
-        // If dataColumn is in localDataframe, then set that value
-        const data: any = localDataframe.rows.map(r => {
-          return columnIndex < 0 ? undefined : parseFloat(r[columnIndex] || '0') || 0
-        })
+          // If dataColumn is in localDataframe, then set that value
+          const data: any = localDataframe.rows.map(r => {
+            return columnIndex < 0 ? undefined : parseFloat(r[columnIndex] || '0') || 0
+          })
 
-        // Otherwise check other dataframes for that columnn
-        if (columnIndex < 0) {
-          dataframes.slice(1).forEach(df => {
-            const { relColumn = '', refValue = '' } = df
+          // Otherwise check other dataframes for that columnn
+          if (columnIndex < 0) {
+            dataframes.slice(1).forEach(df => {
+              const { relColumn = '', refValue = '' } = df
 
-            // Get column that is referenced by relColumn
-            const relColumnIndex = this.getColIndex(localDataframe, relColumn)
-            if (relColumnIndex < 0) {
-              throw new Error(`Column ${relColumn} not found`)
-            }
+              // Get column that is referenced by relColumn
+              const relColumnIndex = this.getColIndex(localDataframe, relColumn)
+              if (relColumnIndex < 0) {
+                throw new Error(`Column ${relColumn} not found`)
+              }
 
-            if (!localDataframe.rows) {
-              throw new Error(`Local rows not found`)
-            }
+              if (!localDataframe.rows) {
+                throw new Error(`Local rows not found`)
+              }
 
-            // Get row index that matches refValue
-            const refRowIndex = localDataframe.rows.findIndex(row => row[relColumnIndex] === refValue)
-            if (refRowIndex < 0) {
-              throw new Error(`Row that matches refRowIndex ${refValue} not found`)
-            }
+              // Get row index that matches refValue
+              const refRowIndex = localDataframe.rows.findIndex(row => row[relColumnIndex] === refValue)
+              if (refRowIndex < 0) {
+                throw new Error(`Row that matches refRowIndex ${refValue} not found`)
+              }
 
-            columnIndex = this.getColIndex(df, name)
-            if (columnIndex < 0) {
-              throw new Error(`Column ${name} not found`)
-            } else if (df.rows) {
-              data[refRowIndex] = parseFloat(df.rows[0][columnIndex] || '0') || 0
-            }
+              columnIndex = this.getColIndex(df, name)
+              if (columnIndex < 0) {
+                throw new Error(`Column ${name} not found`)
+              } else if (df.rows) {
+                data[refRowIndex] = parseFloat(df.rows[0][columnIndex] || '0') || 0
+              }
+            })
+          }
+
+          chartDataset.push({
+            label: name,
+            data,
           })
         }
-
-        chartDataset.push({
-          label: name,
-          data,
-        })
       }
     }
 
