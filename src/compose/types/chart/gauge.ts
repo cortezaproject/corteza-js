@@ -101,10 +101,9 @@ export default class GaugeChart extends BaseChart {
           min: 0,
           max,
           splitNumber: 5,
-          radius: '130%',
-          center: ['50%', '70%'],
+          radius: '100%',
+          center: ['50%', '60%'],
           pointer: {
-            length: '50%',
             itemStyle: {
               color: '#464646',
             },
@@ -131,11 +130,11 @@ export default class GaugeChart extends BaseChart {
             distance: 60,
           },
           title: {
-            offsetCenter: [0, '35%'],
+            offsetCenter: [0, '40%'],
           },
           detail: {
             fontSize: 13,
-            offsetCenter: [0, '30%'],
+            offsetCenter: [0, '40%'],
             valueAnimation: true,
           },
           data: [

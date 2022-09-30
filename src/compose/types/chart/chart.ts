@@ -122,17 +122,23 @@ export default class Chart extends BaseChart {
           max,
         } = yAxis
 
-        options.yAxis = [
-          {
-            name: yLabel,
-            type: yType === 'linear' ? 'value' : 'log',
-            position,
-            nameLocation: 'center',
-            nameGap: 30,
-            min: beginAtZero ? 0 : min || undefined,
-            max: max || undefined,
-          },
-        ]
+        const tempYAxis = {
+          name: yLabel,
+          type: yType === 'linear' ? 'value' : 'log',
+          position,
+          nameLocation: 'center',
+          nameGap: 30,
+          min: beginAtZero ? 0 : min || undefined,
+          max: max || undefined,
+        }
+
+        // If we provide undefined, log scale breaks
+        if (tempYAxis.type === 'log') {
+          delete tempYAxis.min
+          delete tempYAxis.max
+        }
+
+        options.yAxis = [tempYAxis]
       }
     }
 
@@ -147,7 +153,7 @@ export default class Chart extends BaseChart {
         return {
           name: label,
           type: 'pie',
-          radius: [startRadius, '80%'],
+          radius: [startRadius, '75%'],
           center: ['50%', '55%'],
           tooltip: {
             trigger: 'item',
@@ -186,9 +192,7 @@ export default class Chart extends BaseChart {
         }
 
         options.grid = {
-          left: '10%',
-          right: '10%',
-          bottom: '10%',
+          bottom: '5%',
           // prevents long labels like dates from being cut off
           containLabel: true,
         }

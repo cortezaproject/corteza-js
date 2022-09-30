@@ -43,16 +43,18 @@ export class FunnelChartOptions extends ChartOptions {
       },
       legend: {
         show: this.showLegend,
-        top: '7%',
+        top: this.title ? '10%' : '5%',
       },
       series: [
         {
           type: 'funnel',
           name: this.labelColumn,
           sort: 'descending',
+          min: 0,
+          max: 1,
           left: '5%',
-          top: this.title ? '20%' : '15%',
-          bottom: '10%',
+          top: this.title ? '20%' : '10%',
+          bottom: '5%',
           width: '90%',
           label: {
             show: false,
