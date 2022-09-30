@@ -1,3 +1,4 @@
+import { merge } from 'lodash'
 import { Apply, CortezaID, ISO8601Date, NoID } from '../../cast'
 import { IsOf } from '../../guards'
 
@@ -75,10 +76,12 @@ export class DalConnection {
       },
     },
   }
+
   public config: ConnectionConfig = {
     privacy: { sensitivityLevelID: NoID },
     dal: {},
   }
+
   public issues = []
   public labels = []
 
@@ -105,13 +108,13 @@ export class DalConnection {
     Apply(this, dc, Boolean, 'canDeleteConnection', 'canManageDalConfig')
 
     if (IsOf(dc, 'meta')) {
-      this.meta = { ...dc.meta }
+      this.meta = merge(this.meta, dc.meta)
     }
 
-    if(IsOf(dc, 'config')) {
+    if (IsOf(dc, 'config')) {
       this.config = { ...dc.config.privacy }
 
-      if(this.connectionID !== NoID && this.canManageDalConfig) {
+      if (this.connectionID !== NoID && this.canManageDalConfig) {
         this.config = {
           ...dc.config,
           dal: {
@@ -119,7 +122,7 @@ export class DalConnection {
             params: { dsn: '' },
             modelIdent: '',
             modelIdentCheck: [],
-          }
+          },
         }
       }
     }
