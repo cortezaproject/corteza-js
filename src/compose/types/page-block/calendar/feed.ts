@@ -32,7 +32,7 @@ export default class Feed {
   public startField = ''
   public endField = ''
   public titleField = ''
-  public options: FeedOptions = defOptions
+  public options: FeedOptions = { ...defOptions }
 
   public allDay = false
 
