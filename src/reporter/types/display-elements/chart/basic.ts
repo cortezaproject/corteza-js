@@ -88,6 +88,12 @@ export class BasicChartOptions extends ChartOptions {
         },
       ]
 
+      options.grid = {
+        top: this.title ? '20%' : '10%',
+        bottom: '5%',
+        containLabel: true,
+      }
+
       const {
         label: yLabel,
         type: yType = 'linear',
@@ -97,17 +103,22 @@ export class BasicChartOptions extends ChartOptions {
         max,
       } = this.yAxis
 
-      options.yAxis = [
-        {
-          name: yLabel,
-          type: yType === 'linear' ? 'value' : 'log',
-          position,
-          nameLocation: 'center',
-          nameGap: 30,
-          min: beginAtZero ? 0 : min || undefined,
-          max: max || undefined,
-        },
-      ]
+      const tempYAxis = {
+        name: yLabel,
+        type: yType === 'linear' ? 'value' : 'log',
+        position,
+        nameGap: 30,
+        min: beginAtZero ? 0 : min || undefined,
+        max: max || undefined,
+      }
+
+      // If we provide undefined, log scale breaks
+      if (tempYAxis.type === 'log') {
+        delete tempYAxis.min
+        delete tempYAxis.max
+      }
+
+      options.yAxis = [tempYAxis]
 
       options.series = datasets.map(({ label, data }) => {
         return {
@@ -116,8 +127,6 @@ export class BasicChartOptions extends ChartOptions {
           smooth: true,
           areaStyle: {},
           left: 'left',
-          top: this.title ? '20%' : '15%',
-          bottom: '10%',
           label: {
             show: false,
             position: 'inner',
@@ -144,7 +153,7 @@ export class BasicChartOptions extends ChartOptions {
       },
       legend: {
         show: this.showLegend,
-        top: '7%',
+        top: this.title ? '10%' : '5%',
       },
       ...options,
     }

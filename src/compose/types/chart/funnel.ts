@@ -103,7 +103,9 @@ export default class FunnelChart extends BaseChart {
           type: 'funnel',
           sort: 'descending',
           left: '5%',
-          bottom: '10%',
+          bottom: '5%',
+          min: 0,
+          max: 1,
           width: '90%',
           label: {
             show: false,
