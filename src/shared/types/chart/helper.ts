@@ -1,5 +1,5 @@
 import { get } from 'lodash'
-const colorschemes = require('chartjs-plugin-colorschemes/src/colorschemes').default
+import colorschemes from './colorschemes'
 
 export const getColorschemeColors = (colorscheme?: string): string[] => {
   if (!colorscheme) {
