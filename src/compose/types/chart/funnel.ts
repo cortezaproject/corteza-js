@@ -109,6 +109,8 @@ export default class FunnelChart extends BaseChart {
           label: {
             show: false,
             position: 'inside',
+            align: 'center',
+            verticalAlign: 'middle',
             formatter: '{c} ({d}%)',
           },
           emphasis: {

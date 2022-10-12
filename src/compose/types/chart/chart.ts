@@ -6,7 +6,6 @@ import {
   TemporalDataPoint,
 } from './util'
 import { getColorschemeColors } from '../../../shared'
-import moment from 'moment'
 
 // The default dataset post processing function to use.
 // This one simply returns the current value.
@@ -142,7 +141,7 @@ export default class Chart extends BaseChart {
       }
     }
 
-    options.series = datasets.map(({ type, label, data, fill, tooltip }: any) => {
+    options.series = datasets.map(({ type, label, data, fill, tooltip }: any, index: number) => {
       const { fixed, relative } = tooltip
 
       if (['pie', 'doughnut'].includes(type)) {
@@ -151,6 +150,7 @@ export default class Chart extends BaseChart {
         options.tooltip.trigger = 'item'
 
         return {
+          z: index,
           name: label,
           type: 'pie',
           radius: [startRadius, '75%'],
@@ -161,7 +161,9 @@ export default class Chart extends BaseChart {
           },
           label: {
             show: fixed,
-            position: 'inner',
+            position: 'inside',
+            align: 'center',
+            verticalAlign: 'middle',
             fontSize: 14,
           },
           itemStyle: {
@@ -198,6 +200,7 @@ export default class Chart extends BaseChart {
         }
 
         return {
+          z: index,
           name: label,
           type: type,
           smooth: true,
@@ -206,7 +209,9 @@ export default class Chart extends BaseChart {
           },
           label: {
             show: fixed,
-            position: 'inner',
+            position: 'inside',
+            align: 'center',
+            verticalAlign: 'middle',
             fontSize: 14,
           },
           data,
