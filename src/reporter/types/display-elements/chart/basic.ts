@@ -53,7 +53,9 @@ export class BasicChartOptions extends ChartOptions {
           },
           label: {
             show: false,
-            position: 'inner',
+            position: 'inside',
+            align: 'center',
+            verticalAlign: 'middle',
             fontSize: 14,
           },
           itemStyle: {
@@ -129,7 +131,9 @@ export class BasicChartOptions extends ChartOptions {
           left: 'left',
           label: {
             show: false,
-            position: 'inner',
+            position: 'inside',
+            align: 'center',
+            verticalAlign: 'middle',
             fontSize: 14,
           },
           data: xType === 'time' ? labels.map((name, i) => {

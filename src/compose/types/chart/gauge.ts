@@ -7,9 +7,6 @@ import {
 } from './util'
 import { getColorschemeColors } from '../../../shared'
 
-/**
- * Gauge chart provides the definitions for the chartjs-plugin-funnel plugin.
- */
 export default class GaugeChart extends BaseChart {
   constructor (def: PartialChart = {}) {
     super(def)
@@ -25,18 +22,6 @@ export default class GaugeChart extends BaseChart {
           d.meta.steps = []
         }
       }
-    }
-  }
-
-  /**
-   * Since gauge charts always define one type, this check can be simplified
-   */
-  mtrCheck ({ field, aggregate }: Metric) {
-    if (!field) {
-      throw new Error('notification.chart.invalidConfig.missingMetricsField')
-    }
-    if (field !== 'count' && !aggregate) {
-      throw new Error('notification.chart.invalidConfig.missingMetricsAggregate')
     }
   }
 
@@ -72,13 +57,16 @@ export default class GaugeChart extends BaseChart {
       name,
       max,
       value,
+      tooltip: {
+        fixed: m.fixTooltips,
+      },
     }
   }
 
   makeOptions (data: any) {
     const { colorScheme } = this.config
     const { datasets = [] } = data
-    const { steps = [], name, value, max } = datasets.find(({ value }: any) => value) || datasets[0]
+    const { steps = [], name, value, max, tooltip } = datasets.find(({ value }: any) => value) || datasets[0]
     const colors = getColorschemeColors(colorScheme)
 
     const color = steps.map((s: any, i: number) => {
@@ -104,7 +92,8 @@ export default class GaugeChart extends BaseChart {
           radius: '100%',
           center: ['50%', '60%'],
           pointer: {
-            width: 4,
+            width: 5,
+            length: '75%',
             itemStyle: {
               color: '#464646',
             },
@@ -131,6 +120,7 @@ export default class GaugeChart extends BaseChart {
             distance: 60,
           },
           title: {
+            show: tooltip.fixed,
             offsetCenter: [0, '45%'],
           },
           detail: {
@@ -155,5 +145,27 @@ export default class GaugeChart extends BaseChart {
 
   defMetrics (): Metric {
     return Object.assign({}, { type: ChartType.gauge })
+  }
+
+  /**
+   * Checks validity of dimensions.
+   * If invalid it throws an error
+   */
+  dimCheck ({ meta }: Dimension): void | Error {
+    if ((meta?.steps || []).length === 0) {
+      throw new Error('notification.chart.invalidConfig.missingDimensionsSteps')
+    }
+  }
+
+  /**
+   * Since gauge charts always define one type, this check can be simplified
+   */
+  mtrCheck ({ field, aggregate }: Metric): void | Error {
+    if (!field) {
+      throw new Error('notification.chart.invalidConfig.missingMetricsField')
+    }
+    if (field !== 'count' && !aggregate) {
+      throw new Error('notification.chart.invalidConfig.missingMetricsAggregate')
+    }
   }
 }

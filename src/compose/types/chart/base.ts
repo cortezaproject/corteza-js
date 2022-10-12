@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import moment from 'moment'
 import {
   ChartConfig,
   Dimension,
@@ -7,7 +6,6 @@ import {
   Report,
   dimensionFunctions,
   makeAlias,
-  isRadialChart,
 } from './util'
 
 import {
@@ -162,8 +160,6 @@ export class BaseChart {
   private processReporterResults (results: Array<object> = [], report: Report): object {
     const dLabel = 'dimension_0'
     const { dimensions: [dimension] = [] } = report
-    const isTimeDimension = !!(dimensionFunctions.lookup(dimension) || {}).time
-    const hasRadialChart = report.metrics?.find(isRadialChart)
     let labels: Array<string> = []
 
     // helper to choose between eight the provided value, default value or a generic 'undefined'
@@ -267,8 +263,8 @@ export class BaseChart {
 
   defReport (): Report {
     return Object.assign({}, {
-      moduleID: null,
-      filter: null,
+      moduleID: undefined,
+      filter: undefined,
       dimensions: [this.defDimension()],
       metrics: [this.defMetrics()],
       yAxis: {},

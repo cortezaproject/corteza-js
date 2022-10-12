@@ -59,6 +59,8 @@ export class FunnelChartOptions extends ChartOptions {
           label: {
             show: false,
             position: 'inside',
+            align: 'center',
+            verticalAlign: 'middle',
           },
           emphasis: {
             label: {
