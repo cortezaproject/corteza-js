@@ -221,6 +221,7 @@ export default class Chart extends BaseChart {
       },
       legend: {
         show: true,
+        type: 'scroll',
       },
       ...options,
     }

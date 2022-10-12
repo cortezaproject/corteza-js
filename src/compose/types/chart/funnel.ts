@@ -97,6 +97,7 @@ export default class FunnelChart extends BaseChart {
       },
       legend: {
         show: true,
+        type: 'scroll',
       },
       series: datasets.map(({ data }: any) => {
         return {

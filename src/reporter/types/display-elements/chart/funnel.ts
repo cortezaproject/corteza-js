@@ -44,6 +44,7 @@ export class FunnelChartOptions extends ChartOptions {
       legend: {
         show: this.showLegend,
         top: this.title ? '10%' : '5%',
+        type: 'scroll',
       },
       series: [
         {
