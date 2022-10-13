@@ -191,8 +191,8 @@ export const predefinedFilters = [
   },
 ]
 
-dimensionFunctions.lookup = (d) => dimensionFunctions.find(f => d.modifier === f.value)
-dimensionFunctions.convert = (d) => (dimensionFunctions.lookup(d) || {}).convert(d.field)
+dimensionFunctions.lookup = d => dimensionFunctions.find(f => d.modifier === f.value) || dimensionFunctions[0]
+dimensionFunctions.convert = d => dimensionFunctions.lookup(d).convert(d.field)
 
 export const isRadialChart = ({ type }: KV) => type === 'doughnut' || type === 'pie'
 export const hasRelativeDisplay = ({ type }: KV) => isRadialChart({ type })
