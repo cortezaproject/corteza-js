@@ -6,12 +6,14 @@ const kind = 'Geometry'
 interface GeometryOptions extends Options {
   center: number[];
   zoom: number;
+  multiDelimiter: string;
 }
 
 const defaults = (): Readonly<GeometryOptions> => Object.freeze({
   ...defaultOptions(),
   center: [30, 30],
   zoom: 3,
+  multiDelimiter: '\n',
 })
 
 export class ModuleFieldGeometry extends ModuleField {
@@ -28,6 +30,7 @@ export class ModuleFieldGeometry extends ModuleField {
     if (!o) return
     super.applyOptions(o)
 
+    Apply(this.options, o, String, 'multiDelimiter')
     Apply(this.options, o, Number, 'zoom')
 
     if (o.center) {
