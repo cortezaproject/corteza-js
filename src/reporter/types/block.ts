@@ -19,7 +19,6 @@ export class Block {
     Apply(this, p, String, 'title', 'description', 'layout')
     Apply(this, p, CortezaID, 'blockID')
 
-
     if (p.xywh) {
       if (!Array.isArray(p.xywh)) {
         throw new Error('xywh must be an array')

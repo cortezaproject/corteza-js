@@ -7,7 +7,7 @@ const kind = 'Chart'
 export function ChartOptionsMaker<T extends ChartOptions> (options: Partial<ChartOptions>): T {
   const { type } = options
 
-  if (type){
+  if (type) {
     const ChartOptionsTemp = ChartOptionsRegistry.get(type)
     if (ChartOptionsTemp === undefined) {
       throw new Error(`unknown chart type '${type}'`)
@@ -20,14 +20,13 @@ export function ChartOptionsMaker<T extends ChartOptions> (options: Partial<Char
 
     return new ChartOptionsTemp(options) as T
   } else {
-    throw new Error(`no chart type`)
+    throw new Error('no chart type')
   }
 }
 
 export type PartialChartOptions = Partial<ChartOptions>
 export type ChartOptionsInput = ChartOptions | PartialChartOptions
 export const ChartOptionsRegistry = new Map<string, typeof ChartOptions>()
-
 
 interface XAxisOptions {
   type: string;
@@ -67,7 +66,6 @@ export class ChartOptions {
     beginAtZero: true,
   }
 
-
   constructor (o: PartialChartOptions = {}) {
     if (!o) return
 
@@ -87,7 +85,6 @@ export class ChartOptions {
     }
   }
 }
-
 
 export class DisplayElementChart extends DisplayElement {
   readonly kind = kind
@@ -135,7 +132,7 @@ export class DisplayElementChart extends DisplayElement {
               args: [
                 filter,
                 relatedDefinition.filter,
-              ]
+              ],
             }
           } else {
             df.filter = relatedDefinition.filter

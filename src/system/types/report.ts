@@ -21,7 +21,7 @@ interface Meta {
 }
 
 interface ReportDataSource {
-  meta?: Object;
+  meta?: object;
   step: Step;
 }
 
@@ -67,7 +67,6 @@ export class Report {
       this.meta = r.meta
     }
 
-
     this.sources = []
 
     for (const s of r?.sources || []) {
@@ -98,7 +97,7 @@ export class Report {
     Apply(this, r, Boolean,
       'canReadReport',
       'canUpdateReport',
-      'canDeleteReport', 
+      'canDeleteReport',
       'canGrant',
       'canRunReport',
     )

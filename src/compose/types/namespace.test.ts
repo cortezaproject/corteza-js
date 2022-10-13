@@ -46,7 +46,7 @@ describe(__filename, () => {
         enabled: true,
 
         labels: {
-          foo: 'foo'
+          foo: 'foo',
         },
 
         meta: {
@@ -78,7 +78,7 @@ describe(__filename, () => {
       expect(ns).to.have.property('enabled').and.to.eq(true)
 
       expect(ns).to.have.property('labels').and.to.deep.eq({
-        foo: 'foo'
+        foo: 'foo',
       })
       expect(ns).to.have.property('meta').and.to.deep.eq({
         subtitle: 'subtitle',
@@ -105,7 +105,7 @@ describe(__filename, () => {
 
   describe('getters', () => {
     const ns = new Namespace({
-      namespaceID: '42'
+      namespaceID: '42',
     })
 
     it('resourceType', () => {

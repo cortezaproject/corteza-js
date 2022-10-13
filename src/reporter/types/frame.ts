@@ -10,7 +10,7 @@ export interface FrameColumn {
 
 export interface FramePaging {
   limit?: number;
-  cursor?: string
+  cursor?: string;
 }
 
 export class FrameDefinition {

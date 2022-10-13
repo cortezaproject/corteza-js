@@ -4,7 +4,7 @@ import { Apply } from '../../../../cast'
 import { getColorschemeColors } from '../../../../shared'
 
 export class FunnelChartOptions extends ChartOptions {
-  public labelColumn: string = ''
+  public labelColumn = ''
   public dataColumns: Array<{ name: string; label?: string }> = []
 
   constructor (o?: FunnelChartOptions | Partial<FunnelChartOptions>) {
@@ -129,7 +129,7 @@ export class FunnelChartOptions extends ChartOptions {
               }
 
               if (!localDataframe.rows) {
-                throw new Error(`Local rows not found`)
+                throw new Error('Local rows not found')
               }
 
               // Get row index that matches refValue
