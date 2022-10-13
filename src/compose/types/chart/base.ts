@@ -124,7 +124,7 @@ export class BaseChart {
       metrics: metrics?.filter((m: Metric) => m.field !== 'count').map((m: Metric) => `${m.aggregate}(${m.field}) AS ${makeAlias(m)}`).join(','),
 
       // Construct dimensions \w modifiers...
-      dimensions: dimensions?.map((d: Dimension) => dimensionFunctions.convert(d))[0],
+      dimensions: dimensions?.map(d => ({ field: 'createdAt', ...d })).map((d: Dimension) => dimensionFunctions.convert(d))[0],
     }
   }
 
