@@ -4,7 +4,7 @@ import { Apply } from '../../../../cast'
 import { getColorschemeColors } from '../../../../shared'
 import moment from 'moment'
 export class BasicChartOptions extends ChartOptions {
-  public labelColumn: string = ''
+  public labelColumn = ''
   public dataColumns: Array<{ name: string; label?: string }> = []
 
   constructor (o?: BasicChartOptions | Partial<BasicChartOptions>) {

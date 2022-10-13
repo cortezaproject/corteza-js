@@ -82,7 +82,7 @@ export class DisplayElementMetric extends DisplayElement {
               args: [
                 filter,
                 relatedDefinition.filter,
-              ]
+              ],
             }
           } else {
             df.filter = relatedDefinition.filter

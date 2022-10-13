@@ -47,7 +47,7 @@ describe(__filename, () => {
         weight: 1,
 
         labels: {
-          foo: 'foo'
+          foo: 'foo',
         },
 
         visible: true,
@@ -76,7 +76,7 @@ describe(__filename, () => {
       expect(page).to.have.property('weight').and.to.eq(1)
 
       expect(page).to.have.property('labels').and.to.deep.eq({
-        foo: 'foo'
+        foo: 'foo',
       })
 
       expect(page).to.have.property('visible').and.to.eq(true)
@@ -130,7 +130,7 @@ describe(__filename, () => {
         description: 'description',
         visible: true,
         blocks: [
-          { kind: 'RecordList', xywh: [0, 0, 3, 3] }
+          { kind: 'RecordList', xywh: [0, 0, 3, 3] },
         ],
       })
 
@@ -145,7 +145,7 @@ describe(__filename, () => {
     it('validate', () => {
       const page = new Page({
         blocks: [
-          { kind: 'RecordList', xywh: [0, 0, 3, 3] }
+          { kind: 'RecordList', xywh: [0, 0, 3, 3] },
         ],
       })
 

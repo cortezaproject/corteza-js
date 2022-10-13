@@ -29,7 +29,7 @@ interface ConnectionMeta {
 
 interface ConnectionConfigDAL {
   type?: string;
-  params?: Object;
+  params?: object;
   modelIdent?: string;
   modelIdentCheck?: Array<string>;
 }
@@ -39,8 +39,8 @@ interface ConnectionConfigPrivacy {
 }
 
 interface ConnectionConfig {
-  privacy: ConnectionConfigPrivacy,
-  dal?: ConnectionConfigDAL,
+  privacy: ConnectionConfigPrivacy;
+  dal?: ConnectionConfigDAL;
 }
 
 export class DalConnection {
