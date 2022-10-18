@@ -116,13 +116,13 @@ export class DalConnection {
 
       if (this.connectionID !== NoID && this.canManageDalConfig) {
         this.config = {
-          ...dc.config,
           dal: {
             type: 'corteza::dal:connection:dsn',
             params: { dsn: '' },
             modelIdent: '',
             modelIdentCheck: [],
           },
+          ...dc.config,
         }
       }
     }
