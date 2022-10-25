@@ -190,11 +190,17 @@ export default class Chart extends BaseChart {
             nameLocation: 'center',
             type: 'category',
             data: labels,
+            axisLabel: {
+              interval: 0,
+              overflow: 'truncate',
+              hideOverlap: true,
+            },
           })
         }
 
         options.grid = {
-          bottom: '5%',
+          top: 35,
+          bottom: 10,
           // prevents long labels like dates from being cut off
           containLabel: true,
         }
