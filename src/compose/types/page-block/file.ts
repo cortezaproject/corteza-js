@@ -7,6 +7,13 @@ interface Options {
   mode: string;
   attachments: string[];
   hideFileName: boolean;
+  height: string;
+  width: string;
+  maxHeight: string;
+  maxWidth: string;
+  borderRadius: string;
+  margin: string;
+  backgroundColor: string;
 }
 
 const PageBlockFileDefaultMode = 'list'
@@ -25,6 +32,13 @@ const defaults: Readonly<Options> = Object.freeze({
   mode: PageBlockFileDefaultMode,
   attachments: [],
   hideFileName: false,
+  height: '',
+  width: '',
+  maxHeight: '',
+  maxWidth: '',
+  borderRadius: '',
+  margin: '',
+  backgroundColor: '',
 })
 
 export class PageBlockFile extends PageBlock {
@@ -45,6 +59,7 @@ export class PageBlockFile extends PageBlock {
     }
 
     Apply(this.options, o, Boolean, 'hideFileName')
+    Apply(this.options, o, String, 'height', 'width', 'maxHeight', 'maxWidth', 'borderRadius', 'margin', 'backgroundColor')
 
     if (o.mode) {
       if (PageBlockFileModes.includes(o.mode)) {
