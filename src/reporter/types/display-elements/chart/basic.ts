@@ -87,12 +87,17 @@ export class BasicChartOptions extends ChartOptions {
           nameGap: 30,
           type: xType,
           data: labels,
+          axisLabel: {
+            interval: 0,
+            overflow: 'truncate',
+            hideOverlap: true,
+          },
         },
       ]
 
       options.grid = {
-        top: this.title ? '20%' : '10%',
-        bottom: '5%',
+        top: this.title ? 60 : 35,
+        bottom: xLabel ? 30 : 20,
         containLabel: true,
       }
 
@@ -109,6 +114,7 @@ export class BasicChartOptions extends ChartOptions {
         name: yLabel,
         type: yType === 'linear' ? 'value' : 'log',
         position,
+        nameLocation: 'center',
         nameGap: 30,
         min: beginAtZero ? 0 : min || undefined,
         max: max || undefined,
@@ -157,7 +163,7 @@ export class BasicChartOptions extends ChartOptions {
       },
       legend: {
         show: this.showLegend,
-        top: this.title ? '10%' : '5%',
+        top: this.title ? 25 : undefined,
         type: 'scroll',
       },
       ...options,
