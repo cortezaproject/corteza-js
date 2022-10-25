@@ -4,29 +4,7 @@ import { Apply } from '../../../../cast'
 
 const kind = 'Chart'
 
-export function ChartOptionsMaker<T extends ChartOptions> (options: Partial<ChartOptions>): T {
-  const { type } = options
-
-  if (type) {
-    const ChartOptionsTemp = ChartOptionsRegistry.get(type)
-    if (ChartOptionsTemp === undefined) {
-      throw new Error(`unknown chart type '${type}'`)
-    }
-
-    if (options instanceof ChartOptions) {
-      // Get rid of the references
-      options = JSON.parse(JSON.stringify(options))
-    }
-
-    return new ChartOptionsTemp(options) as T
-  } else {
-    throw new Error('no chart type')
-  }
-}
-
 export type PartialChartOptions = Partial<ChartOptions>
-export type ChartOptionsInput = ChartOptions | PartialChartOptions
-export const ChartOptionsRegistry = new Map<string, typeof ChartOptions>()
 
 interface XAxisOptions {
   type: string;
@@ -83,6 +61,28 @@ export class ChartOptions {
     if (o.yAxis) {
       this.yAxis = { ...this.yAxis, ...o.yAxis }
     }
+  }
+}
+
+export const ChartOptionsRegistry = new Map<string, typeof ChartOptions>()
+
+export function ChartOptionsMaker<T extends ChartOptions> (options: Partial<ChartOptions>): T {
+  const { type } = options
+
+  if (type) {
+    const ChartOptionsTemp = ChartOptionsRegistry.get(type)
+    if (ChartOptionsTemp === undefined) {
+      throw new Error(`unknown chart type '${type}'`)
+    }
+
+    if (options instanceof ChartOptions) {
+      // Get rid of the references
+      options = JSON.parse(JSON.stringify(options))
+    }
+
+    return new ChartOptionsTemp(options) as T
+  } else {
+    throw new Error('no chart type')
   }
 }
 
