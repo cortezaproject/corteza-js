@@ -7,6 +7,7 @@ interface Options {
   mode: string;
   attachments: string[];
   hideFileName: boolean;
+  refreshRate: number;
 }
 
 const PageBlockFileDefaultMode = 'list'
@@ -25,6 +26,7 @@ const defaults: Readonly<Options> = Object.freeze({
   mode: PageBlockFileDefaultMode,
   attachments: [],
   hideFileName: false,
+  refreshRate: 0
 })
 
 export class PageBlockFile extends PageBlock {
@@ -45,6 +47,7 @@ export class PageBlockFile extends PageBlock {
     }
 
     Apply(this.options, o, Boolean, 'hideFileName')
+    Apply(this.options, o, Number, 'refreshRate')
 
     if (o.mode) {
       if (PageBlockFileModes.includes(o.mode)) {

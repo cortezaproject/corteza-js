@@ -5,10 +5,12 @@ const kind = 'Chart'
 
 interface Options {
   chartID: string;
+  refreshRate: number;
 }
 
 const defaults: Readonly<Options> = Object.freeze({
   chartID: NoID,
+  refreshRate: 0
 })
 
 export class PageBlockChart extends PageBlock {

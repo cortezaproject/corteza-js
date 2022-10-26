@@ -1,13 +1,16 @@
 import { PageBlock, PageBlockInput, Registry } from './base'
+import { Apply } from '../../../cast'
 
 const kind = 'Record'
 
 interface Options {
   fields: unknown[];
+  refreshRate: number;
 }
 
 const defaults: Readonly<Options> = Object.freeze({
   fields: [],
+  refreshRate: 0
 })
 
 export class PageBlockRecord extends PageBlock {
@@ -22,7 +25,7 @@ export class PageBlockRecord extends PageBlock {
 
   applyOptions (o?: Partial<Options>): void {
     if (!o) return
-
+    Apply(this.options, o, Number, 'refreshRate')
     if (o.fields) {
       this.options.fields = o.fields
     }

@@ -5,10 +5,12 @@ const kind = 'Content'
 
 interface Options {
   body: string;
+  refreshRate: number;
 }
 
 const defaults: Readonly<Options> = Object.freeze({
   body: '',
+  refreshRate: 0
 })
 
 export class PageBlockContent extends PageBlock {
@@ -25,6 +27,7 @@ export class PageBlockContent extends PageBlock {
     if (!o) return
 
     Apply(this.options, o, String, 'body')
+    Apply(this.options, o, Number, 'refreshRate')
   }
 }
 
