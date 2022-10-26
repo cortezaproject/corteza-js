@@ -264,7 +264,7 @@ export class BaseChart {
   defReport (): Report {
     return Object.assign({}, {
       moduleID: undefined,
-      filter: undefined,
+      filter: '',
       dimensions: [this.defDimension()],
       metrics: [this.defMetrics()],
       yAxis: {},
