@@ -22,13 +22,13 @@ interface FileOptions extends Options {
   inline: boolean;
   hideFileName: boolean;
   mimetypes?: string;
-  height: string;
-  width: string;
-  maxHeight: string;
-  maxWidth: string;
-  borderRadius: string;
-  margin: string;
-  backgroundColor: string;
+  height?: number;
+  width?: number;
+  maxHeight?: number;
+  maxWidth?: number;
+  borderRadius?: number;
+  margin?: number;
+  backgroundColor?: number;
 }
 
 const defaults = (): Readonly<FileOptions> => Object.freeze({
@@ -40,13 +40,13 @@ const defaults = (): Readonly<FileOptions> => Object.freeze({
   inline: true,
   hideFileName: false,
   mimetypes: '',
-  height: '',
-  width: '',
-  maxHeight: '',
-  maxWidth: '',
-  borderRadius: '',
-  margin: '',
-  backgroundColor: '',
+  height: undefined,
+  width: undefined,
+  maxHeight: undefined,
+  maxWidth: undefined,
+  borderRadius: undefined,
+  margin: undefined,
+  backgroundColor: undefined,
 })
 
 export class ModuleFieldFile extends ModuleField {
