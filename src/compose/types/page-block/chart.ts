@@ -27,6 +27,7 @@ export class PageBlockChart extends PageBlock {
     if (!o) return
 
     Apply(this.options, o, CortezaID, 'chartID')
+    Apply(this.options, o, Number, 'refreshRate')
   }
 }
 
