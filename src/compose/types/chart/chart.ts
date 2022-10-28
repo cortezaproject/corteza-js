@@ -145,7 +145,7 @@ export default class Chart extends BaseChart {
       const { fixed, relative } = tooltip
 
       if (['pie', 'doughnut'].includes(type)) {
-        const startRadius = type === 'doughnut' ? 50 : 0
+        const startRadius = type === 'doughnut' ? 40 : 0
 
         options.tooltip.trigger = 'item'
 
@@ -153,7 +153,7 @@ export default class Chart extends BaseChart {
           z: index,
           name: label,
           type: 'pie',
-          radius: [startRadius, '75%'],
+          radius: [`${startRadius}%`, '80%'],
           center: ['50%', '55%'],
           tooltip: {
             trigger: 'item',

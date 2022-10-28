@@ -33,8 +33,8 @@ export class BasicChartOptions extends ChartOptions {
     }
 
     if (['pie', 'doughnut'].includes(this.type)) {
-      const startRadius = this.type === 'doughnut' ? 35 : 0
-      const endRadius = 70
+      const startRadius = this.type === 'doughnut' ? 40 : 0
+      const endRadius = 80
       const radiusLength = (endRadius - startRadius) / (datasets.length || 1)
 
       options.tooltip.trigger = 'item'

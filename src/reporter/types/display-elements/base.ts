@@ -4,8 +4,6 @@ import { merge } from 'lodash'
 export type PartialDisplayElement = Partial<DisplayElement>
 export type DisplayElementInput = DisplayElement | PartialDisplayElement
 
-export const Registry = new Map<string, typeof DisplayElement>()
-
 export class DisplayElement {
   public elementID = NoID
   public name = ''
@@ -37,3 +35,5 @@ export class DisplayElement {
     }
   }
 }
+
+export const Registry = new Map<string, typeof DisplayElement>()
