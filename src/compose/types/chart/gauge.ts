@@ -45,12 +45,14 @@ export default class GaugeChart extends BaseChart {
 
     const max = Math.max(...steps.map(({ value }: any) => parseFloat(value)))
 
-    const { label: name } = [...steps].sort((a: any, b: any) => {
+    const sortedSteps = [...steps].sort((a: any, b: any) => {
       return parseFloat(b.value) - parseFloat(a.value)
-    }).reduce((acc: any, cur: any) => {
+    })
+
+    const { label: name } = sortedSteps.reduce((acc: any, cur: any) => {
       const curValue = parseFloat(cur.value)
       return value < curValue ? cur : acc
-    }, {})
+    }, sortedSteps[0] || {})
 
     return {
       steps,
@@ -78,8 +80,7 @@ export default class GaugeChart extends BaseChart {
         fontFamily: 'Poppins-Regular',
       },
       grid: {
-        bottom: '0%',
-        left: '0%',
+        bottom: 0,
       },
       series: [
         {
@@ -120,12 +121,13 @@ export default class GaugeChart extends BaseChart {
             distance: 60,
           },
           title: {
+            fontSize: 14,
             show: tooltip.fixed,
-            offsetCenter: [0, '45%'],
+            offsetCenter: [0, '30%'],
           },
           detail: {
             fontSize: 13,
-            offsetCenter: [0, '25%'],
+            offsetCenter: [0, '55%'],
             valueAnimation: true,
           },
           data: [
