@@ -63,9 +63,9 @@ export class ModuleFieldFile extends ModuleField {
     if (!o) return
     super.applyOptions(o)
 
-    Apply(this.options, o, Number, 'maxSize')
+    Apply(this.options, o, Number, 'maxSize', 'height', 'width', 'maxHeight', 'maxWidth', 'borderRadius', 'margin', 'backgroundColor')
     Apply(this.options, o, Boolean, 'allowImages', 'allowDocuments', 'inline', 'hideFileName')
-    Apply(this.options, o, String, 'mimetypes', 'height', 'width', 'maxHeight', 'maxWidth', 'borderRadius', 'margin', 'backgroundColor')
+    Apply(this.options, o, String, 'mimetypes')
     ApplyWhitelisted(this.options, o, modes, 'mode')
   }
 }
