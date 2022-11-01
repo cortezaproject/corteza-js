@@ -23,6 +23,11 @@ export async function RecordFeed ($ComposeAPI: ComposeAPI, module: Module, names
   const params = {
     namespaceID: namespace.namespaceID,
     moduleID: module.moduleID,
+    query: '',
+  }
+
+  if (feed.options.prefilter) {
+    params.query += ` AND (${feed.options.prefilter})`
   }
 
   const events: Array<any> = []
