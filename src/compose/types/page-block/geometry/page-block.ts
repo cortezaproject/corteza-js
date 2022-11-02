@@ -4,26 +4,19 @@ import { RecordFeed } from './feed-record'
 
 const kind = 'Geometry'
 
-// interface Feed {
-//   color: string;
-//   prefilter: string;
-//   moduleID: string;
-//   resource: string;
-//   titleField: string;
-// }
-
 class GeometryOptions {
     public defaultView = ''
-    public center = ''
+    public center: Array<number> = [30, 30]
     public feeds: Array<Feed> = []
-    public zoom = 4
-    public boundsUpper = ''
-    public boundsLower = ''
+    public zoomStarting = 4
+    public zoomMin = 4
+    public zoomMax = 4
+    public boundTopLeft = ''
+    public boundLowerRight = ''
+    public lockZoomCenter = false
+    public lockBounds = false
 }
 
-/**
- * Helper class to help define calendar's functionality
- */
 export class PageBlockGeometry extends PageBlock {
   readonly kind = kind
   public options = new GeometryOptions()
@@ -41,10 +34,14 @@ export class PageBlockGeometry extends PageBlock {
     if (!o) return
 
     this.options.feeds = (o.feeds || [])
-    this.options.center = (o.center || '{"coordinates":[30, 30]}')
-    this.options.boundsUpper = (o.boundsUpper || '{"coordinates":[8.8993416,62.578125]}')
-    this.options.boundsLower = (o.boundsLower || '{"coordinates":[24.6651445,33.5742188]}')
-    this.options.zoom = (o.zoom || 4)
+    this.options.center = (o.center || [])
+    this.options.boundTopLeft = (o.boundTopLeft || '{"coordinates":[8.8993416,62.578125]}')
+    this.options.boundLowerRight = (o.boundLowerRight || '{"coordinates":[24.6651445,33.5742188]}')
+    this.options.zoomStarting = (o.zoomStarting || 4)
+    this.options.zoomMin = (o.zoomMin || 4)
+    this.options.zoomMax = (o.zoomMax || 4)
+    this.options.lockZoomCenter = (o.lockZoomCenter || false)
+    this.options.lockBounds = (o.lockBounds || false)
   }
 
   static makeFeed (f?: FeedInput): Feed {
