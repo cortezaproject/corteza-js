@@ -13,7 +13,7 @@ interface Options {
   maxWidth?: number;
   borderRadius?: number;
   margin?: number;
-  backgroundColor?: number;
+  backgroundColor?: string;
 }
 
 const PageBlockFileDefaultMode = 'list'
@@ -59,7 +59,8 @@ export class PageBlockFile extends PageBlock {
     }
 
     Apply(this.options, o, Boolean, 'hideFileName')
-    Apply(this.options, o, Number, 'height', 'width', 'maxHeight', 'maxWidth', 'borderRadius', 'margin', 'backgroundColor')
+    Apply(this.options, o, String, 'backgroundColor')
+    Apply(this.options, o, Number, 'height', 'width', 'maxHeight', 'maxWidth', 'borderRadius', 'margin')
 
     if (o.mode) {
       if (PageBlockFileModes.includes(o.mode)) {
