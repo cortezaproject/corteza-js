@@ -18,16 +18,12 @@ interface Range {
   start: Date;
 }
 
-export async function RecordFeed ($ComposeAPI: ComposeAPI, module: Module, namespace: Namespace, feed: Feed, range: Range): Promise<any[]> {
+export async function RecordFeed ($ComposeAPI: ComposeAPI, module: Module, namespace: Namespace, feed: Feed): Promise<any[]> {
   // Params for record fetching
   const params = {
     namespaceID: namespace.namespaceID,
     moduleID: module.moduleID,
-    query: '',
-  }
-
-  if (feed.options.prefilter) {
-    params.query += ` AND (${feed.options.prefilter})`
+    query: feed.options.prefilter,
   }
 
   const events: Array<any> = []

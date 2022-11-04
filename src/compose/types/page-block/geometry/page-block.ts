@@ -8,12 +8,10 @@ class GeometryOptions {
     public defaultView = ''
     public center: Array<number> = [30, 30]
     public feeds: Array<Feed> = []
-    public zoomStarting = 4
-    public zoomMin = 4
-    public zoomMax = 4
-    public boundTopLeft = ''
-    public boundLowerRight = ''
-    public lockZoomCenter = false
+    public zoomStarting = 3
+    public zoomMin = 1
+    public zoomMax = 18
+    public bounds: Array<number> | null = []
     public lockBounds = false
 }
 
@@ -35,12 +33,10 @@ export class PageBlockGeometry extends PageBlock {
 
     this.options.feeds = (o.feeds || [])
     this.options.center = (o.center || [])
-    this.options.boundTopLeft = (o.boundTopLeft || '{"coordinates":[8.8993416,62.578125]}')
-    this.options.boundLowerRight = (o.boundLowerRight || '{"coordinates":[24.6651445,33.5742188]}')
-    this.options.zoomStarting = (o.zoomStarting || 4)
-    this.options.zoomMin = (o.zoomMin || 4)
-    this.options.zoomMax = (o.zoomMax || 4)
-    this.options.lockZoomCenter = (o.lockZoomCenter || false)
+    this.options.zoomStarting = (o.zoomStarting || 3)
+    this.options.zoomMin = (o.zoomMin || 1)
+    this.options.zoomMax = (o.zoomMax || 18)
+    this.options.bounds = (o.bounds || null)
     this.options.lockBounds = (o.lockBounds || false)
   }
 

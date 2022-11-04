@@ -8,6 +8,7 @@ interface FeedOptions {
   moduleID: string;
   resource: string;
   titleField: string;
+  geometryField: string;
 }
 
 export type FeedInput = Partial<Feed> | Feed
@@ -18,6 +19,7 @@ const defOptions = {
   prefilter: '',
   resource: 'compose:record',
   titleField: '',
+  geometryField: '',
 }
 
 /**
@@ -27,6 +29,7 @@ export default class Feed {
   public resource = 'compose:record'
   public titleField = ''
   public color = ''
+  public geometryField = ''
   public options: FeedOptions = { ...defOptions }
 
   constructor (i?: FeedInput) {
@@ -37,7 +40,7 @@ export default class Feed {
     if (!i) return
 
     if (IsOf<Feed>(i, 'resource')) {
-      Apply(this, i, String, 'resource', 'color', 'titleField')
+      Apply(this, i, String, 'resource', 'color', 'titleField', 'geometryField')
 
       if (i.options) {
         this.options = { ...this.options, ...i.options }
