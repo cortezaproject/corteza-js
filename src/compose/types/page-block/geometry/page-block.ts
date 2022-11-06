@@ -4,6 +4,17 @@ import { RecordFeed } from './feed-record'
 
 const kind = 'Geometry'
 
+interface Bounds {
+  _southWest: {
+    lat: number;
+    lng: number;
+  };
+  _northEast: {
+    lat: number;
+    lng: number;
+  };
+}
+
 class GeometryOptions {
     public defaultView = ''
     public center: Array<number> = [30, 30]
@@ -11,7 +22,7 @@ class GeometryOptions {
     public zoomStarting = 3
     public zoomMin = 1
     public zoomMax = 18
-    public bounds: Array<number> | null = []
+    public bounds: Bounds | null = null
     public lockBounds = false
 }
 
