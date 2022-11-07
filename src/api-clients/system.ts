@@ -1535,6 +1535,7 @@ export default class System {
     const {
       sensitivityLevelID,
       deleted,
+      incTotal,
     } = (a as KV) || {}
     const cfg: AxiosRequestConfig = {
       ...extra,
@@ -1544,6 +1545,7 @@ export default class System {
     cfg.params = {
       sensitivityLevelID,
       deleted,
+      incTotal,
     }
 
     return this.api().request(cfg).then(result => stdResolve(result))
