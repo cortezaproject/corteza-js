@@ -23,6 +23,7 @@ interface Options {
   hideRecordPermissionsButton: boolean;
   allowExport: boolean;
   perPage: number;
+  recordDisplayOption: string;
 
   fullPageNavigation: boolean;
   showTotalCount: boolean;
@@ -66,6 +67,7 @@ const defaults: Readonly<Options> = Object.freeze({
   hideRecordPermissionsButton: true,
   allowExport: false,
   perPage: 20,
+  recordDisplayOption: NoID,
 
   fullPageNavigation: true,
   showTotalCount: true,
@@ -100,7 +102,7 @@ export class PageBlockRecordList extends PageBlock {
     if (!o) return
 
     Apply(this.options, o, CortezaID, 'moduleID')
-    Apply(this.options, o, String, 'prefilter', 'presort', 'selectMode', 'positionField', 'refField')
+    Apply(this.options, o, String, 'prefilter', 'presort', 'selectMode', 'positionField', 'refField', 'recordDisplayOption')
     Apply(this.options, o, Number, 'perPage')
 
     if (o.fields) {
