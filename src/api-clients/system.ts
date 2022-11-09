@@ -3042,6 +3042,7 @@ export default class System {
   async reportList (a: KV, extra: AxiosRequestConfig = {}): Promise<KV> {
     const {
       handle,
+      query,
       deleted,
       labels,
       limit,
@@ -3056,6 +3057,7 @@ export default class System {
     }
     cfg.params = {
       handle,
+      query,
       deleted,
       labels,
       limit,
