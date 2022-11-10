@@ -67,7 +67,7 @@ const defaults: Readonly<Options> = Object.freeze({
   hideRecordPermissionsButton: true,
   allowExport: false,
   perPage: 20,
-  recordDisplayOption: NoID,
+  recordDisplayOption: 'sameTab',
 
   fullPageNavigation: true,
   showTotalCount: true,
@@ -113,6 +113,10 @@ export class PageBlockRecordList extends PageBlock {
       this.options.editFields = o.editFields
     }
 
+    if (o.openInNewTab) {
+      this.options.recordDisplayOption = 'newTab'
+    }
+
     Apply(this.options, o, Boolean,
       'hideHeader',
       'hideAddButton',
@@ -131,7 +135,6 @@ export class PageBlockRecordList extends PageBlock {
       'hideRecordPermissionsButton',
       'editable',
       'draggable',
-      'openInNewTab',
       'linkToParent',
     )
 
