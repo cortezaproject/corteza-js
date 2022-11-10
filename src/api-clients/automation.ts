@@ -145,9 +145,6 @@ export default class Automation {
       runAs,
       ownedBy,
     } = (a as KV) || {}
-    if (!handle) {
-      throw Error('field handle is empty')
-    }
     if (!runAs) {
       throw Error('field runAs is empty')
     }
@@ -197,9 +194,6 @@ export default class Automation {
     } = (a as KV) || {}
     if (!workflowID) {
       throw Error('field workflowID is empty')
-    }
-    if (!handle) {
-      throw Error('field handle is empty')
     }
     if (!runAs) {
       throw Error('field runAs is empty')
