@@ -1,4 +1,5 @@
 import { PageBlock, Registry } from '../base'
+import { Apply } from '../../../../cast'
 import Feed, { FeedInput } from './feed'
 import { RecordFeed } from './feed-record'
 
@@ -15,20 +16,31 @@ interface Bounds {
   };
 }
 
-class GeometryOptions {
-    public defaultView = ''
-    public center: Array<number> = [30, 30]
-    public feeds: Array<Feed> = []
-    public zoomStarting = 3
-    public zoomMin = 1
-    public zoomMax = 18
-    public bounds: Bounds | null = null
-    public lockBounds = false
+interface Options {
+  defaultView: string;
+  center: Array<number>;
+  feeds: Array<Feed>;
+  zoomStarting: number;
+  zoomMin: number;
+  zoomMax: number;
+  bounds: Bounds | null;
+  lockBounds: boolean;
 }
+
+const defaults: Readonly<Options> = Object.freeze({
+  defaultView: '',
+  center: [35, -30],
+  feeds: [],
+  zoomStarting: 2,
+  zoomMin: 1,
+  zoomMax: 18,
+  bounds: null,
+  lockBounds: false,
+})
 
 export class PageBlockGeometry extends PageBlock {
   readonly kind = kind
-  public options = new GeometryOptions()
+  options: Options = { ...defaults }
 
   static feedResources = Object.freeze({
     record: 'compose:record',
@@ -36,19 +48,18 @@ export class PageBlockGeometry extends PageBlock {
 
   constructor (i?: PageBlock | Partial<PageBlock>) {
     super(i)
-    this.applyOptions(i?.options as Partial<GeometryOptions>)
+    this.applyOptions(i?.options as Partial<Options>)
   }
 
-  applyOptions (o?: Partial<GeometryOptions>): void {
+  applyOptions (o?: Partial<Options>): void {
     if (!o) return
 
-    this.options.feeds = (o.feeds || [])
+    this.options.feeds = (o.feeds || []).map(f => new Feed(f))
     this.options.center = (o.center || [])
-    this.options.zoomStarting = (o.zoomStarting || 3)
-    this.options.zoomMin = (o.zoomMin || 1)
-    this.options.zoomMax = (o.zoomMax || 18)
     this.options.bounds = (o.bounds || null)
-    this.options.lockBounds = (o.lockBounds || false)
+
+    Apply(this.options, o, Number, 'zoomStarting', 'zoomMin', 'zoomMax')
+    Apply(this.options, o, Boolean, 'lockBounds')
   }
 
   static makeFeed (f?: FeedInput): Feed {
