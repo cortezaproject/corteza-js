@@ -39,6 +39,7 @@ interface Options {
   linkToParent: boolean;
 
   // Should records be opened in a new tab
+  // legacy field that has been removed but we keep it for backwards compatibility
   openInNewTab: boolean;
 
   // Are table rows selectable
